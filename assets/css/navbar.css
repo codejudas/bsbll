@@ -1,0 +1,128 @@
+.nav{
+    position: fixed;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:80px;
+    /*font-family: "Open Sans" Arial;*/
+    color: #2a2a2a;
+    background-color: #f0f0f0;
+    z-index:100;
+}
+
+#nav-border{
+    background-color: #f83240;
+    width:100%;
+    height:5px;
+    position: absolute;
+    left:0px;
+    top: 100%;
+}
+
+.content{
+    margin-top: 85px;
+}
+
+#mlb-icon{
+    height: 60px;
+    width: 100px;
+    position: relative;
+    top:calc(50% - 30px);
+    margin-left: 30px;
+    display:inline-block;
+}
+
+.nav-entry{
+    font-size:30px;
+    font-weight: 300;
+    height: calc(100% - 10px);
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+.nav-entry>p{
+    margin: 0px;
+    position: relative;
+    top: 18px;
+}
+
+#nav-search-icon{
+    cursor:pointer;
+    height: 35px;
+    width: 35px;
+    float:right;
+    position:relative;
+    top: calc(50% - 18px);
+    right: 30px;
+    opacity: 0.9;
+}
+
+#nav-selector{
+    width:50px;
+    height:10px;
+    position: absolute;
+    top:calc(100% - 10px);
+    left:0px;
+    background-color: #f83240;
+}
+
+#search-container{
+    position: fixed;
+    top:85px;
+    left:0px;
+    z-index:200;
+    width:100%;
+    height: 100%;
+}
+
+#search-overlay{
+    background-color: rgba(0,0,0,0.7);
+    width: 100vw;
+    height: 100%;
+    position:absolute;
+    top:0px;
+    left:0px;
+    z-index: 21;
+}
+
+.search-modal{
+    width: 500px;
+    height: 70px;
+    background-color: #f0f0f0;
+    position:absolute;
+    top:200px;
+    left:calc(50% - 250px);
+    z-index: 220;
+    border-radius: 3px;
+    opacity:1 ;
+    transform: translateY(-50px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.modal-hidden{
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+#search-input{
+    font-size: 28px;
+    width:410px;
+    font-family: "Open Sans" Arial;
+    font-weight: 300;
+    color: #2a2a2a;
+    background-color: #f0f0f0;
+    border: none;
+    vertical-align: top;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+#search-modal-icon{
+    width:35px;
+    height:35px;
+    margin-top: 18px;
+    margin-left:18px;
+}
