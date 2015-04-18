@@ -263,6 +263,23 @@
     opacity: 0.6;
 }
 
+/* For final game*/
+.pitcher-stats.away-pitcher>h3{
+    float:left;
+    margin-top: 8px;
+    margin-right:10px;
+    font-weight: 400;
+    opacity: 0.6;
+}
+
+.pitcher-stats.home-pitcher>h3{
+    float:right;
+    margin-top: 8px;
+    margin-left:10px;
+    font-weight: 400;
+    opacity: 0.6;
+}
+
 /*
     CURRENT GAME STUFF
  */
