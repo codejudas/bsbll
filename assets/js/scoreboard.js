@@ -19,6 +19,18 @@ $(document).ready(function(){
         // hilight animation
         hilight_game_card(this);
     })
+
+    // NL/AL filter buttons effects
+    $(".nl-circle, .al-circle").click(function(){
+        if($(this).hasClass("on")){
+            $(this).removeClass("on");
+            $(this).addClass("off");
+        }
+        else{
+            $(this).removeClass("off");
+            $(this).addClass("on");
+        }
+    })
 });
 
 function hilight_game_card(elem){
