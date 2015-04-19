@@ -12,6 +12,11 @@ var $MASONRY_CONTAINER;
  */
 $(document).ready(function(){
 
+    // Set the margin-left for the cards so that they are centered on the screen
+    calc_card_margin();
+    // Recalculate margin when screen is resized
+    $(window).resize(calc_card_margin);
+
     // Hover effect for game cards
     $(".game-card").hover(function(){
         // Change pointer to clickable
@@ -39,4 +44,14 @@ function hilight_game_card(elem){
     console.log($hilight_bar);
     if($hilight_bar.hasClass("highlighted")) $hilight_bar.removeClass("highlighted");
     else $hilight_bar.addClass("highlighted");
+}
+
+function calc_card_margin(){
+    // Calculate game card left-margins, assumes you can fit atleast 3 cards on the screen
+    var curWidth;
+    if($(window).width() > 1440) curWidth = 1440;
+    else curWidth = $(window).width();
+    var leftMarg = (curWidth - 900) / 4;
+    console.log("New margin: "+leftMarg);
+    $(".game-card").css("margin-left",leftMarg+"px");
 }
