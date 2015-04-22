@@ -129,6 +129,7 @@
     display: inline-block;
     margin-left: 94px;
     margin-bottom: 50px;
+    cursor: pointer;
 }
 
 .game-card-details{
@@ -140,26 +141,40 @@
     background-color: #2a2a2a;
 }
 
+.card-game-status{
+    position: absolute;
+    top:91px;
+    left: calc(50% - 45px);
+    width: 80px;
+    height: 20px;
+    color: white;
+    text-align: center;
+    z-index: 51;
+    padding: 2px 5px;
+    font-size: 14px;
+    line-height: 21px;
+}
+
 .card-highlight{
-    width:70%;
+    width:10px;
     height: 5px;
     position: absolute;
-    top:112px;
-    left:15%;
+    top:110px;
+    left:calc(50% - 5px);
     z-index: 50;
     transition: left 0.5s cubic-bezier(0.19, 1, 0.22, 1), width 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.card-highlight.final{
+.final{
     background-color: #f83240;
 }
 
-.card-highlight.live{
+.live{
     background-color: #F5AB35;
 }
 
-.card-highlight.upcoming{
-    background-color: #4183D7;
+.upcoming{
+    background-color: #8BEC32;
 }
 
 .card-highlight.highlighted{
@@ -227,7 +242,7 @@
 .away-score{
     position:absolute;
     top: 10px;
-    left:80px;
+    left:86px;
     width:60px;
     text-align: center;
 }
@@ -235,7 +250,7 @@
 .home-score{
     position:absolute;
     top:10px;
-    right:80px;
+    right:78px;
     width:60px;
     text-align: center;
 }
@@ -243,7 +258,7 @@
 .card-separator{
     position: absolute;
     top:17px;
-    left:148px;
+    left:50%;
     font-family: "Oswald", Arial;
     font-size: 40px;
     font-weight: 300;
