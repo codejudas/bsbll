@@ -1,3 +1,9 @@
+/* Position the nav selector under the correct tab in case jquery doesnt load*/
+#nav-selector{
+    width: 74px;
+    left: 163px;
+}
+
 #splash-container{
     position:absolute;
     top:85px;

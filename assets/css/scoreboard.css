@@ -1,5 +1,10 @@
 /*SCOREBOARD CSS*/
 
+#nav-selector{
+    width: 157px;
+    left: 273px;
+}
+
 .content{
     margin-top: 100px;
 }
