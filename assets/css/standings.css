@@ -135,14 +135,14 @@
     height: 390px;
     opacity: 0;
     transform: translateY(390px);
-    transition: transform 1s, opacity 0.5s ease-out;
+    transition: transform 1s, opacity 0.5s;
     z-index: 40;
 }
 
 .team-rankings.active{
     opacity: 1;
     transform: translateY(0px);
-    transition: transform 1s, opacity 0.5s ease-out;
+    transition: transform 1s, opacity 0.5s;
     z-index: 41;
 }
 
