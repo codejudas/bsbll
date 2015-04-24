@@ -172,7 +172,7 @@
     height:58px;
     padding:7px;
     border-radius: 2px;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.2);
     transition: border 0.5s;
 }
 
@@ -232,12 +232,12 @@
 }
 
 .al-teams>.team>.team-stats{
-    left: 65px;
+    left: 67px;
 }
 
 .team-stats>h2{
     display: inline;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 400;
     margin:0px;
     opacity: 0.4;
@@ -253,7 +253,7 @@
 
 .team-stats>h3{
     display: inline;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 300;
     margin:0px;
 }
