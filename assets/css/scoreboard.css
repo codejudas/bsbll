@@ -12,7 +12,7 @@
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 20px;
     font-weight: 300;
 }
@@ -50,14 +50,10 @@
 /*AL-NL Filter Buttons*/
 #league-filter{
     height: 50px;
-/*    position: absolute;
-    left: calc(50% - 60px);
-    top: 120px;*/
-
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 #league-filter>.circle{

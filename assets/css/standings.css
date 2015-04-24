@@ -1,0 +1,93 @@
+/*
+    CSS FOR THE STANDINGS PAGE
+ */
+
+.content{
+    position: relative;
+    width: 1000px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+}
+
+#nl-icon, #al-icon{
+    position: absolute;
+    top:15px;
+    width: 200px;
+    opacity: 0.9;
+}
+
+#nl-icon{
+    left:100px;
+}
+
+#al-icon{
+    right:100px;
+}
+
+#division-toggle{
+    position: absolute;
+    left: calc(50% - 200px);
+    top:70px;
+    width: 400px;
+    /*border: 1px solid red;*/
+    text-align: center;
+}
+
+#division-toggle>h1{
+    position:relative;
+    font-family: "Open Sans", Arial;
+    font-size: 18px;
+    font-weight: 400;
+    opacity: 0.8;
+    z-index:31;
+}
+
+.div-button{
+    position:relative;
+    display: inline;
+    font-size: 25px;
+    font-weight: 300;
+    margin:0px;
+    margin: 0px 26px;
+    z-index:31;
+    opacity: 0.6;
+    cursor:pointer;
+    transition: opacity 0.5s, color 0.5s;
+}
+
+.div-button.div-selected{
+    color: white;
+    opacity: 1;
+    transition: opacity 0.5s, color 0.5s;
+}
+
+#division-selector{
+    position:absolute;
+    top:46px;
+    left:21px;
+    width:86px;
+    height:40px;
+    background-color: #f83240;
+    border-radius: 16px;
+    z-index: 30;
+}
+
+#division-selector.west{
+    width:86px;
+    transform: translateX(0px);
+    transition: width 0.5s, transform 0.5s;
+}
+
+#division-selector.central{
+    width: 125px;
+    transform: translateX(120px);
+    transition: width 0.5s, transform 0.5s;
+}
+
+#division-selector.east{
+    width: 83px;
+    transform: translateX(275px);
+    transition: width 0.5s, transform 0.5s;
+}
