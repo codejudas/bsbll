@@ -129,6 +129,20 @@
     position:relative;
 }
 
+.team-rankings.active{
+    opacity: 1;
+    transform: translateY(0px);
+    transition: transform 1s, opacity 1s;
+    z-index: 41;
+}
+
+.team-rankings.inactive{
+    opacity: 0.5;
+    transform: translateY(395px);
+    transition: transform 1s, opacity 1s;
+    z-index: 40;
+}
+
 .nl-teams{
     width: 460px;
     height: 58px;

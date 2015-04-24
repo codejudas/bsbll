@@ -10,12 +10,13 @@ $(document).ready(function(){
     console.log("Current division = "+$CUR_DIVISION.html());
 
     $(".div-button").click(function(){
+        if($CUR_DIVISION == $(this)) return;
+
         move_div_selector($(this));
     });
 });
 
 function move_div_selector($elem){
-    if($CUR_DIVISION == $elem) return;
 
     var title = $elem.html();
     console.log("moving to division:"+title);
