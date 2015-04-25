@@ -1,0 +1,147 @@
+#nav-selector{
+    width: 88px;
+    left: 630px;
+}
+
+#instructions{
+    font-size: 25px;
+    font-weight: 300;
+    text-align: center;
+    padding-top: 25px;
+}
+
+#map-container{
+    position: relative;
+    width: 900px;
+    margin: 0px auto;
+}
+
+#map{
+    display: block;
+    height: 535px;
+    z-index: 30;
+}
+
+/* TEAMS */
+.team-circle{
+    position: absolute;
+    top:0px;
+    left:0px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor:pointer;
+    z-index: 35;
+}
+
+.team-circle:hover{
+    opacity: 0.5;
+    z-index: 40;
+}
+
+.team-popup{
+    position: absolute;
+    top:0px;
+    left:0px;
+    background-color: white;
+    border: 1px solid rgba(0,0,0,0.2);
+    z-index: 39;
+    width: 210px;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    border-radius: 2px;
+    box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.1);
+    opacity: 1;
+    transform: translateY(0px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.team-popup.inactive{
+    transform: translateY(50px);
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    z-index: 20;
+}
+
+.team-popup>img{
+    float:left;
+    width:40px;
+    height:40px;
+}
+
+.team-popup>h1{
+    font-size: 18px;
+    font-weight: 300;
+    margin: 0px;
+    margin-top: -3px;
+}
+
+.team-popup>h2{
+    font-size: 12px;
+    font-weight: 300;
+    margin: 0px;
+}
+
+#sf{
+    position:absolute;
+    top: 220px;
+    left: 6px;
+}
+
+#sf>.team-circle{
+    background-color: #F9690E;
+}
+
+#sf>.team-popup{
+    top: -65px;
+    left: -25px;
+}
+
+#oak{
+    position: absolute;
+    top: 215px;
+    left: 25px;
+}
+
+#oak>.team-circle{
+    background-color: #1E824C;
+}
+
+#oak>.team-popup{
+    top: -65px;
+    left: -40px;
+    padding-left: 5px;
+}
+
+#lad{
+    position: absolute;
+    top:300px;
+    left: 48px;
+}
+
+#lad>.team-circle{
+    background-color: #19B5FE;
+}
+
+#lad>.team-popup{
+    width:220px;
+    top: -65px;
+    left: -70px;
+}
+
+#laa{
+    position: absolute;
+    top:310px;
+    left: 70px;
+}
+
+#laa>.team-circle{
+    background-color: #CF000F;
+}
+
+#laa>.team-popup{
+    width:220px;
+    top: -65px;
+    left: -70px;
+}
