@@ -100,6 +100,7 @@
 
 #standings-container{
     position: absolute;
+    /*Margin between the natl/amr league logos and top of standings*/
     top:195px;
     width: 100%;
     height: 395px;
@@ -264,4 +265,84 @@
 
 .al-teams>.team>.team-stats>h3{
     margin-right: 20px;
+}
+
+/* MEDIA QUERIES TO FIT TALLER DISPLAYS BETTER*/
+/*Add more spacing between league images and top of standings for taller screens*/
+@media (min-height: 720px) {
+    #standings-container{
+        top: 210px;
+    }
+}
+
+/*Make standings container larger for taller screens*/
+@media (min-height: 760px){
+    #standings-container{
+        height: 435px;
+    }
+
+    .ranking-circle{
+        margin-bottom: 32px;
+    }
+
+    .team{
+        margin-bottom: 16px;
+    }
+
+    .team-rankings{
+        transform: translateY(440px);
+    }
+}
+
+@media (min-height: 900px){
+    #nl-icon, #al-icon{
+        width: 225px;
+    }
+
+    #nl-icon{
+        left: 75px;
+    }
+
+    #al-icon{
+        right: 75px;
+    }
+
+    #standings-container{
+        top:260px;
+        height: 475px;
+    }
+    .ranking-circle{
+        margin-bottom: 42px;
+    }
+
+    .team{
+        margin-bottom: 26px;
+    }
+
+    .team-rankings{
+        transform: translateY(480px);
+    }
+}
+
+/*Make the cards slightly smaller for narrow screens*/
+@media (max-width: 1050px){
+    .team-stats>h2{
+        font-size: 15px;
+    }
+
+    .team-stats>h3{
+        font-size: 15px;
+    }
+
+    .nl-teams, .al-teams{
+        width: 410px;
+    }
+
+    .nl-teams{
+        left: 45px;
+    }
+
+    .al-teams{
+        left: 555px;
+    }
 }
