@@ -22,6 +22,97 @@
     z-index: 30;
 }
 
+#team-container{
+    width: 965px;
+    margin: 0px auto;
+    margin-top: 20px;
+}
+
+.team-img{
+    width: 50px;
+    height: 50px;
+    margin-right: 6px;
+    margin-bottom:5px;
+    cursor: pointer;
+}
+
+.team-img.fade{
+    opacity: 0.3;
+}
+
+.team-img:hover{
+    opacity: 0.7;
+}
+
+.team-img.fade:hover{
+    opacity: 0.3;
+}
+
+
+.league-circle{
+    vertical-align: top;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 25px;
+    color: white;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.league-circle.nl-circle{
+    background-color: #4183D7;
+    transition: background-color 0.5s;
+}
+
+.league-circle.nl-circle.off{
+    background-color: white;
+    border: 2px solid #4183D7;
+    color: #4183D7;
+    width: 48px;
+    height: 48px;
+    transition: background-color 0.5s;
+}
+
+
+.league-circle.al-circle{
+    background-color: #f83240;
+    transition: background-color 0.5s;
+}
+
+.league-circle.al-circle.off{
+    background-color: white;
+    border: 2px solid #f83240;
+    color: #f83240;
+    width: 48px;
+    height: 48px;
+    transition: background-color 0.5s;
+}
+
+/*Media Queries*/
+@media(min-height: 735px){
+    #map-container{
+        margin-top: 35px;
+    }
+}
+
+/* Hide the team bar at the bottom if the screen height is less than 855px*/
+@media(max-height: 855px){
+    #team-container{
+        display: none;
+    }
+}
+
+@media(min-height: 870px){
+    #team-container{
+        margin-top: 40px;
+    }
+}
+
 /* TEAMS */
 .team-circle{
     position: absolute;
@@ -34,7 +125,7 @@
     z-index: 35;
 }
 
-.team-circle:hover{
+.team-circle.active{
     opacity: 0.5;
     z-index: 40;
 }
