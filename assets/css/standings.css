@@ -12,7 +12,6 @@
     height: 100%;
     margin-left: auto;
     margin-right: auto;
-    /*border: 1px solid black;*/
 }
 
 #nl-icon, #al-icon{
@@ -61,12 +60,14 @@
     opacity: 0.6;
     cursor:pointer;
     transition: opacity 0.5s, color 0.5s;
+    -webkit-transition: opacity 0.5s, color 0.5s;
 }
 
 .div-button.div-selected{
     color: white;
     opacity: 1;
     transition: opacity 0.5s, color 0.5s;
+    -webkit-transition: opacity 0.5s, color 0.5s;
 }
 
 #division-selector{
@@ -84,18 +85,21 @@
     width:86px;
     transform: translateX(0px);
     transition: width 0.5s, transform 0.5s;
+    -webkit-transition: width 0.5s, transform 0.5s;
 }
 
 #division-selector.central{
     width: 125px;
     transform: translateX(120px);
     transition: width 0.5s, transform 0.5s;
+    -webkit-transition: width 0.5s, transform 0.5s;
 }
 
 #division-selector.east{
     width: 83px;
     transform: translateX(275px);
     transition: width 0.5s, transform 0.5s;
+    -webkit-transition: width 0.5s, transform 0.5s;
 }
 
 #standings-container{
@@ -137,6 +141,7 @@
     opacity: 0;
     transform: translateY(390px);
     transition: transform 1s, opacity 0.5s;
+    -webkit-transition: transform 1s, opacity 0.5s;
     z-index: 40;
 }
 
@@ -144,6 +149,7 @@
     opacity: 1;
     transform: translateY(0px);
     transition: transform 1s, opacity 0.5s;
+    -webkit-transition: transform 1s, opacity 0.5s;
     z-index: 41;
 }
 
@@ -175,11 +181,13 @@
     border-radius: 2px;
     border: 1px solid rgba(0,0,0,0.2);
     transition: border 0.5s;
+    -webkit-transition: border 0.5s;
 }
 
 .team:hover{
     border: 1px solid rgba(0,0,0,0.4);
     transition: border 0.5s;
+    -webkit-transition: border 0.5s;
 }
 
 .nl-teams>.team{

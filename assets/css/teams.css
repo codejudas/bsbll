@@ -67,6 +67,7 @@
 .league-circle.nl-circle{
     background-color: #4183D7;
     transition: background-color 0.5s;
+    -webkit-transition: background-color 0.5s;
 }
 
 .league-circle.nl-circle.off{
@@ -76,12 +77,14 @@
     width: 48px;
     height: 48px;
     transition: background-color 0.5s;
+    -webkit-transition: background-color 0.5s;
 }
 
 
 .league-circle.al-circle{
     background-color: #f83240;
     transition: background-color 0.5s;
+    -webkit-transition: background-color 0.5s;
 }
 
 .league-circle.al-circle.off{
@@ -91,6 +94,7 @@
     width: 48px;
     height: 48px;
     transition: background-color 0.5s;
+    -webkit-transition: background-color 0.5s;
 }
 
 /*Media Queries*/
@@ -147,12 +151,14 @@
     opacity: 1;
     transform: translateY(0px);
     transition: opacity 0.5s, transform 0.5s;
+    -webkit-transition: opacity 0.5s, transform 0.5s;
 }
 
 .team-popup.inactive{
     transform: translateY(50px);
     opacity: 0;
     transition: opacity 0.5s, transform 0.5s;
+    -webkit-transition: opacity 0.5s, transform 0.5s;
     z-index: 20;
 }
 
