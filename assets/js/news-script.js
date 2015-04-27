@@ -19,8 +19,8 @@ $(document).ready(function(){
     });
 
     // Handle clicking on left arrow
-    $("#splash-left-arrow").click(slideshow_move_left);
-    $("#splash-right-arrow").click(slideshow_move_right);
+    $("#splash-left-arrow").click(slideshow_move_right);
+    $("#splash-right-arrow").click(slideshow_move_left);
 
     // Set width of story container to be num_Stories*windows width
     $("#story-container").css("width", window_width*(num_stories+1));
@@ -76,12 +76,12 @@ function slideshow_move_right(){
 }
 
 function display_arrows(){
-    if(cur_story == 1)
+    if(cur_story == num_stories)
         $("#splash-right-arrow").addClass("off");
     else
         $("#splash-right-arrow").removeClass("off");
 
-    if(cur_story == num_stories)
+    if(cur_story == 1)
         $("#splash-left-arrow").addClass("off");
     else
         $("#splash-left-arrow").removeClass("off");
