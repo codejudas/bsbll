@@ -147,9 +147,11 @@
     height: 20px;
     width: 60px;
     position:relative;
-    top: calc(50% - 10px);
+    top: calc(50% - 33px);
     left: calc(50% - 30px);
     opacity: 0.5;
+    padding:20px;
+    padding-bottom: 10px;
     transition: opacity 0.2s ease-in;
     -webkit-transition: opacity 0.2s ease-in;
 }

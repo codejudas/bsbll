@@ -6,8 +6,12 @@
         <link rel="stylesheet" type="text/css" href="assets/css/global.css" />
         <link rel="stylesheet" type="text/css" href="assets/css/navbar.css" />
         <link rel="stylesheet" type="text/css" href="assets/css/scoreboard.css" />
+        <!--[if !IE]><!-->
         <script language="javascript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-        <!-- <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/masonry/3.3.0/masonry.pkgd.min.js"></script> -->
+        <!--<![endif]-->
+        <!--[if IE]>
+            <script language="javascript" type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <![endif]-->
         <script language="javascript" type="text/javascript" src="assets/js/masonry.pkgd.min.js"></script>
         <script language="javascript" type="text/javascript" src="assets/js/nav-script.js"></script>
         <script language="javascript" type="text/javascript" src="assets/js/scoreboard-script.js"></script>
@@ -46,8 +50,46 @@
                 <img class="date-arrow" id="date-right-arrow" src="assets/img/cal-arrow.png" />
             </div>
             <div id="game-cards-masonry">
-                <!-- LIVE GAME -->
+                <!-- FINAL GAME -->
                 <div id="game1" class="game-card">
+                    <img class="card-team away-team" src="assets/img/teams/mil.png" />
+                    <img class="card-team home-team" src="assets/img/teams/chc.png" />
+                    <div class="card-header away-score">5</div>
+                    <div class="card-header home-score">2</div>
+                    <div class="card-separator">|</div>
+                    <div class="card-record away-record">3 - 13</div>
+                    <div class="card-record home-record">8 - 7</div>
+                    <div class="card-game-status final">FINAL</div>
+                    <div class="card-highlight final"></div>
+                    <div class="game-card-details">
+                        <img class="pitcher-image away-pitcher" src="assets/img/players/garza.png"/>
+                        <img class="pitcher-image home-pitcher" src="assets/img/players/lester.png"/>
+                        <div class="pitcher-stats away-pitcher"><h3>W</h3><h1>M. Garza</h1> <h2>1-1 4.22 ERA</h2></div>
+                        <div class="pitcher-stats home-pitcher"><h3>L</h3><h1>J. Lester</h1> <h2>0-1 7.84 ERA</h2></div>
+                    </div>
+                </div>
+
+                <!-- FINAL GAME -->
+                <div id="game2" class="game-card">
+                    <img class="card-team away-team" src="assets/img/teams/atl.png" />
+                    <img class="card-team home-team" src="assets/img/teams/tor.png" />
+                    <div class="card-header away-score">1</div>
+                    <div class="card-header home-score">0</div>
+                    <div class="card-separator">|</div>
+                    <div class="card-record away-record">8 - 7</div>
+                    <div class="card-record home-record">9 - 7</div>
+                    <div class="card-game-status final">FINAL - 11</div>
+                    <div class="card-highlight final"></div>
+                    <div class="game-card-details">
+                        <img class="pitcher-image away-pitcher" src="assets/img/players/teheran.png"/>
+                        <img class="pitcher-image home-pitcher" src="assets/img/players/cecil.png"/>
+                        <div class="pitcher-stats away-pitcher"><h3>W</h3><h1>J. Teheran</h1> <h2>1-1 3.56 ERA</h2></div>
+                        <div class="pitcher-stats home-pitcher"><h3>L</h3><h1>B. Cecil</h1> <h2>0-2 4.84 ERA</h2></div>
+                    </div>
+                </div>
+
+                <!-- LIVE GAME -->
+                <div id="game3" class="game-card">
                     <img class="card-team away-team" src="assets/img/teams/sf.png" />
                     <img class="card-team home-team" src="assets/img/teams/lad.png" />
                     <div class="card-header away-score">10</div>
@@ -103,7 +145,7 @@
                 </div>
 
                 <!-- LIVE GAME -->
-                <div id="game2" class="game-card">
+                <div id="game4" class="game-card">
                     <img class="card-team away-team" src="assets/img/teams/oak2.png" />
                     <img class="card-team home-team" src="assets/img/teams/nyy.png" />
                     <div class="card-header away-score">3</div>
@@ -157,8 +199,62 @@
                     </div>
                 </div>
 
+                <!-- LIVE GAME -->
+                <div id="game5" class="game-card">
+                    <img class="card-team away-team" src="assets/img/teams/kc.png" />
+                    <img class="card-team home-team" src="assets/img/teams/cws.png" />
+                    <div class="card-header away-score">2</div>
+                    <div class="card-header home-score">3</div>
+                    <div class="card-separator">|</div>
+                    <div class="card-record away-record">12 - 4</div>
+                    <div class="card-record home-record">6 - 9</div>
+                    <div class="card-game-status live">LIVE</div>
+                    <div class="card-highlight live"></div>
+                    <div class="game-card-details">
+                        <div class="inning-container">
+                            <p>9</p>
+                            <div class="inning-arrow arrow-up"></div>
+                        </div>
+                        <div class="bases">
+                            <img class="diamond-icon" src="assets/img/bases.png" />
+                        </div>
+                        <div class="game-info">
+                            <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>M. Lindstrom</h2> <h4>4.02 ERA</h4></p> </div>
+                            <div class="game-info-line"><h1>AB</h1> <p class="hitter-line"><h2>A. Rios</h2> <h3>.192 AVG</h3> <h4>4 HR</h4></p></div>
+                            <div class="game-info-line">
+                                <h1>B</h1>
+                                <div class="circles-container ball-line">
+                                    <div class="circle circle-ball-active"></div>
+                                    <div class="circle circle-ball-active"></div>
+                                    <div class="circle circle-ball-inactive"></div>
+                                    <div class="circle circle-ball-inactive"></div>
+                                </div>
+                            </div>
+                            <div class="game-info-line">
+                                <h1>S</h1>
+                                <div class="circles-container strike-line">
+                                    <div class="circle circle-strike-active"></div>
+                                    <div class="circle circle-strike-active"></div>
+                                    <div class="circle circle-strike-inactive"></div>
+                                </div>
+                            </div>
+
+                            <div class="game-info-line">
+                                <h1>O</h1>
+                                <div class="circles-container out-line">
+                                    <div class="circle circle-out-active"></div>
+                                    <div class="circle circle-out-inactive"></div>
+                                    <div class="circle circle-out-inactive"></div>
+                                </div>
+                            </div>
+
+                            <img class="radio-icon" src="assets/img/headphones.png" />
+                        </div>
+                    </div>
+                </div>
+
                 <!-- UPCOMING GAME -->
-                <div id="game3" class="game-card">
+                <div id="game6" class="game-card">
                     <img class="card-team away-team" src="assets/img/teams/bal.png" />
                     <img class="card-team home-team" src="assets/img/teams/tb.png" />
                     <div class="card-header game-time">7:15pm <h2>EST</h2></div>
@@ -175,41 +271,39 @@
                     </div>
                 </div>
 
-                <!-- FINAL GAME -->
-                <div id="game4" class="game-card">
-                    <img class="card-team away-team" src="assets/img/teams/mil.png" />
-                    <img class="card-team home-team" src="assets/img/teams/chc.png" />
-                    <div class="card-header away-score">5</div>
-                    <div class="card-header home-score">2</div>
-                    <div class="card-separator">|</div>
-                    <div class="card-record away-record">3 - 13</div>
+                <!-- UPCOMING GAME -->
+                <div id="game7" class="game-card">
+                    <img class="card-team away-team" src="assets/img/teams/pit.png" />
+                    <img class="card-team home-team" src="assets/img/teams/ari.png" />
+                    <div class="card-header game-time">9:15pm <h2>EST</h2></div>
+                    <div class="card-header game-loc">@ Chase Field</div>
+                    <div class="card-record away-record">8 - 8</div>
                     <div class="card-record home-record">8 - 7</div>
-                    <div class="card-game-status final">FINAL</div>
-                    <div class="card-highlight final"></div>
+                    <div class="card-game-status upcoming">UPCOMING</div>
+                    <div class="card-highlight upcoming"></div>
                     <div class="game-card-details">
-                        <img class="pitcher-image away-pitcher" src="assets/img/players/garza.png"/>
-                        <img class="pitcher-image home-pitcher" src="assets/img/players/lester.png"/>
-                        <div class="pitcher-stats away-pitcher"><h3>W</h3><h1>M. Garza</h1> <h2>1-1 4.22 ERA</h2></div>
-                        <div class="pitcher-stats home-pitcher"><h3>L</h3><h1>J. Lester</h1> <h2>0-1 7.84 ERA</h2></div>
+                        <img class="pitcher-image away-pitcher" src="assets/img/players/sisco.png"/>
+                        <img class="pitcher-image home-pitcher" src="assets/img/players/corbin.png"/>
+                        <div class="pitcher-stats away-pitcher"><h1>F. Liriano</h1> <h2>2-1 2.96 ERA</h2></div>
+                        <div class="pitcher-stats home-pitcher"><h1>P. Corbin</h1> <h2>1-1 4.18 ERA</h2></div>
                     </div>
                 </div>
 
-                <!-- FINAL GAME -->
-                <div id="game5" class="game-card">
-                    <img class="card-team away-team" src="assets/img/teams/atl.png" />
-                    <img class="card-team home-team" src="assets/img/teams/tor.png" />
-                    <div class="card-header away-score">1</div>
-                    <div class="card-header home-score">0</div>
-                    <div class="card-separator">|</div>
-                    <div class="card-record away-record">8 - 7</div>
-                    <div class="card-record home-record">9 - 7</div>
-                    <div class="card-game-status final">FINAL - 11</div>
-                    <div class="card-highlight final"></div>
+                <!-- UPCOMING GAME -->
+                <div id="game8" class="game-card">
+                    <img class="card-team away-team" src="assets/img/teams/min.png" />
+                    <img class="card-team home-team" src="assets/img/teams/sea.png" />
+                    <div class="card-header game-time">10:15pm <h2>EST</h2></div>
+                    <div class="card-header game-loc">@ Safeco Field</div>
+                    <div class="card-record away-record">6 - 9</div>
+                    <div class="card-record home-record">6 - 9</div>
+                    <div class="card-game-status upcoming">UPCOMING</div>
+                    <div class="card-highlight upcoming"></div>
                     <div class="game-card-details">
-                        <img class="pitcher-image away-pitcher" src="assets/img/players/teheran.png"/>
-                        <img class="pitcher-image home-pitcher" src="assets/img/players/cecil.png"/>
-                        <div class="pitcher-stats away-pitcher"><h3>W</h3><h1>J. Teheran</h1> <h2>1-1 3.56 ERA</h2></div>
-                        <div class="pitcher-stats home-pitcher"><h3>L</h3><h1>B. Cecil</h1> <h2>0-2 4.84 ERA</h2></div>
+                        <img class="pitcher-image away-pitcher" src="assets/img/players/milone.png"/>
+                        <img class="pitcher-image home-pitcher" src="assets/img/players/felix.png"/>
+                        <div class="pitcher-stats away-pitcher"><h1>T. Milone</h1> <h2>2-0 3.38 ERA</h2></div>
+                        <div class="pitcher-stats home-pitcher"><h1>F. Hernandez</h1> <h2>2-0 3.32 ERA</h2></div>
                     </div>
                 </div>
             </div>
