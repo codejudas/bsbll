@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MLB Teams</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300|Oswald:400,700,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="assets/css/global.css" />
+        <link rel="stylesheet" type="text/css" href="assets/css/navbar.css" />
+        <link rel="stylesheet" type="text/css" href="assets/css/teams.css" />
+        <!--[if !IE]><!-->
+        <script language="javascript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+        <!--<![endif]-->
+        <!--[if IE]>
+            <script language="javascript" type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <![endif]-->
+        <script language="javascript" type="text/javascript" src="assets/js/nav-script.js"></script>
+        <script language="javascript" type="text/javascript" src="assets/js/teams-script.js"></script>
+    </head>
+    <body>
+        <div class="nav">
+            <img id="mlb-icon" src="assets/img/mlb.png" />
+            <div id="nav-selector"></div>
+            <div class="nav-entry"><p>News</p></div>
+            <div class="nav-entry"><p>Scoreboard</p></div>
+            <div class="nav-entry"><p>Standings</p></div>
+            <div class="nav-entry nav-selected"><p>Teams</p></div>
+            <img id="nav-search-icon" src="assets/img/search-flipped.png" />
+            <div id="nav-border"></div>
+        </div>
+        <div id="search-container">
+            <div id="search-overlay"></div>
+            <div class="search-modal modal-hidden">
+                <img id="search-modal-icon" src="assets/img/search-flipped.png" />
+                <input type="text" placeholder="Search the mlb" id="search-input"/>
+            </div>
+        </div>
+        <div class="content">
+            <div id="instructions">Hover over a city to find out more about their team.</div>
+            <div id="map-container">
+                <img id="map" src="assets/img/map2.png" />
+
+                <!-- SF -->
+                <div class="team-entry nl" id="sf">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/sf.png" />
+                        <h1>San Francisco Giants</h1>
+                        <h2>AT&T Park, San Francisco, CA</h2>
+                    </div>
+                </div>
+
+                <!-- OAK -->
+                <div class="team-entry al" id="oak">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/oak.png" />
+                        <h1>Oakland Athletics</h1>
+                        <h2>O.co Colliseum, Oakland, CA</h2>
+                    </div>
+                </div>
+
+                <!-- LAD -->
+                <div class="team-entry nl" id="lad">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/lad.png" />
+                        <h1>Los Angeles Dodgers</h1>
+                        <h2>Dodger Stadium, Los Angeles, CA</h2>
+                    </div>
+                </div>
+
+                <!-- LAA -->
+                <div class="team-entry al" id="laa">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/laa.png" />
+                        <h1>Los Angeles Angels</h1>
+                        <h2>Angel Stadium, Anaheim, CA</h2>
+                    </div>
+                </div>
+
+                <!-- SD -->
+                <div class="team-entry nl" id="sd">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/sd.png" />
+                        <h1>San Diego Padres</h1>
+                        <h2>Petco Park, San Diego, CA</h2>
+                    </div>
+                </div>
+
+                <!-- SEA -->
+                <div class="team-entry al" id="sea">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/sea.png" />
+                        <h1>Seattle Mariners</h1>
+                        <h2>Safeco Field, Seattle, WA</h2>
+                    </div>
+                </div>
+
+                <!-- ARI -->
+                <div class="team-entry nl" id="ari">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/ari.png" />
+                        <h1>Arizona Diamondbacks</h1>
+                        <h2>Chase Field, Phoenix, AZ</h2>
+                    </div>
+                </div>
+
+                <!-- COL -->
+                <div class="team-entry nl" id="col">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/col.png" />
+                        <h1>Colorado Rockies</h1>
+                        <h2>Coors Field, Denver, CO</h2>
+                    </div>
+                </div>
+
+                <!-- TEX -->
+                <div class="team-entry al" id="tex">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/tex.png" />
+                        <h1>Texas Rangers</h1>
+                        <h2>Rangers Ballpark, Arlington, TX</h2>
+                    </div>
+                </div>
+
+                <!-- HOU -->
+                <div class="team-entry al" id="hou">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/hou.png" />
+                        <h1>Houston Astros</h1>
+                        <h2>Minute Maid Park, Houston, TX</h2>
+                    </div>
+                </div>
+
+                <!-- KC -->
+                <div class="team-entry al" id="kc">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/kc.png" />
+                        <h1>Kansas City Royals</h1>
+                        <h2>Kauffman Stadium, Kansas City, MO</h2>
+                    </div>
+                </div>
+
+                <!-- STL -->
+                <div class="team-entry nl" id="stl">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/stl.png" />
+                        <h1>St. Louis Cardinals</h1>
+                        <h2>Busch Stadium, St. Louis, MO</h2>
+                    </div>
+                </div>
+
+                <!-- MIN -->
+                <div class="team-entry al" id="min">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/min.png" />
+                        <h1>Minnesota Twins</h1>
+                        <h2>Target Field, Minneapolis, MN</h2>
+                    </div>
+                </div>
+
+                <!-- MIL -->
+                <div class="team-entry nl" id="mil">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/mil.png" />
+                        <h1>Milwaukee Brewers</h1>
+                        <h2>Miller Park, Milwaukee, WI</h2>
+                    </div>
+                </div>
+
+                <!-- CHC -->
+                <div class="team-entry nl" id="chc">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/chc.png" />
+                        <h1>Chicago Cubs</h1>
+                        <h2>Wrigley Field, Chicago, IL</h2>
+                    </div>
+                </div>
+
+                <!-- CWS -->
+                <div class="team-entry al" id="cws">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/cws.png" />
+                        <h1>Chicago White Sox</h1>
+                        <h2>US Cellular Field, Chicago, IL</h2>
+                    </div>
+                </div>
+
+                <!-- DET -->
+                <div class="team-entry al" id="det">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/det.png" />
+                        <h1>Detroit Tigers</h1>
+                        <h2>Comerica Park, Detroit, MI</h2>
+                    </div>
+                </div>
+
+                <!-- CLE -->
+                <div class="team-entry al" id="cle">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/cle.png" />
+                        <h1>Cleveland Indians</h1>
+                        <h2>Progressive Field, Cleveland, OH</h2>
+                    </div>
+                </div>
+
+                <!-- CIN -->
+                <div class="team-entry nl" id="cin">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/cin.png" />
+                        <h1>Cincinnati Reds</h1>
+                        <h2>Great American Ballpark, Cincinnati, OH</h2>
+                    </div>
+                </div>
+
+                <!-- TOR -->
+                <div class="team-entry al" id="tor">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/tor.png" />
+                        <h1>Toronto Blue Jays</h1>
+                        <h2>Rogers Centre, Toronto, Canada</h2>
+                    </div>
+                </div>
+
+                <!-- PIT -->
+                <div class="team-entry nl" id="pit">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/pit.png" />
+                        <h1>Pittsburgh Pirates</h1>
+                        <h2>PNC Park, Pittsburgh, PA</h2>
+                    </div>
+                </div>
+
+                <!-- BOS -->
+                <div class="team-entry al" id="bos">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/bos.png" />
+                        <h1>Boston Red Sox</h1>
+                        <h2>Fenway Park, Boston, MA</h2>
+                    </div>
+                </div>
+
+                <!-- NYY -->
+                <div class="team-entry al" id="nyy">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/nyy.png" />
+                        <h1>New York Yankees</h1>
+                        <h2>Yankee Stadium, New York, NY</h2>
+                    </div>
+                </div>
+
+                <!-- NYM -->
+                <div class="team-entry nl" id="nym">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/nym.png" />
+                        <h1>New York Mets</h1>
+                        <h2>Citi Field, New York, NY</h2>
+                    </div>
+                </div>
+
+                <!-- PHI -->
+                <div class="team-entry nl" id="phi">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/phi.png" />
+                        <h1>Philadelphia Phillies</h1>
+                        <h2>Citizens Bank Park, Philadelphia, PA</h2>
+                    </div>
+                </div>
+
+                <!-- BAL -->
+                <div class="team-entry al" id="bal">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/bal.png" />
+                        <h1>Baltimore Orioles</h1>
+                        <h2>Camden Yards, Baltimore, MD</h2>
+                    </div>
+                </div>
+
+                <!-- WAS -->
+                <div class="team-entry nl" id="was">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/was.png" />
+                        <h1>Washington Nationals</h1>
+                        <h2>Nationals Park, Washington D.C.</h2>
+                    </div>
+                </div>
+
+                <!-- ATL -->
+                <div class="team-entry nl" id="atl">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/atl.png" />
+                        <h1>Atlanta Braves</h1>
+                        <h2>Turner Field, Atlanta, GA</h2>
+                    </div>
+                </div>
+
+                <!-- MIA -->
+                <div class="team-entry nl" id="mia">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/mia.png" />
+                        <h1>Miami Marlins</h1>
+                        <h2>Marlins Park, Miami, FL</h2>
+                    </div>
+                </div>
+
+                <!-- TB -->
+                <div class="team-entry al" id="tb">
+                    <div class="team-circle"></div>
+                    <div class="team-popup inactive">
+                        <img src="assets/img/teams/tb.png" />
+                        <h1>Tampa Bay Rays</h1>
+                        <h2>Tropicana Field, Tampa, FL</h2>
+                    </div>
+                </div>
+
+            </div>
+            <div id="team-container">
+                <div class="league-circle nl-circle">NL</div>
+                <!-- NL West -->
+                <img class="team-img nl" src="assets/img/teams/sf.png" />
+                <img class="team-img nl" src="assets/img/teams/lad.png" />
+                <img class="team-img nl" src="assets/img/teams/col.png" />
+                <img class="team-img nl" src="assets/img/teams/ari.png" />
+                <img class="team-img nl" src="assets/img/teams/sd.png" />
+                <!-- NL Central -->
+                <img class="team-img nl" src="assets/img/teams/stl.png" />
+                <img class="team-img nl" src="assets/img/teams/chc.png" />
+                <img class="team-img nl" src="assets/img/teams/pit.png" />
+                <img class="team-img nl" src="assets/img/teams/cin.png" />
+                <img class="team-img nl" src="assets/img/teams/mil.png" />
+                <!-- NL East -->
+                <img class="team-img nl" src="assets/img/teams/nym.png" />
+                <img class="team-img nl" src="assets/img/teams/atl.png" />
+                <img class="team-img nl" src="assets/img/teams/mia.png" />
+                <img class="team-img nl" src="assets/img/teams/was.png" />
+                <img class="team-img nl" src="assets/img/teams/phi.png" />
+
+                <div class="league-circle al-circle">AL</div>
+                <!-- AL West -->
+                <img class="team-img al" src="assets/img/teams/hou.png" />
+                <img class="team-img al" src="assets/img/teams/laa.png" />
+                <img class="team-img al" src="assets/img/teams/sea.png" />
+                <img class="team-img al" src="assets/img/teams/oak.png" />
+                <img class="team-img al" src="assets/img/teams/tex.png" />
+
+                <!-- AL Central -->
+                <img class="team-img al" src="assets/img/teams/kc.png" />
+                <img class="team-img al" src="assets/img/teams/det.png" />
+                <img class="team-img al" src="assets/img/teams/cws.png" />
+                <img class="team-img al" src="assets/img/teams/cle.png" />
+                <img class="team-img al" src="assets/img/teams/min.png" />
+
+                <!-- AL East -->
+                <img class="team-img al" src="assets/img/teams/bos.png" />
+                <img class="team-img al" src="assets/img/teams/tb.png" />
+                <img class="team-img al" src="assets/img/teams/nyy.png" />
+                <img class="team-img al" src="assets/img/teams/tor.png" />
+                <img class="team-img al" src="assets/img/teams/bal.png" />
+
+            </div>
+        </div>
+
+        <div id="team-container-sidebar">
+                <div class="league-circle nl-circle">NL</div>
+                <!-- NL West -->
+                <img class="team-img nl" src="assets/img/teams/sf.png" />
+                <img class="team-img nl" src="assets/img/teams/lad.png" />
+                <img class="team-img nl" src="assets/img/teams/col.png" />
+                <img class="team-img nl" src="assets/img/teams/ari.png" />
+                <img class="team-img nl" src="assets/img/teams/sd.png" />
+                <!-- NL Central -->
+                <img class="team-img nl" src="assets/img/teams/stl.png" />
+                <img class="team-img nl" src="assets/img/teams/chc.png" />
+                <img class="team-img nl" src="assets/img/teams/pit.png" />
+                <img class="team-img nl" src="assets/img/teams/cin.png" />
+                <img class="team-img nl" src="assets/img/teams/mil.png" />
+                <!-- NL East -->
+                <img class="team-img nl" src="assets/img/teams/nym.png" />
+                <img class="team-img nl" src="assets/img/teams/atl.png" />
+                <img class="team-img nl" src="assets/img/teams/mia.png" />
+                <img class="team-img nl" src="assets/img/teams/was.png" />
+                <img class="team-img nl" src="assets/img/teams/phi.png" />
+
+                <div class="league-circle al-circle">AL</div>
+                <!-- AL West -->
+                <img class="team-img al" src="assets/img/teams/hou.png" />
+                <img class="team-img al" src="assets/img/teams/laa.png" />
+                <img class="team-img al" src="assets/img/teams/sea.png" />
+                <img class="team-img al" src="assets/img/teams/oak.png" />
+                <img class="team-img al" src="assets/img/teams/tex.png" />
+
+                <!-- AL Central -->
+                <img class="team-img al" src="assets/img/teams/kc.png" />
+                <img class="team-img al" src="assets/img/teams/det.png" />
+                <img class="team-img al" src="assets/img/teams/cws.png" />
+                <img class="team-img al" src="assets/img/teams/cle.png" />
+                <img class="team-img al" src="assets/img/teams/min.png" />
+
+                <!-- AL East -->
+                <img class="team-img al" src="assets/img/teams/bos.png" />
+                <img class="team-img al" src="assets/img/teams/tb.png" />
+                <img class="team-img al" src="assets/img/teams/nyy.png" />
+                <img class="team-img al" src="assets/img/teams/tor.png" />
+                <img class="team-img al" src="assets/img/teams/bal.png" />
+
+            </div>
+        </div>
+    </body>
+</html>

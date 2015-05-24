@@ -90,13 +90,13 @@ $(document).ready(function(){
         if(CURRENT_TAB_NAME === title) return;
 
         if(title === "News")
-            window.location.href = 'index.html';
+            window.location.href = 'index';
         else if(title === "Scoreboard")
-            window.location.href = 'scoreboard.html';
+            window.location.href = 'scoreboard';
         else if(title === "Standings")
-            window.location.href = 'standings.html';
+            window.location.href = 'standings';
         else
-            window.location.href = 'teams.html';
+            window.location.href = 'teams';
     });
 });
 
