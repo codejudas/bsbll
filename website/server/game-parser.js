@@ -1,4 +1,9 @@
-/*Game Parser*/
+/*Game Parser
+    
+    Should be called by the server script periodically.
+    Downloads the current game information live from mlb.com in JSON and cherrypicks necessary information and puts it in the GAMES array
+    For Upcoming and Final games, downloads pitcher images from espn.com and adds them to the assets folder.
+*/
 
 var http = require("http");
 var request = require('request');
