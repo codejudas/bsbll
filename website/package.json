@@ -1,0 +1,11 @@
+{
+    "name": "mlb-redesign",
+    "description": "A baseball fan's reimagining of mlb.com with a cleaner interface.",
+    "version": "0.0.1",
+    "dependencies":{
+        "express": "3.x",
+        "express-handlebars": "*",
+        "request": "*",
+        "cheerio": "*"
+    }
+}
