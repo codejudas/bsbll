@@ -5,6 +5,7 @@ var request = require('request');
 var fs = require('fs');
 var cheerio = require('cheerio');
 
+var PITCHER_PATH_PREFIX = "../assets/img/players/";
 var GAMES = [];
 var team_abbreviation = {
     "Batlimore" : "bal",
@@ -95,7 +96,7 @@ function parse_scores(response_text){
         data["status"] = g["status"]["status"];
 
         // Get Data for in progress game
-        if(data["status"] === "In Progress"){
+        if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
             data["status"] = "LIVE";
             data["away_score"] = g["linescore"]["r"]["away"];
             data["home_score"] = g["linescore"]["r"]["home"];
@@ -104,7 +105,7 @@ function parse_scores(response_text){
             data["pitcher"] = g["pitcher"]["first"] + " " + g["pitcher"]["last"];
         }
         // Get Data for Final Game
-        else if(data["status"] === "Game Over"){
+        else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early"){
             data["status"] = "FINAL";
             data["away_score"] = g["linescore"]["r"]["away"];
             data["home_score"] = g["linescore"]["r"]["home"];
@@ -132,9 +133,13 @@ function parse_scores(response_text){
                 data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + " - " + g["winning_pitcher"]["losses"];
                 data["home_pitcher_era"] = g["winning_pitcher"]["era"];
             }
+            // Load pitcher images if they havent already been downloaded
+            get_pitcher_image(data["away_pitcher"], data["away_team"]);
+            get_pitcher_image(data["home_pitcher"], data["home_team"]);
         }
         // Get Data for upcoming game
         else{
+            console.log("Game Status = "+data["status"]);
             var away_pitcher, home_pitcher;
             if(data["status"] === "Preview"){
                 away_pitcher = "away_probable_pitcher";
@@ -144,7 +149,6 @@ function parse_scores(response_text){
                 away_pitcher = "pitcher";
                 home_pitcher = "oposing_pitcher";
             }
-
             data["away_pitcher"] = g[away_pitcher]["first"] + " " +g[away_pitcher]["last"];
             data["away_pitcher_rec"] = g[away_pitcher]["wins"] + " - " + g[away_pitcher]["losses"];
             data["away_pitcher_era"] = g[away_pitcher]["era"];
@@ -155,7 +159,6 @@ function parse_scores(response_text){
             get_pitcher_image(data["home_pitcher"], data["home_team"]);
             data["status"] = "UPCOMING";
         }
-
 
         GAMES.push(data);
     }
@@ -171,17 +174,17 @@ function print_scores(){
 // Checks if we already have pitcher's image, if not downloads the image from espn
 function get_pitcher_image(pitcher_name, team){
     console.log("Looking for pitcher "+pitcher_name);
-    var path = pitcher_name.split(" ").join("").toLowerCase()+".png";
+    var path = PITCHER_PATH_PREFIX + pitcher_name.split(" ").join("").toLowerCase()+".png";
     console.log("path="+path);
     fs.open(path,'r',function(err,fd){
-        if (err && err.code=='ENOENT') download_image(pitcher_name, team);
+        if (err && err.code=='ENOENT') download_image(pitcher_name, team, path);
         else console.log("Already have file "+path);
     });
 }
 
-function download_image(pitcher_name, team){
+function download_image(pitcher_name, team, fname){
     var uri = "http://espn.go.com/mlb/teams/roster?team="+ team_abbreviation[team];
-    console.log("uri="+uri);
+    console.log("team uri="+uri);
     // Go to roster page to find player
     request(uri, function(err,res,body){
         if(!err && res.statusCode == 200){
@@ -194,7 +197,7 @@ function download_image(pitcher_name, team){
                 if($pitcher.text().toLowerCase() === pitcher_name.toLowerCase()){
                     // Go to player page
                     uri = $pitcher.attr("href");
-                    console.log("uri="+uri);
+                    console.log("player uri="+uri);
 
                     request(uri, function(err, res, body){
                         if(!err && res.statusCode == 200){
@@ -202,8 +205,12 @@ function download_image(pitcher_name, team){
                             $ = cheerio.load(body);
                             var $pic = $(".main-headshot").children().first();
                             console.log("pic url="+$pic.attr("src"));
+                            if(!$pic.attr("src")){
+                                console.log("ERROR: player "+pitcher_name+" has no picture, skipping");
+                                return;
+                            }
                             uri = $pic.attr("src");
-                            var filename = pitcher_name.split(" ").join("").toLowerCase()+".png";
+                            var filename = fname;
                             // Download image and save it as a file
                             request.head(uri, function(err, res, body){
                                 console.log('content-type:', res.headers['content-type']);
@@ -228,7 +235,6 @@ function download_image(pitcher_name, team){
             console.log("error response");
         }
     });
-
     
 }
 

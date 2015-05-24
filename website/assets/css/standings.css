@@ -1,0 +1,356 @@
+/*
+    CSS FOR THE STANDINGS PAGE
+ */
+
+#nav-selector{
+    width:132px;
+    left:463px;
+}
+.content{
+    position: relative;
+    width: 1010px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#nl-icon, #al-icon{
+    position: absolute;
+    top:15px;
+    width: 175px;
+    opacity: 0.9;
+}
+
+#nl-icon{
+    left:100px;
+}
+
+#al-icon{
+    right:100px;
+}
+
+#division-toggle{
+    position: absolute;
+    left: calc(50% - 200px);
+    top:48px;
+    width: 400px;
+    /*border: 1px solid red;*/
+    text-align: center;
+}
+
+#division-toggle>h1{
+    position:relative;
+    font-family: "Open Sans", Arial;
+    font-size: 22px;
+    font-weight: 400;
+    opacity: 0.6;
+    z-index:31;
+    padding-left:3px;
+    margin-bottom: 20px;
+}
+
+.div-button{
+    position:relative;
+    display: inline;
+    font-size: 25px;
+    font-weight: 300;
+    margin:0px;
+    margin: 0px 26px;
+    z-index:31;
+    opacity: 0.6;
+    cursor:pointer;
+    transition: opacity 0.5s, color 0.5s;
+    -webkit-transition: opacity 0.5s, color 0.5s;
+}
+
+.div-button.div-selected{
+    color: white;
+    opacity: 1;
+    transition: opacity 0.5s, color 0.5s;
+    -webkit-transition: opacity 0.5s, color 0.5s;
+}
+
+#division-selector{
+    position:absolute;
+    top:62px;
+    left:21px;
+    width:86px;
+    height:40px;
+    background-color: #f83240;
+    border-radius: 16px;
+    z-index: 30;
+}
+
+#division-selector.west{
+    width:86px;
+    transform: translateX(0px);
+    transition: width 0.5s, transform 0.5s;
+    -webkit-transition: width 0.5s, transform 0.5s;
+}
+
+#division-selector.central{
+    width: 125px;
+    transform: translateX(120px);
+    transition: width 0.5s, transform 0.5s;
+    -webkit-transition: width 0.5s, transform 0.5s;
+}
+
+#division-selector.east{
+    width: 83px;
+    transform: translateX(275px);
+    transition: width 0.5s, transform 0.5s;
+    -webkit-transition: width 0.5s, transform 0.5s;
+}
+
+#standings-container{
+    position: absolute;
+    /*Margin between the natl/amr league logos and top of standings*/
+    top:195px;
+    width: 100%;
+    height: 395px;
+    overflow: hidden;
+}
+
+#rankings{
+    position: absolute;
+    left: calc(50% - 30px);
+    z-index: 45;
+}
+
+.ranking-circle{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    line-height: 50px;
+    text-align: center;
+    border: 4px solid #f83240;
+    background-color: white;
+    color: rgba(0,0,0,0.7);
+    font-family: "Oswald", Arial;
+    font-size: 25px;
+    margin-bottom: 22px;
+    margin-top: 9px;
+}
+
+.team-rankings{
+    position:absolute;
+    top:0px;
+    left:0px;
+    background-color: #f0f0f0;
+    height: 390px;
+    opacity: 0;
+    transform: translateY(390px);
+    transition: transform 1s, opacity 0.5s;
+    -webkit-transition: transform 1s, opacity 0.5s;
+    z-index: 40;
+}
+
+.team-rankings.active{
+    opacity: 1;
+    transform: translateY(0px);
+    transition: transform 1s, opacity 0.5s;
+    -webkit-transition: transform 1s, opacity 0.5s;
+    z-index: 41;
+}
+
+.nl-teams{
+    width: 460px;
+    height: 58px;
+    position: absolute;
+    top:0px;
+    left:0px;
+    /*background-color: red;*/
+}
+
+.al-teams{
+    width: 460px;
+    height: 58px;
+    position: absolute;
+    top:0px;
+    left: 548px;
+    /*background-color: blue;*/
+}
+
+.team{
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 6px;
+    background-color: white;
+    height:58px;
+    padding:7px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.2);
+    transition: border 0.5s;
+    -webkit-transition: border 0.5s;
+}
+
+.team:hover{
+    border: 1px solid rgba(0,0,0,0.4);
+    transition: border 0.5s;
+    -webkit-transition: border 0.5s;
+}
+
+.nl-teams>.team{
+    text-align: right;
+}
+
+.al-teams>.team{
+    text-align: left;
+}
+
+.team-img{
+    height: 58px;
+    width: 58px;
+
+}
+
+.nl-teams>.team>.team-img{
+    position: absolute;
+    right:5px;
+}
+
+.al-teams>.team>.team-img{
+    position: absolute;
+    left:5px;
+}
+
+.team-name{
+    margin: 0px;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 25px;
+}
+
+.nl-teams>.team>.team-name{
+    position: relative;
+    right:65px;
+}
+
+.al-teams>.team>.team-name{
+    position: relative;
+    left:65px;
+}
+
+.team-stats{
+    position: relative;
+    top:7px;
+}
+
+.nl-teams>.team>.team-stats{
+    right: 65px;
+}
+
+.al-teams>.team>.team-stats{
+    left: 67px;
+}
+
+.team-stats>h2{
+    display: inline;
+    font-size: 18px;
+    font-weight: 400;
+    margin:0px;
+    opacity: 0.4;
+}
+
+.nl-teams>.team>.team-stats>h2{
+    margin-left: 20px;
+}
+
+.al-teams>.team>.team-stats>h2{
+    margin-right: 5px;
+}
+
+.team-stats>h3{
+    display: inline;
+    font-size: 18px;
+    font-weight: 300;
+    margin:0px;
+}
+
+.nl-teams>.team>.team-stats>h3{
+    margin-left: 5px;
+}
+
+.al-teams>.team>.team-stats>h3{
+    margin-right: 20px;
+}
+
+/* MEDIA QUERIES TO FIT TALLER DISPLAYS BETTER*/
+/*Add more spacing between league images and top of standings for taller screens*/
+@media (min-height: 720px) {
+    #standings-container{
+        top: 210px;
+    }
+}
+
+/*Make standings container larger for taller screens*/
+@media (min-height: 760px){
+    #standings-container{
+        height: 435px;
+    }
+
+    .ranking-circle{
+        margin-bottom: 32px;
+    }
+
+    .team{
+        margin-bottom: 16px;
+    }
+
+    .team-rankings{
+        transform: translateY(440px);
+    }
+}
+
+@media (min-height: 900px){
+    #nl-icon, #al-icon{
+        width: 225px;
+    }
+
+    #nl-icon{
+        left: 75px;
+    }
+
+    #al-icon{
+        right: 75px;
+    }
+
+    #standings-container{
+        top:260px;
+        height: 475px;
+    }
+    .ranking-circle{
+        margin-bottom: 42px;
+    }
+
+    .team{
+        margin-bottom: 26px;
+    }
+
+    .team-rankings{
+        transform: translateY(480px);
+    }
+}
+
+/*Make the cards slightly smaller for narrow screens*/
+@media (max-width: 1050px){
+    .team-stats>h2{
+        font-size: 15px;
+    }
+
+    .team-stats>h3{
+        font-size: 15px;
+    }
+
+    .nl-teams, .al-teams{
+        width: 410px;
+    }
+
+    .nl-teams{
+        left: 45px;
+    }
+
+    .al-teams{
+        left: 555px;
+    }
+}
