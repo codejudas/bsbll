@@ -10,10 +10,17 @@ var request = require('request');
 var fs = require('fs');
 var cheerio = require('cheerio');
 
-var PITCHER_PATH_PREFIX = "../assets/img/players/";
-var GAMES = [];
+var PITCHER_PATH_PREFIX = "assets/img/players/";
+var TEAM_LOGO_PATH_PREFIX = "assets/img/teams/";
+var result = {
+    games: {
+        final_games: [],
+        live_games: [],
+        upcoming_games: []
+    }
+};
 var team_abbreviation = {
-    "Batlimore" : "bal",
+    "Baltimore" : "bal",
     "Boston" : "bos",
     "NY Yankees" : "nyy",
     "Tampa Bay" : "tam",
@@ -43,9 +50,46 @@ var team_abbreviation = {
     "LA Dodgers": "lad",
     "San Diego": "sdg",
     "San Francisco": "sfo"
-}
+};
 
-function load_scores(){
+var time_zones = {
+    "Baltimore" : "EST",
+    "Boston" : "EST",
+    "NY Yankees" : "EST",
+    "Tampa Bay" : "EST",
+    "Toronto" : "EST",
+    "Chi White Sox": "CST",
+    "Cleveland" : "EST",
+    "Detroit" : "EST",
+    "Kansas City" : "CST",
+    "Minnesota": "CST",
+    "Houston" : "MST",
+    "LA Angels": "PST",
+    "Oakland" : "PST",
+    "Seattle" : "PST",
+    "Texas" : "MST",
+    "Atlanta" : "EST",
+    "Miami": "EST",
+    "NY Mets": "EST",
+    "Philadelphia" : "EST",
+    "Washington": "EST",
+    "Chi Cubs": "CST",
+    "Cincinnati": "EST",
+    "Milwaukee": "CST",
+    "Pittsburgh": 'EST',
+    "St. Louis": "CST",
+    "Arizona": "MST",
+    "Colorado": "MST",
+    "LA Dodgers": "PST",
+    "San Diego": "PST",
+    "San Francisco": "PST"
+};
+
+var weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+
+function load_scores(callback){
     console.log("Loading scores...");
     // Get todays date first
     var today = new Date();
@@ -56,6 +100,14 @@ function load_scores(){
     if(mm<10) mm='0'+mm
     console.log("Date: "+mm+"/"+dd+"/"+yyyy);
 
+    var day_suffix;
+    if(dd % 10 == 1) day_suffix = "st";
+    else if(dd % 10 == 2) day_suffix = "nd";
+    else if(dd % 10 == 3) day_suffix = "rd";
+    else day_suffix = "th";
+
+    // Store the current date
+    result.date = weekdays[today.getDay()] + ", " + months[today.getMonth()] + " " + dd + day_suffix + " " + yyyy;
     // Build path
     var p = "/components/game/mlb/year_"+yyyy+"/month_"+mm+"/day_"+dd+"/master_scoreboard.json";
     console.log("using path='"+p+"'");
@@ -76,7 +128,7 @@ function load_scores(){
 
       res.on("end",function(){
         // move on to parsing the response
-        parse_scores(resp_content);
+        parse_scores(resp_content, callback);
       });
 
     }).on('error', function(e) {
@@ -84,7 +136,7 @@ function load_scores(){
     });
 }
 
-function parse_scores(response_text){
+function parse_scores(response_text, callback){
     console.log("Parsing Response...");
 
     var obj = JSON.parse(response_text);
@@ -96,6 +148,8 @@ function parse_scores(response_text){
         var data = {};
         data["away_team"] = g["away_team_city"];
         data["home_team"] = g["home_team_city"];
+        data["away_team_logo"] = TEAM_LOGO_PATH_PREFIX + team_abbreviation[data["away_team"]] + ".png";
+        data["home_team_logo"] = TEAM_LOGO_PATH_PREFIX + team_abbreviation[data["home_team"]] + ".png";
         data["away_rec"] = g["away_win"] + " - " +g["away_loss"];
         data["home_rec"] = g["home_win"] + " - " +g["home_loss"];
         data["status"] = g["status"]["status"];
@@ -103,6 +157,7 @@ function parse_scores(response_text){
         // Get Data for in progress game
         if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
             data["status"] = "LIVE";
+            data["display_status"] = "LIVE";
             data["away_score"] = g["linescore"]["r"]["away"];
             data["home_score"] = g["linescore"]["r"]["home"];
 
@@ -112,11 +167,12 @@ function parse_scores(response_text){
         // Get Data for Final Game
         else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early"){
             data["status"] = "FINAL";
+            data["display_status"] = data["status"];
             data["away_score"] = g["linescore"]["r"]["away"];
             data["home_score"] = g["linescore"]["r"]["home"];
             // Check if game went to extra innings
             if(parseInt(g["status"]["inning"]) > 9){
-                data["status"] += " - " + g["status"]["inning"];
+                data["display_status"] += " - " + g["status"]["inning"];
             }
             // Find winning and losing pitchers
             if(parseInt(data["away_score"]) < parseInt(data["home_score"])){
@@ -141,6 +197,9 @@ function parse_scores(response_text){
             // Load pitcher images if they havent already been downloaded
             get_pitcher_image(data["away_pitcher"], data["away_team"]);
             get_pitcher_image(data["home_pitcher"], data["home_team"]);
+
+            data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
+            data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
         }
         // Get Data for upcoming game
         else{
@@ -154,6 +213,7 @@ function parse_scores(response_text){
                 away_pitcher = "pitcher";
                 home_pitcher = "oposing_pitcher";
             }
+            data["display_status"] = (data["status"] === "Delayed Start") ? "UPCOMING" : "DELAYED";
             data["away_pitcher"] = g[away_pitcher]["first"] + " " +g[away_pitcher]["last"];
             data["away_pitcher_rec"] = g[away_pitcher]["wins"] + " - " + g[away_pitcher]["losses"];
             data["away_pitcher_era"] = g[away_pitcher]["era"];
@@ -163,12 +223,24 @@ function parse_scores(response_text){
             data["home_pitcher_era"] = g[home_pitcher]["era"];
             get_pitcher_image(data["home_pitcher"], data["home_team"]);
             data["status"] = "UPCOMING";
+
+            data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
+            data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
+
+            data["game_time"] = g["home_time"] + g["ampm"].toLowerCase();
+            data["game_tzone"] = time_zones[data["home_team"]];
+            data["stadium"] = g["venue"];
+
         }
 
-        GAMES.push(data);
+        if(data["status"] === "UPCOMING") result.games.upcoming_games.push(data);
+        else if(data["status"] === "LIVE") result.games.live_games.push(data);
+        else result.games.final_games.push(data);
     }
 
-    print_scores();
+    // print_scores();
+    // Return the games array and call the callback
+    callback(result);
 }
 
 function print_scores(){
@@ -193,9 +265,7 @@ function download_image(pitcher_name, team, fname){
     // Go to roster page to find player
     request(uri, function(err,res,body){
         if(!err && res.statusCode == 200){
-            console.log("success");
             var $ = cheerio.load(body);
-            console.log("num pitchers="+$(".evenrow, .oddrow","table").length);
             // Find the player
             $(".evenrow, .oddrow").each(function(i,elem){
                 var $pitcher = $(this).find("a");
@@ -206,7 +276,6 @@ function download_image(pitcher_name, team, fname){
 
                     request(uri, function(err, res, body){
                         if(!err && res.statusCode == 200){
-                            console.log("success");
                             $ = cheerio.load(body);
                             var $pic = $(".main-headshot").children().first();
                             console.log("pic url="+$pic.attr("src"));
@@ -218,11 +287,8 @@ function download_image(pitcher_name, team, fname){
                             var filename = fname;
                             // Download image and save it as a file
                             request.head(uri, function(err, res, body){
-                                console.log('content-type:', res.headers['content-type']);
-                                console.log('content-length:', res.headers['content-length']);
-
                                 request(uri).pipe(fs.createWriteStream(filename)).on('close', function(){
-                                    console.log("Downloaded image for "+pitcher_name + " to "+filename);
+                                    console.log("Downloaded image for "+pitcher_name + " to "+filename + " size: "+res.headers['content-length']+"B");
                                 });
                             });
                         }
@@ -243,5 +309,7 @@ function download_image(pitcher_name, team, fname){
     
 }
 
-console.log("Starting...");
-load_scores();
+exports.load_scoreboard = function(callback){
+    console.log("===Loading Scoreboard Information===");
+    load_scores(callback);
+}
