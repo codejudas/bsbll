@@ -11,6 +11,7 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 
 var PITCHER_PATH_PREFIX = "assets/img/players/";
+var GENERIC_PATH = PITCHER_PATH_PREFIX + "generic.png";
 var TEAM_LOGO_PATH_PREFIX = "assets/img/teams/";
 var num_asynch_reqs = 0;
 var result = {
@@ -211,8 +212,8 @@ function parse_scores(response_text, callback){
             get_pitcher_image(data, true);
             get_pitcher_image(data, false);
 
-            data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
-            data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
+            // data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
+            // data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
         }
         // Get Data for upcoming game
         else{
@@ -241,8 +242,6 @@ function parse_scores(response_text, callback){
             get_pitcher_image(data, false);
             data["status"] = "UPCOMING";
 
-            data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
-
             data["game_time"] = g["home_time"] + g["ampm"].toLowerCase();
             data["game_tzone"] = time_zones[data["home_team"]];
             data["stadium"] = g["venue"];
@@ -257,16 +256,16 @@ function parse_scores(response_text, callback){
     wait_for_asynch_reqs(callback);
 }
 
-// Waits until all the asynchronous requests have completed then calls orig_callback passing in the result object, returning it to the server
-function wait_for_asynch_reqs(orig_callback, callback){
-    if(num_asynch_reqs != 0){
-        console.log("Waiting on asynch reqs");
+// Waits until all the asynchronous requests have completed then calls callback which returns the data to the server
+function wait_for_asynch_reqs(callback){
+    if(num_asynch_reqs > 0){
+        console.log("===Waiting on asynch reqs ("+num_asynch_reqs+" left)===");
         setTimeout(function(){
-            wait_for_asynch_reqs(orig_callback);
-        }, 500);
+            wait_for_asynch_reqs(callback);
+        }, 2000);
     }
     else{
-        console.log("All requests done");
+        console.log("===All requests done===");
         print_scores();
         // Return the games array and call the callback
         callback(result);
@@ -296,18 +295,32 @@ function get_pitcher_image(data, away_bool){
     console.log("Looking for pitcher "+pitcher_name);
     var path = PITCHER_PATH_PREFIX + pitcher_name.split(" ").join("").toLowerCase()+".png";
     console.log("path="+path);
+    num_asynch_reqs++; //Indicate we are starting a sequence of asynchronous requests
+    console.log(">>>Num asynch reqs ++, = "+num_asynch_reqs);
     fs.open(path,'r',function(err,fd){
-        if (err && err.code=='ENOENT') download_image(pitcher_name, team, path);
+        if (err && err.code=='ENOENT') download_image(data, away_bool, path);
         else{
             console.log("Already have file "+path);
+            if(!away_bool) data["home_pitcher_img_path"] = path;
+            else data["away_pitcher_img_path"] = path;
+            num_asynch_reqs--;
+            console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
         } 
     });
 }
 
-function download_image(pitcher_name, team, fname){
+function download_image(data, away_bool, fname){
+    var pitcher_name; 
+    if(away_bool) pitcher_name = data["away_pitcher"];
+    else pitcher_name = data["home_pitcher"];
+
+    var team;
+    if(away_bool) team =  data["away_team"];
+    else team = data["home_team"];
+
     var uri = "http://espn.go.com/mlb/teams/roster?team="+ team_abbreviation[team];
     console.log("team uri="+uri);
-    num_asynch_reqs++; //Indicate we are starting a sequence of asynchronous requests
+
     // Go to roster page to find player
     request(uri, function(err,res,body){
         if(!err && res.statusCode == 200){
@@ -327,7 +340,11 @@ function download_image(pitcher_name, team, fname){
                             console.log("pic url="+$pic.attr("src"));
                             if(!$pic.attr("src")){
                                 console.log("ERROR: player "+pitcher_name+" has no picture, skipping");
+                                // Use the generic pitcher image path
+                                if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
+                                else data["away_pitcher_img_path"] = GENERIC_PATH;
                                 num_asynch_reqs--;
+                                console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
                                 return;
                             }
                             uri = $pic.attr("src");
@@ -336,13 +353,21 @@ function download_image(pitcher_name, team, fname){
                             request.head(uri, function(err, res, body){
                                 request(uri).pipe(fs.createWriteStream(filename)).on('close', function(){
                                     console.log("Downloaded image for "+pitcher_name + " to "+filename + " size: "+res.headers['content-length']+"B");
+                                    // Populate the appropriate fields in data
+                                    if(!away_bool) data["home_pitcher_img_path"] = filename;
+                                    else data["away_pitcher_img_path"] = filename;
                                     num_asynch_reqs--;
+                                    console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
                                 });
                             });
                         }
                         else{
                             console.log("Error getting to pitcher page");
+                            // Since error, just use the generic pitcher image
+                            if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
+                            else data["away_pitcher_img_path"] = GENERIC_PATH;
                             num_asynch_reqs--;
+                            console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
                         }
                     });
 
@@ -353,7 +378,11 @@ function download_image(pitcher_name, team, fname){
         }
         else{
             console.log("error response");
+            // Just use generic pitcher image
+            if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
+            else data["away_pitcher_img_path"] = GENERIC_PATH;
             num_asynch_reqs--;
+            console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
         }
     });
     
