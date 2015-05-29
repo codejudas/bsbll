@@ -66,189 +66,64 @@
                     </div>
                 {{/each}}
 
-                <!-- FINAL GAME -->
-                <!-- <div id="game1" class="game-card">
-                    <img class="card-team away-team" src="assets/img/teams/mil.png" />
-                    <img class="card-team home-team" src="assets/img/teams/chc.png" />
-                    <div class="card-header away-score">5</div>
-                    <div class="card-header home-score">2</div>
-                    <div class="card-separator">|</div>
-                    <div class="card-record away-record">3 - 13</div>
-                    <div class="card-record home-record">8 - 7</div>
-                    <div class="card-game-status final">FINAL</div>
-                    <div class="card-highlight final"></div>
-                    <div class="game-card-details">
-                        <img class="pitcher-image away-pitcher" src="assets/img/players/garza.png"/>
-                        <img class="pitcher-image home-pitcher" src="assets/img/players/lester.png"/>
-                        <div class="pitcher-stats away-pitcher"><h3>W</h3><h1>M. Garza</h1> <h2>1-1 4.22 ERA</h2></div>
-                        <div class="pitcher-stats home-pitcher"><h3>L</h3><h1>J. Lester</h1> <h2>0-1 7.84 ERA</h2></div>
-                    </div>
-                </div>-->
-
-                <!-- LIVE GAME -->
-                <div id="game3" class="game-card">
-                    <img class="card-team away-team" src="assets/img/teams/sf.png" />
-                    <img class="card-team home-team" src="assets/img/teams/lad.png" />
-                    <div class="card-header away-score">10</div>
-                    <div class="card-header home-score">4</div>
-                    <div class="card-separator">|</div>
-                    <div class="card-record away-record">7 - 10</div>
-                    <div class="card-record home-record">9 - 6</div>
-                    <div class="card-game-status live">LIVE</div>
-                    <div class="card-highlight live"></div>
-                    <div class="game-card-details">
-                        <div class="inning-container">
-                            <p>7</p>
-                            <div class="inning-arrow arrow-up"></div>
-                        </div>
-                        <div class="bases">
-                            <img class="diamond-icon" src="assets/img/bases.png" />
-                            <img class="base-icon first-base" src="assets/img/pink-dot.png" />
-                            <img class="base-icon second-base" src="assets/img/pink-dot.png" />
-                        </div>
-                        <div class="game-info">
-                            <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>C. Kershaw</h2> <h4>2.93 ERA</h4></p> </div>
-                            <div class="game-info-line"><h1>AB</h1> <p class="hitter-line"><h2>B. Posey</h2> <h3>.312 AVG</h3> <h4>5 HR</h4></p></div>
-                            <div class="game-info-line">
-                                <h1>B</h1>
-                                <div class="circles-container ball-line">
-                                    <div class="circle circle-ball-active"></div>
-                                    <div class="circle circle-ball-active"></div>
-                                    <div class="circle circle-ball-active"></div>
-                                    <div class="circle circle-ball-inactive"></div>
-                                </div>
+                <!-- LIVE GAMES -->
+                {{#each games.live_games}}
+                    <div class="game-card">
+                        <img class="card-team away-team" src="{{this.away_team_logo}}" />
+                        <img class="card-team home-team" src="{{this.home_team_logo}}" />
+                        <div class="card-header away-score">{{this.away_score}}</div>
+                        <div class="card-header home-score">{{this.home_score}}</div>
+                        <div class="card-separator">|</div>
+                        <div class="card-record away-record">{{this.away_rec}}</div>
+                        <div class="card-record home-record">{{this.home_rec}}</div>
+                        <div class="card-game-status live">{{this.display_status}}</div>
+                        <div class="card-highlight live"></div>
+                        <div class="game-card-details">
+                            <div class="inning-container">
+                                <p>{{this.inning_num}}</p>
+                                <div class="inning-arrow arrow-{{this.inning_arrow}}"></div>
                             </div>
-                            <div class="game-info-line">
-                                <h1>S</h1>
-                                <div class="circles-container strike-line">
-                                    <div class="circle circle-strike-active"></div>
-                                    <div class="circle circle-strike-inactive"></div>
-                                    <div class="circle circle-strike-inactive"></div>
-                                </div>
+                            <div class="bases">
+                                <img class="diamond-icon" src="assets/img/bases.png" />
+                                {{#if this.runners.1b}}<img class="base-icon first-base" src="assets/img/pink-dot.png" /> {{/if}}
+                                {{#if this.runners.2b}}<img class="base-icon second-base" src="assets/img/pink-dot.png" /> {{/if}}
+                                {{#if this.runners.3b}}<img class="base-icon third-base" src="assets/img/pink-dot.png" /> {{/if}}
                             </div>
-
-                            <div class="game-info-line">
-                                <h1>O</h1>
-                                <div class="circles-container out-line">
-                                    <div class="circle circle-out-inactive"></div>
-                                    <div class="circle circle-out-inactive"></div>
-                                    <div class="circle circle-out-inactive"></div>
+                            <div class="game-info">
+                                <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>C. Kershaw</h2> <h4>2.93 ERA</h4></p> </div>
+                                <div class="game-info-line"><h1>AB</h1> <p class="hitter-line"><h2>B. Posey</h2> <h3>.312 AVG</h3> <h4>5 HR</h4></p></div>
+                                <div class="game-info-line">
+                                    <h1>B</h1>
+                                    <div class="circles-container ball-line">
+                                        <div class="circle circle-ball-active"></div>
+                                        <div class="circle circle-ball-active"></div>
+                                        <div class="circle circle-ball-active"></div>
+                                        <div class="circle circle-ball-inactive"></div>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="game-info-line">
+                                    <h1>S</h1>
+                                    <div class="circles-container strike-line">
+                                        <div class="circle circle-strike-active"></div>
+                                        <div class="circle circle-strike-inactive"></div>
+                                        <div class="circle circle-strike-inactive"></div>
+                                    </div>
+                                </div>
 
-                            <img class="radio-icon" src="assets/img/headphones.png" />
+                                <div class="game-info-line">
+                                    <h1>O</h1>
+                                    <div class="circles-container out-line">
+                                        <div class="circle circle-out-inactive"></div>
+                                        <div class="circle circle-out-inactive"></div>
+                                        <div class="circle circle-out-inactive"></div>
+                                    </div>
+                                </div>
+
+                                <img class="radio-icon" src="assets/img/headphones.png" />
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- LIVE GAME -->
-                <div id="game4" class="game-card">
-                    <img class="card-team away-team" src="assets/img/teams/oak2.png" />
-                    <img class="card-team home-team" src="assets/img/teams/nyy.png" />
-                    <div class="card-header away-score">3</div>
-                    <div class="card-header home-score">3</div>
-                    <div class="card-separator">|</div>
-                    <div class="card-record away-record">8 - 9</div>
-                    <div class="card-record home-record">9 - 7</div>
-                    <div class="card-game-status live">LIVE</div>
-                    <div class="card-highlight live"></div>
-                    <div class="game-card-details">
-                        <div class="inning-container">
-                            <p>4</p>
-                            <div class="inning-arrow arrow-down"></div>
-                        </div>
-                        <div class="bases">
-                            <img class="diamond-icon" src="assets/img/bases.png" />
-                            <img class="base-icon second-base" src="assets/img/pink-dot.png" />
-                        </div>
-                        <div class="game-info">
-                            <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>CC Sabathia</h2> <h4>3.15 ERA</h4></p> </div>
-                            <div class="game-info-line"><h1>AB</h1> <p class="hitter-line"><h2>C. Crisp</h2> <h3>.287 AVG</h3> <h4>1 HR</h4></p></div>
-                            <div class="game-info-line">
-                                <h1>B</h1>
-                                <div class="circles-container ball-line">
-                                    <div class="circle circle-ball-active"></div>
-                                    <div class="circle circle-ball-inactive"></div>
-                                    <div class="circle circle-ball-inactive"></div>
-                                    <div class="circle circle-ball-inactive"></div>
-                                </div>
-                            </div>
-                            <div class="game-info-line">
-                                <h1>S</h1>
-                                <div class="circles-container strike-line">
-                                    <div class="circle circle-strike-active"></div>
-                                    <div class="circle circle-strike-inactive"></div>
-                                    <div class="circle circle-strike-inactive"></div>
-                                </div>
-                            </div>
-
-                            <div class="game-info-line">
-                                <h1>O</h1>
-                                <div class="circles-container out-line">
-                                    <div class="circle circle-out-active"></div>
-                                    <div class="circle circle-out-active"></div>
-                                    <div class="circle circle-out-inactive"></div>
-                                </div>
-                            </div>
-
-                            <img class="radio-icon" src="assets/img/headphones.png" />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LIVE GAME -->
-                <div id="game5" class="game-card">
-                    <img class="card-team away-team" src="assets/img/teams/kc.png" />
-                    <img class="card-team home-team" src="assets/img/teams/cws.png" />
-                    <div class="card-header away-score">2</div>
-                    <div class="card-header home-score">3</div>
-                    <div class="card-separator">|</div>
-                    <div class="card-record away-record">12 - 4</div>
-                    <div class="card-record home-record">6 - 9</div>
-                    <div class="card-game-status live">LIVE</div>
-                    <div class="card-highlight live"></div>
-                    <div class="game-card-details">
-                        <div class="inning-container">
-                            <p>9</p>
-                            <div class="inning-arrow arrow-up"></div>
-                        </div>
-                        <div class="bases">
-                            <img class="diamond-icon" src="assets/img/bases.png" />
-                        </div>
-                        <div class="game-info">
-                            <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>M. Lindstrom</h2> <h4>4.02 ERA</h4></p> </div>
-                            <div class="game-info-line"><h1>AB</h1> <p class="hitter-line"><h2>A. Rios</h2> <h3>.192 AVG</h3> <h4>4 HR</h4></p></div>
-                            <div class="game-info-line">
-                                <h1>B</h1>
-                                <div class="circles-container ball-line">
-                                    <div class="circle circle-ball-active"></div>
-                                    <div class="circle circle-ball-active"></div>
-                                    <div class="circle circle-ball-inactive"></div>
-                                    <div class="circle circle-ball-inactive"></div>
-                                </div>
-                            </div>
-                            <div class="game-info-line">
-                                <h1>S</h1>
-                                <div class="circles-container strike-line">
-                                    <div class="circle circle-strike-active"></div>
-                                    <div class="circle circle-strike-active"></div>
-                                    <div class="circle circle-strike-inactive"></div>
-                                </div>
-                            </div>
-
-                            <div class="game-info-line">
-                                <h1>O</h1>
-                                <div class="circles-container out-line">
-                                    <div class="circle circle-out-active"></div>
-                                    <div class="circle circle-out-inactive"></div>
-                                    <div class="circle circle-out-inactive"></div>
-                                </div>
-                            </div>
-
-                            <img class="radio-icon" src="assets/img/headphones.png" />
-                        </div>
-                    </div>
-                </div>
+                {{/each}}
 
                 <!-- UPCOMING GAMES -->
                 {{#each games.upcoming_games}}
@@ -264,8 +139,8 @@
                         <div class="game-card-details">
                             <img class="pitcher-image away-pitcher" src="{{this.away_pitcher_img_path}}"/>
                             <img class="pitcher-image home-pitcher" src="{{this.home_pitcher_img_path}}"/>
-                            <div class="pitcher-stats away-pitcher"><h1>{{this.away_pitcher}}</h1> <h2>{{this.away_pitcher_rec}} {{this.away_pitcher_era}} ERA</h2></div>
-                            <div class="pitcher-stats home-pitcher"><h1>{{this.home_pitcher}}</h1> <h2>{{this.home-pitcher_rec}} {{this.away_pitcher_era}} ERA</h2></div>
+                            <div class="pitcher-stats away-pitcher"><h1>{{this.away_pitcher_abrv}}</h1> <h2>{{this.away_pitcher_rec}} {{this.away_pitcher_era}} ERA</h2></div>
+                            <div class="pitcher-stats home-pitcher"><h1>{{this.home_pitcher_abrv}}</h1> <h2>{{this.home_pitcher_rec}} {{this.home_pitcher_era}} ERA</h2></div>
                         </div>
                     </div>
                 {{/each}}
