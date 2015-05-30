@@ -231,8 +231,8 @@ function parse_scores(response_text, callback){
                 home_pitcher = "home_probable_pitcher";
             }
             else{
-                away_pitcher = "pitcher";
-                home_pitcher = "opposing_pitcher";
+                home_pitcher = "pitcher";
+                away_pitcher = "opposing_pitcher";
             }
             data["display_status"] = (data["status"] === "Delayed Start") ? "DELAYED" : "PREVIEW";
             data["status"] = "UPCOMING";
@@ -329,19 +329,21 @@ function download_image(data, away_bool, fname){
     else team = data["home_team"];
 
     var uri = "http://espn.go.com/mlb/teams/roster?team="+ team_abbreviation[team];
-    console.log("team uri="+uri);
+    console.log("("+pitcher_name+")team uri="+uri);
 
     // Go to roster page to find player
     request(uri, function(err,res,body){
         if(!err && res.statusCode == 200){
             var $ = cheerio.load(body);
+            var found_player = false;
             // Find the player
             $(".evenrow, .oddrow").each(function(i,elem){
                 var $pitcher = $(this).find("a");
                 if($pitcher.text().toLowerCase() === pitcher_name.toLowerCase()){
+                    found_player = true;
                     // Go to player page
                     uri = $pitcher.attr("href");
-                    console.log("player uri="+uri);
+                    console.log("("+pitcher_name+") player uri="+uri);
 
                     request(uri, function(err, res, body){
                         if(!err && res.statusCode == 200){
@@ -372,7 +374,7 @@ function download_image(data, away_bool, fname){
                             });
                         }
                         else{
-                            console.log("Error getting to pitcher page");
+                            console.log("("+pitcher_name+") Error getting to pitcher page");
                             // Since error, just use the generic pitcher image
                             if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
                             else data["away_pitcher_img_path"] = GENERIC_PATH;
@@ -385,9 +387,19 @@ function download_image(data, away_bool, fname){
                     return false;
                 }
             });
+
+            if(!found_player){
+                console.log("("+pitcher_name+") Unable to find player in roster");
+                // Just use generic pitcher image
+                if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
+                else data["away_pitcher_img_path"] = GENERIC_PATH;
+                num_asynch_reqs--;
+                console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
+            }
+
         }
         else{
-            console.log("error response");
+            console.log("("+pitcher_name+") Error getting to roster page for player");
             // Just use generic pitcher image
             if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
             else data["away_pitcher_img_path"] = GENERIC_PATH;
