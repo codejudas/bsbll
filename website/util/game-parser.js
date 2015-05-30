@@ -13,6 +13,7 @@ var cheerio = require('cheerio');
 var PITCHER_PATH_PREFIX = "assets/img/players/";
 var GENERIC_PATH = PITCHER_PATH_PREFIX + "generic.png";
 var TEAM_LOGO_PATH_PREFIX = "assets/img/teams/";
+var MAX_PNAME_LENGTH = 12;
 var num_asynch_reqs = 0;
 var result = {
     games: {
@@ -193,21 +194,25 @@ function parse_scores(response_text, callback){
             if(parseInt(data["away_score"]) < parseInt(data["home_score"])){
                 data["winner"] = "home";
                 data["away_pitcher"] = g["losing_pitcher"]["first"] + " " + g["losing_pitcher"]["last"];
+                data["away_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
                 data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + " - " + g["losing_pitcher"]["losses"];
                 data["away_pitcher_era"] = g["losing_pitcher"]["era"];
                 data["home_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
                 data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + " - " + g["winning_pitcher"]["losses"];
                 data["home_pitcher_era"] = g["winning_pitcher"]["era"];
+                data["home_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
 
             }
             else{
                 data["winner"] = "away";
                 data["away_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
-                data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + " - " + g["losing_pitcher"]["losses"];
-                data["away_pitcher_era"] = g["losing_pitcher"]["era"];
+                data["away_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
+                data["away_pitcher_rec"] = g["winning_pitcher"]["wins"] + " - " + g["winning_pitcher"]["losses"];
+                data["away_pitcher_era"] = g["winning_pitcher"]["era"];
                 data["home_pitcher"] = g["losing_pitcher"]["first"] + " "+ g["losing_pitcher"]["last"];
-                data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + " - " + g["winning_pitcher"]["losses"];
-                data["home_pitcher_era"] = g["winning_pitcher"]["era"];
+                data["home_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
+                data["home_pitcher_rec"] = g["losing_pitcher"]["wins"] + " - " + g["losing_pitcher"]["losses"];
+                data["home_pitcher_era"] = g["losing_pitcher"]["era"];
             }
             // Load pitcher images if they havent already been downloaded
             get_pitcher_image(data, true);
@@ -255,6 +260,14 @@ function parse_scores(response_text, callback){
 
         }
 
+        // Fix long pitcher name abbreviations if necessary
+        if(data["away_pitcher_abrv"] && data["away_pitcher_abrv"].length > MAX_PNAME_LENGTH){
+            data["away_pitcher_abrv"] = fix_abbrev(data["away_pitcher_abrv"]);
+        }
+        if(data["home_pitcher_abrv"] && data["home_pitcher_abrv"].length > MAX_PNAME_LENGTH){
+            data["home_pitcher_abrv"] = fix_abbrev(data["home_pitcher_abrv"]);
+        }
+
         if(data["status"] === "UPCOMING") result.games.upcoming_games.push(data);
         else if(data["status"] === "LIVE") result.games.live_games.push(data);
         else if(data["status"] === "POSTPONED") result.games.postponed_games.push(data);
@@ -262,6 +275,13 @@ function parse_scores(response_text, callback){
     }
 
     wait_for_asynch_reqs(callback);
+}
+
+function fix_abbrev(name){
+    // First try and use just the last name
+    var lastnameonly = name.slice(3);
+    if(lastnameonly.length <= MAX_PNAME_LENGTH) return lastnameonly;
+    else return name.slice(0,MAX_PNAME_LENGTH-2) + ".."; //Otherwise just truncate name & add ..
 }
 
 // Waits until all the asynchronous requests have completed then calls callback which returns the data to the server
