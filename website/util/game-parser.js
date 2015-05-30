@@ -18,7 +18,8 @@ var result = {
     games: {
         final_games: [],
         live_games: [],
-        upcoming_games: []
+        upcoming_games: [],
+        postponed_games: []
     }
 };
 var team_abbreviation = {
@@ -215,6 +216,12 @@ function parse_scores(response_text, callback){
             // data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
             // data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
         }
+        // Get Data for postponed game
+        else if(data["status"] === "Postponed"){
+            console.log("Game postponed");
+            data["status"] = "POSTPONED";
+            data["reason"] = g["status"]["reason"];
+        }
         // Get Data for upcoming game
         else{
             console.log("Game Status = "+data["status"]);
@@ -228,6 +235,7 @@ function parse_scores(response_text, callback){
                 home_pitcher = "opposing_pitcher";
             }
             data["display_status"] = (data["status"] === "Delayed Start") ? "DELAYED" : "PREVIEW";
+            data["status"] = "UPCOMING";
             data["away_pitcher"] = g[away_pitcher]["first"] + " " +g[away_pitcher]["last"];
             data["away_pitcher_abrv"] = g[away_pitcher]["first"].slice(0,1) + ". " +g[away_pitcher]["last"]
             data["away_pitcher_rec"] = g[away_pitcher]["wins"] + " - " + g[away_pitcher]["losses"];
@@ -240,7 +248,6 @@ function parse_scores(response_text, callback){
             data["home_pitcher_era"] = g[home_pitcher]["era"];
             // Download home pitcher image
             get_pitcher_image(data, false);
-            data["status"] = "UPCOMING";
 
             data["game_time"] = g["home_time"] + g["ampm"].toLowerCase();
             data["game_tzone"] = time_zones[data["home_team"]];
@@ -250,6 +257,7 @@ function parse_scores(response_text, callback){
 
         if(data["status"] === "UPCOMING") result.games.upcoming_games.push(data);
         else if(data["status"] === "LIVE") result.games.live_games.push(data);
+        else if(data["status"] === "POSTPONED") result.games.postponed_games.push(data);
         else result.games.final_games.push(data);
     }
 
@@ -280,6 +288,8 @@ function print_scores(){
     console.log(result.games.final_games);
     console.log("UPCOMING GAMES");
     console.log(result.games.upcoming_games);
+    console.log("POSTPONED GAMES");
+    console.log(result.games.postponed_games);
 }
 
 // Checks if we already have pitcher's image, if not downloads the image from espn
