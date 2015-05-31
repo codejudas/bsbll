@@ -160,8 +160,9 @@ function parse_scores(response_text, callback){
 
         // Get Data for in progress game
         if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
+            if(data["status"] === "Delayed Start") data["display_status"] = "DELAYED";
+            else data["display_status"] = "LIVE";
             data["status"] = "LIVE";
-            data["display_status"] = "LIVE";
             data["away_score"] = g["linescore"]["r"]["away"];
             data["home_score"] = g["linescore"]["r"]["home"];
 
@@ -170,15 +171,37 @@ function parse_scores(response_text, callback){
 
             // Runners
             data["runners"] = {};
-            // console.log("RUNNERS ON BASE: ");
-            // console.log(g["runners_on_base"]);
             if(g["runners_on_base"]["runner_on_1b"]) data["runners"]["1b"] = 1;
             if(g["runners_on_base"]["runner_on_2b"]) data["runners"]["2b"] = 1;
             if(g["runners_on_base"]["runner_on_3b"]) data["runners"]["3b"] = 1;
 
+            // Pitcher
             data["pitcher"] = g["pitcher"]["first"] + " " + g["pitcher"]["last"];
             data["pitcher_abrv"] = g["pitcher"]["first"].slice(0,1) + ". " + g["pitcher"]["last"];
+            data["pitcher_era"] = g["pitcher"]["era"];
 
+            // Batter
+            data["batter"] = g["batter"]["first"] + " " + g["batter"]["last"];
+            data["batter_abrv"] = g["batter"]["first"].slice(0,1) + ". " + g["batter"]["last"];
+            data["batter_avg"] = g["batter"]["avg"];
+
+            // Balls/Strikes/Outs
+            data["count"] = {};
+            data["count"]["b"] = {}; 
+            var num_balls = parseInt(g["status"]["b"]);
+            var i;
+            for(i = 0; i < num_balls; i++)
+                data["count"]["b"]["p"+i] = 1;
+            
+            data["count"]["s"] = {};
+            var num_strikes = parseInt(g["status"]["s"]);
+            for(i = 0; i < num_strikes; i++)
+                data["count"]["s"]["p"+i] = 1;
+
+            data["count"]["o"] = {};
+            var num_outs = parseInt(g["status"]["o"]);
+            for(i = 0; i < num_outs; i++)
+                data["count"]["o"]["p"+i] = 1;
         }
         // Get Data for Final Game
         else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early"){
@@ -195,10 +218,10 @@ function parse_scores(response_text, callback){
                 data["winner"] = "home";
                 data["away_pitcher"] = g["losing_pitcher"]["first"] + " " + g["losing_pitcher"]["last"];
                 data["away_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
-                data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + " - " + g["losing_pitcher"]["losses"];
+                data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
                 data["away_pitcher_era"] = g["losing_pitcher"]["era"];
                 data["home_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
-                data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + " - " + g["winning_pitcher"]["losses"];
+                data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
                 data["home_pitcher_era"] = g["winning_pitcher"]["era"];
                 data["home_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
 
@@ -207,11 +230,11 @@ function parse_scores(response_text, callback){
                 data["winner"] = "away";
                 data["away_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
                 data["away_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
-                data["away_pitcher_rec"] = g["winning_pitcher"]["wins"] + " - " + g["winning_pitcher"]["losses"];
+                data["away_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
                 data["away_pitcher_era"] = g["winning_pitcher"]["era"];
                 data["home_pitcher"] = g["losing_pitcher"]["first"] + " "+ g["losing_pitcher"]["last"];
                 data["home_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
-                data["home_pitcher_rec"] = g["losing_pitcher"]["wins"] + " - " + g["losing_pitcher"]["losses"];
+                data["home_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
                 data["home_pitcher_era"] = g["losing_pitcher"]["era"];
             }
             // Load pitcher images if they havent already been downloaded
@@ -243,13 +266,13 @@ function parse_scores(response_text, callback){
             data["status"] = "UPCOMING";
             data["away_pitcher"] = g[away_pitcher]["first"] + " " +g[away_pitcher]["last"];
             data["away_pitcher_abrv"] = g[away_pitcher]["first"].slice(0,1) + ". " +g[away_pitcher]["last"]
-            data["away_pitcher_rec"] = g[away_pitcher]["wins"] + " - " + g[away_pitcher]["losses"];
+            data["away_pitcher_rec"] = g[away_pitcher]["wins"] + "-" + g[away_pitcher]["losses"];
             data["away_pitcher_era"] = g[away_pitcher]["era"];
             // Download away pitcher image
             get_pitcher_image(data, true);
             data["home_pitcher"] = g[home_pitcher]["first"] + " "+ g[home_pitcher]["last"];
             data["home_pitcher_abrv"] = g[home_pitcher]["first"].slice(0,1) + ". " +g[home_pitcher]["last"]
-            data["home_pitcher_rec"] = g[home_pitcher]["wins"] + " - " + g[home_pitcher]["losses"];
+            data["home_pitcher_rec"] = g[home_pitcher]["wins"] + "-" + g[home_pitcher]["losses"];
             data["home_pitcher_era"] = g[home_pitcher]["era"];
             // Download home pitcher image
             get_pitcher_image(data, false);
@@ -303,7 +326,7 @@ function wait_for_asynch_reqs(callback){
 function print_scores(){
     console.log("Printing collected data...");
     console.log("LIVE GAMES");
-    console.log(result.games.live_games);
+    console.log(JSON.stringify(result.games.live_games));
     console.log("FINAL GAMES");
     console.log(result.games.final_games);
     console.log("UPCOMING GAMES");

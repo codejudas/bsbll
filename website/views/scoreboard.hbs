@@ -69,32 +69,43 @@
                                 {{#if this.runners.3b}}<img class="base-icon third-base" src="assets/img/pink-dot.png" /> {{/if}}
                             </div>
                             <div class="game-info">
-                                <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>C. Kershaw</h2> <h4>2.93 ERA</h4></p> </div>
-                                <div class="game-info-line"><h1>AB</h1> <p class="hitter-line"><h2>B. Posey</h2> <h3>.312 AVG</h3> <h4>5 HR</h4></p></div>
+                                <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>{{this.pitcher_abrv}}</h2> <h4>{{this.pitcher_era}} ERA</h4></p> </div>
+                                <div class="game-info-line">
+                                    <h1>AB</h1> 
+                                    <p class="hitter-line">
+                                        <h2>{{this.batter_abrv}}</h2> <h3>{{this.batter_avg}} AVG</h3> {{#if this.batter_hr}}<h4>{{this.batter_hr}} HR</h4>{{/if}}
+                                    </p>
+                                </div>
                                 <div class="game-info-line">
                                     <h1>B</h1>
                                     <div class="circles-container ball-line">
-                                        <div class="circle circle-ball-active"></div>
-                                        <div class="circle circle-ball-active"></div>
-                                        <div class="circle circle-ball-active"></div>
-                                        <div class="circle circle-ball-inactive"></div>
+                                        {{#with count.b}}
+                                            <div class="circle circle-ball-{{#if p0}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-ball-{{#if p1}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-ball-{{#if p2}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-ball-{{#if p3}}active{{else}}inactive{{/if}}"></div>
+                                        {{/with}}
                                     </div>
                                 </div>
                                 <div class="game-info-line">
                                     <h1>S</h1>
                                     <div class="circles-container strike-line">
-                                        <div class="circle circle-strike-active"></div>
-                                        <div class="circle circle-strike-inactive"></div>
-                                        <div class="circle circle-strike-inactive"></div>
+                                        {{#with count.s}}
+                                            <div class="circle circle-strike-{{#if p0}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-strike-{{#if p1}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-strike-{{#if p2}}active{{else}}inactive{{/if}}"></div>
+                                        {{/with}}
                                     </div>
                                 </div>
 
                                 <div class="game-info-line">
                                     <h1>O</h1>
                                     <div class="circles-container out-line">
-                                        <div class="circle circle-out-inactive"></div>
-                                        <div class="circle circle-out-inactive"></div>
-                                        <div class="circle circle-out-inactive"></div>
+                                        {{#with count.o}}
+                                            <div class="circle circle-out-{{#if p0}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-out-{{#if p1}}active{{else}}inactive{{/if}}"></div>
+                                            <div class="circle circle-out-{{#if p2}}active{{else}}inactive{{/if}}"></div>
+                                        {{/with}}
                                     </div>
                                 </div>
 

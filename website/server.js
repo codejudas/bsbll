@@ -63,10 +63,10 @@ app.use('/assets', express.static(assets_path));
 /* Load current data */
 game_parser.load_scoreboard(function(res){
     template_data.scoreboard = res;
-    console.log(template_data.scoreboard);
 
     // Start the server
     app.listen(port, function(){
+        console.log("===STARTING SERVER===");
         console.log("Listening on port "+port);
         console.log("Root dir: "+__dirname);
     });
