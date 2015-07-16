@@ -5,6 +5,7 @@
 var express = require('express');
 var exp_handlebars = require('express-handlebars');
 var game_parser = require('./util/game-parser.js');
+var standings_parser = require('./util/standings-parser.js');
 var app = express();
 var port = 6969;
 var assets_path = "assets";
@@ -64,11 +65,16 @@ app.use('/assets', express.static(assets_path));
 game_parser.load_scoreboard(function(res){
     template_data.scoreboard = res;
 
-    // Start the server
-    app.listen(port, function(){
-        console.log("===STARTING SERVER===");
-        console.log("Listening on port "+port);
-        console.log("Root dir: "+__dirname);
+    /* Load standings next */
+    standings_parser.load_standings(function(res){
+        template_data.standings = res;
+
+        // Start the server
+        app.listen(port, function(){
+            console.log("===STARTING SERVER===");
+            console.log("Listening on port "+port);
+            console.log("Root dir: "+__dirname);
+        });
     });
 });
 

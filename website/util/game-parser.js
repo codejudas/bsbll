@@ -25,6 +25,7 @@ var result = {
     num_games: 0
 
 };
+
 var team_abbreviation = {
     "Baltimore" : "bal",
     "Boston" : "bos",
@@ -96,6 +97,9 @@ var time_zones = {
 var weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+/*
+    PRIVATE METHODS CALLED INTERNALLY IN THIS SCRIPT
+ */
 
 function load_scores(callback){
     console.log("Loading scores...");
@@ -108,7 +112,7 @@ function load_scores(callback){
     /*
         To test a specific date we override values of dd,mm,yyyy
      */
-    dd = 14;
+    // dd = 14;
 
 
     if(dd<10) dd='0'+dd
@@ -158,10 +162,9 @@ function parse_scores(response_text, callback){
     var game_data = obj["data"]["games"]["game"];
 
     // Ensure that game_data is an array, the proceeding code assumes it is and if it is not an array than using the for each loop breaks
-    if(!Array.isArray(game_data))
+    if(game_data !== undefined && !Array.isArray(game_data))
         game_data = [].concat(game_data);
     
-
     for(var i in game_data){
         result.num_games++;
 
@@ -470,6 +473,10 @@ function download_image(data, away_bool, fname){
     });
     
 }
+
+/*
+    PUBLIC METHOD CALLED BY MAIN SERVER SCRIPT
+ */
 
 exports.load_scoreboard = function(callback){
     console.log("===Loading Scoreboard Information===");
