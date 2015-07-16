@@ -30,6 +30,8 @@
             </div>
         </div>
         <div class="content">
+            <!-- Only display league filter circles if theres games today -->
+            {{#if num_games}}
             <div id="league-filter">
                 <div class="circle nl-circle on">
                     <h1>NL</h1>
@@ -38,12 +40,15 @@
                     <h1>AL</h1>
                 </div>
             </div>
+            {{/if}}
             <div id="date-selector">
                 <img class="date-arrow" id="date-left-arrow" src="assets/img/cal-arrow.png" />
                 <img id="date-cal-icon" src="assets/img/cal.png" />
                 <span id="date-text">{{date}}</span>
                 <img class="date-arrow" id="date-right-arrow" src="assets/img/cal-arrow.png" />
             </div>
+            <!-- Only display games if there are some today -->
+            {{#if num_games}}
             <div id="game-cards-masonry">
                 <!-- LIVE GAMES -->
                 {{#each games.live_games}}
@@ -157,6 +162,13 @@
                 {{/each}}
 
             </div>
+            {{else}}
+            <!-- Display No games message -->
+            <div id="no_game_container">
+                <h1>NO GAMES TODAY</h1>
+                <img id="no_game_icon" src="assets/img/bats.png" />
+            </div>
+            {{/if}}
         </div>
     </body>
 </html>

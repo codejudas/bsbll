@@ -21,7 +21,9 @@ var result = {
         live_games: [],
         upcoming_games: [],
         postponed_games: []
-    }
+    },
+    num_games: 0
+
 };
 var team_abbreviation = {
     "Baltimore" : "bal",
@@ -147,6 +149,8 @@ function parse_scores(response_text, callback){
     var game_data = obj["data"]["games"]["game"];
 
     for(var i in game_data){
+        result.num_games++;
+
         // Cherry pick information we need
         var g = game_data[i];
         var data = {};

@@ -571,3 +571,23 @@
     margin-left: 1px;
     border:1px solid #f83240;
 }
+
+/*
+    No games display message styles
+ */
+#no_game_container>h1{
+    text-align: center;
+    padding-top: 75px;
+    font-size: 28px;
+    font-family: "Open Sans", Arial;
+    font-weight: 300;
+    opacity: 0.9;
+    letter-spacing: 1px;
+}
+
+#no_game_icon{
+    display: block;
+    margin: 10px auto;
+    height: 125px;
+    opacity: 0.8;
+}
