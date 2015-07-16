@@ -55,7 +55,9 @@ var team_abbreviation = {
     "Colorado": "col",
     "LA Dodgers": "lad",
     "San Diego": "sdg",
-    "San Francisco": "sfo"
+    "San Francisco": "sfo",
+    "AL All-Stars": "al",
+    "NL All-Stars": "nl"
 };
 
 var time_zones = {
@@ -102,6 +104,13 @@ function load_scores(callback){
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
     var yyyy = today.getFullYear();
+
+    /*
+        To test a specific date we override values of dd,mm,yyyy
+     */
+    dd = 14;
+
+
     if(dd<10) dd='0'+dd
     if(mm<10) mm='0'+mm
     console.log("Date: "+mm+"/"+dd+"/"+yyyy);
@@ -147,6 +156,11 @@ function parse_scores(response_text, callback){
 
     var obj = JSON.parse(response_text);
     var game_data = obj["data"]["games"]["game"];
+
+    // Ensure that game_data is an array, the proceeding code assumes it is and if it is not an array than using the for each loop breaks
+    if(!Array.isArray(game_data))
+        game_data = [].concat(game_data);
+    
 
     for(var i in game_data){
         result.num_games++;
