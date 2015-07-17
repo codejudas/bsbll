@@ -52,7 +52,7 @@ var team_abbreviation = {
     "St. Louis Cardinals": "stl",
     "Arizona Diamondbacks": "ari",
     "Colorado Rockies": "col",
-    "LA Dodgers Dodgers": "lad",
+    "Los Angeles Dodgers": "lad",
     "San Diego Padres": "sdg",
     "San Francisco Giants": "sfo"
 };

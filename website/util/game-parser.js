@@ -112,7 +112,7 @@ function load_scores(callback){
     /*
         To test a specific date we override values of dd,mm,yyyy
      */
-    // dd = 14;
+    // dd = 12;
 
 
     if(dd<10) dd='0'+dd
