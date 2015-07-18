@@ -516,9 +516,16 @@
 .radio-icon{
     position: absolute;
     width:30px;
-    top:75px;
-    left:170px;
+    top:70px;
+    left:165px;
     cursor: pointer;
+    padding:10px;
+    transition: background-color 0.2s;
+}
+
+.radio-icon:hover{
+    background-color: #f83240;
+    transition: background-color 0.2s;
 }
 
 /*
