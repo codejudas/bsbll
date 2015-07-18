@@ -266,7 +266,7 @@ function parse_scores(response_text, callback){
             // data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
         }
         // Get Data for postponed game
-        else if(data["status"] === "Postponed"){
+        else if(data["status"] === "Postponed" || data["status"] === "Suspended"){
             console.log("Game postponed");
             data["status"] = "POSTPONED";
             data["reason"] = g["status"]["reason"];
