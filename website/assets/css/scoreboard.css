@@ -483,10 +483,9 @@
 .game-info-line>h3,h4{
     font-size: 12px;
     opacity: 0.6;
-}
-
-.game-info-line>h4{
-    margin-left: 2px;
+    float:right;
+    margin-top: 6px;
+    margin-right: 4px;
 }
 
 .game-info-line>p{

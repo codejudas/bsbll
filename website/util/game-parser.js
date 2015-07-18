@@ -312,7 +312,7 @@ function parse_scores(response_text, callback){
             data["home_pitcher_abrv"] = fix_abbrev(data["home_pitcher_abrv"]);
         }
         // Fix long batter names in live games
-        if(data["batter_abrv"] && data["batter_abrv"].length > MAX_PNAME_LENGTH){
+        if(data["batter_abrv"] && data["batter_abrv"].length > (MAX_PNAME_LENGTH-1)){
             data["batter_abrv"] = fix_abbrev(data["batter_abrv"]);
         }
         // Fix long pitcher names in live games
