@@ -124,8 +124,8 @@
     }
 
     .team-img{
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        height: 25px;
     }
 
     .league-circle{
@@ -133,6 +133,19 @@
         height: 30px;
         font-size: 15px;
         line-height: 30px;
+    }
+
+    #nl-sidebar{
+        float:left;
+        width:30px;
+        height:100%;
+        margin-right: 15px;
+    }
+
+    #al-sidebar{
+        float:left;
+        width: 30px;
+        height:100%;
     }
 }
 

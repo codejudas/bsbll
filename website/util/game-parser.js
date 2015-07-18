@@ -311,6 +311,14 @@ function parse_scores(response_text, callback){
         if(data["home_pitcher_abrv"] && data["home_pitcher_abrv"].length > MAX_PNAME_LENGTH){
             data["home_pitcher_abrv"] = fix_abbrev(data["home_pitcher_abrv"]);
         }
+        // Fix long batter names in live games
+        if(data["batter_abrv"] && data["batter_abrv"].length > MAX_PNAME_LENGTH){
+            data["batter_abrv"] = fix_abbrev(data["batter_abrv"]);
+        }
+        // Fix long pitcher names in live games
+        if(data["pitcher_abrv"] && data["pitcher_abrv"].length > MAX_PNAME_LENGTH){
+            data["pitcher_abrv"] = fix_abbrev(data["pitcher_abrv"]);
+        }
 
         if(data["status"] === "UPCOMING") result.games.upcoming_games.push(data);
         else if(data["status"] === "LIVE") result.games.live_games.push(data);

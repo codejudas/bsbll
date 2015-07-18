@@ -93,7 +93,6 @@ function get_standings(callback){
 
 function parse_standings(response_text, callback){
     console.log("Parsing Response...");
-    console.log(response_text);
     var obj = JSON.parse(response_text);
     var standings = obj["standing"];
 
@@ -128,7 +127,7 @@ function parse_standings(response_text, callback){
     }
 
     console.log("===Done Loading Score Board Information===");
-    print_results();
+    // print_results();
     callback(result);
 }
 
