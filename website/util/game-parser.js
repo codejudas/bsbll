@@ -13,7 +13,7 @@ var cheerio = require('cheerio');
 var PITCHER_PATH_PREFIX = "assets/img/players/";
 var GENERIC_PATH = PITCHER_PATH_PREFIX + "generic.png";
 var TEAM_LOGO_PATH_PREFIX = "assets/img/teams/";
-var MAX_PNAME_LENGTH = 12;
+var MAX_PNAME_LENGTH = 10;
 var num_asynch_reqs = 0;
 var result = {
     games: {
@@ -312,7 +312,7 @@ function parse_scores(response_text, callback){
             data["home_pitcher_abrv"] = fix_abbrev(data["home_pitcher_abrv"]);
         }
         // Fix long batter names in live games
-        if(data["batter_abrv"] && data["batter_abrv"].length > (MAX_PNAME_LENGTH-1)){
+        if(data["batter_abrv"] && data["batter_abrv"].length > MAX_PNAME_LENGTH){
             data["batter_abrv"] = fix_abbrev(data["batter_abrv"]);
         }
         // Fix long pitcher names in live games
@@ -333,7 +333,7 @@ function fix_abbrev(name){
     // First try and use just the last name
     var lastnameonly = name.slice(3);
     if(lastnameonly.length <= MAX_PNAME_LENGTH) return lastnameonly;
-    else return name.slice(0,MAX_PNAME_LENGTH-2) + ".."; //Otherwise just truncate name & add ..
+    else return lastnameonly.slice(0,MAX_PNAME_LENGTH-1) + ".."; //Otherwise just truncate name & add ..
 }
 
 // Waits until all the asynchronous requests have completed then calls callback which returns the data to the server

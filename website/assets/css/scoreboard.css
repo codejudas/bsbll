@@ -325,14 +325,14 @@
 
 .pitcher-stats.away-pitcher{
     position:absolute;
-    width:130px;
+    width:135px;
     top:5px;
     left:10px;
 }
 
 .pitcher-stats.home-pitcher{
     position:absolute;
-    width:130px;
+    width:135px;
     top:5px;
     right:10px;
     text-align: right;
