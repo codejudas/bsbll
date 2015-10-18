@@ -1,0 +1,11 @@
+.DS_Store
+
+# Don't track player images downloaded for that day
+website/assets/img/players/**
+
+# Except generic player image
+!website/assets/img/players/generic.png
+
+# Don't track node dependency files
+website/node_modules
+
