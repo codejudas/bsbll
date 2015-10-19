@@ -52,7 +52,7 @@ function serve_teams(req,res){
 app.engine('hbs', exp_handlebars({ext:".hbs"}));
 app.set('view engine', 'hbs');
 
-app.get('/', serve_index);
+app.get('/', serve_scoreboard);
 app.get('/index', serve_index);
 app.get('/scoreboard', serve_scoreboard);
 app.get('/standings', serve_standings);
