@@ -7,7 +7,7 @@ var exp_handlebars = require('express-handlebars');
 var game_parser = require('./util/game-parser.js');
 var standings_parser = require('./util/standings-parser.js');
 var app = express();
-var port = 6969;
+var port = process.env.PORT || 6969;
 var assets_path = "assets";
 
 /*
