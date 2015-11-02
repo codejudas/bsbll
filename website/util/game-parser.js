@@ -108,6 +108,8 @@ function load_scores(callback){
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
     var yyyy = today.getFullYear();
+    var hour = today.getHours();
+    var min = today.getMinutes();
 
     /*
         To test a specific date we override values of dd,mm,yyyy
@@ -117,7 +119,7 @@ function load_scores(callback){
 
     if(dd<10) dd='0'+dd
     if(mm<10) mm='0'+mm
-    console.log("Date: "+mm+"/"+dd+"/"+yyyy);
+    console.log("Date: "+mm+"/"+dd+"/"+yyyy+" "+hour+":"+min);
 
     var day_suffix;
     if(dd % 10 == 1) day_suffix = "st";

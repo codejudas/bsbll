@@ -37,7 +37,10 @@
             <img id="nl-icon" src="assets/img/national-league.png" />
             <img id="al-icon" src="assets/img/american-league.png" />
             <div id="division-toggle">
-                <h1>DIVISION</h1>
+                <img class="mode-arrow left-arrow" src="assets/img/down-arrow-gray.png">
+                <h1 id="division-text">DIVISION</h1>
+                <h1 id="wildcard-text">WILD CARD</h1>
+                <img class="mode-arrow right-arrow" src="assets/img/down-arrow-gray.png">
                 <h2 class="div-button div-selected">WEST</h2>
                 <h2 class="div-button">CENTRAL</h2>
                 <h2 class="div-button">EAST</h2>
@@ -50,6 +53,14 @@
                     <div class="ranking-circle">3</div>
                     <div class="ranking-circle">4</div>
                     <div class="ranking-circle">5</div>
+                    <!-- Wildcard rankings only -->
+                    <div class="ranking-circle">6</div>
+                    <div class="ranking-circle">7</div>
+                    <div class="ranking-circle">8</div>
+                    <div class="ranking-circle">9</div>
+                    <div class="ranking-circle">10</div>
+                    <div class="ranking-circle">11</div>
+                    <div class="ranking-circle">12</div>
                 </div>
                 <div id="west-rankings" class="team-rankings active">
                     <div class="nl-teams">
@@ -163,6 +174,51 @@
 
                     <div class="al-teams">
                         {{#each al.east}}
+                            <div class="team">
+                                <img class="team-img" src="assets/img/teams/{{this.team_abbrv}}.png" />
+                                <h1 class="team-name">{{this.disp_name}}</h1>
+                                <div class="team-stats">
+                                    <h2>W</h2><h3>{{this.won}}</h3>
+                                    <h2>L</h2><h3>{{this.lost}}</h3>
+                                    <h2>PCT</h2><h3>{{this.win_percent}}</h3>
+                                    <h2>GB</h2>
+                                    {{#if this.games_back}}
+                                        <h3>{{this.games_back}}</h3>
+                                    {{else}}
+                                        <h3>---</h3>
+                                    {{/if}}
+                                    <h2>STRK</h2><h3>{{this.streak}}</h3>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+
+
+                <div id="wildcard-rankings" class="team-rankings inactive">
+                    <div class="nl-teams">
+                        {{#each nl.wildcard}}
+                            <div class="team">
+                                <img class="team-img" src="assets/img/teams/{{this.team_abbrv}}.png" />
+                                <h1 class="team-name">{{this.disp_name}}</h1>
+                                <div class="team-stats">
+                                    <h2>W</h2><h3>{{this.won}}</h3>
+                                    <h2>L</h2><h3>{{this.lost}}</h3>
+                                    <h2>PCT</h2><h3>{{this.win_percent}}</h3>
+                                    <h2>GB</h2>
+                                    {{#if this.games_back}}
+                                        <h3>{{this.games_back}}</h3>
+                                    {{else}}
+                                        <h3>---</h3>
+                                    {{/if}}
+                                    <h2>STRK</h2><h3>{{this.streak}}</h3>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+
+                    <div class="al-teams">
+                        {{#each al.wildcard}}
                             <div class="team">
                                 <img class="team-img" src="assets/img/teams/{{this.team_abbrv}}.png" />
                                 <h1 class="team-name">{{this.disp_name}}</h1>

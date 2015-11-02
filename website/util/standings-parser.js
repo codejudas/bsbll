@@ -9,18 +9,25 @@ var https = require("https");
 var request = require('request');
 
 var api_host = "erikberg.com";
-var api_path = "/mlb/standings.json";
+var reg_standings_path = "/mlb/standings.json";
+var wildcard_path = "/mlb/wildcard.json";
 var user_agent_str = "Evan Fossier (evan.fossier@yahoo.com)";
+
+var poll_interval = 500; // ms
+var poll_timeout = 10 * 1000; //s * 1000 = ms
+
 var result = {
     nl: {
         west: [],
         central:[],
-        east:[]
+        east:[],
+        wildcard: []
     },
     al: {
         west: [],
         central: [],
-        east: []
+        east: [],
+        wildcard: []
     }
 }
 
@@ -61,14 +68,14 @@ var team_abbreviation = {
     PRIVATE METHODS
  */
 
-function get_standings(callback){
-    console.log("Downloading standings data from: "+api_host+api_path);
+function get_standings(path){
+    console.log("Downloading standings data from: " + api_host + path);
 
     // Build http req
     var opts = {
         host: api_host,
         port: 443,
-        path: api_path,
+        path: path,
         headers:{
             'User-Agent': user_agent_str
         }
@@ -76,6 +83,10 @@ function get_standings(callback){
 
     https.get(opts, function(res) {
       console.log("Got response: " + res.statusCode);
+      if (res.statusCode >= 300){
+        console.log("ERROR: Received " + res.statusCode + " on  URL: " + api_host + path);
+        return;
+      }
       var resp_content = "";
       res.on("data",function(chunk){
         resp_content += chunk;
@@ -83,7 +94,7 @@ function get_standings(callback){
 
       res.on("end",function(){
         // move on to parsing the response
-        parse_standings(resp_content, callback);
+        parse_standings(resp_content);
       });
 
     }).on('error', function(e) {
@@ -91,7 +102,7 @@ function get_standings(callback){
     });
 }
 
-function parse_standings(response_text, callback){
+function parse_standings(response_text){
     console.log("Parsing Response...");
     var obj = JSON.parse(response_text);
     var standings = obj["standing"];
@@ -117,18 +128,22 @@ function parse_standings(response_text, callback){
         var div;
         if(t["division"] === "W") division = league.west;
         else if(t["division"] === "C") division = league.central;
-        else division = league.east;
+        else if(t["division"] === "E") division = league.east;
+        else division = leage.wildcard;
 
+        // Insert into regular standings
         var index = entry["rank"] - 1;
         if(index < division.length)
             division.splice(index,0,entry);
         else
             division.push(entry);
-    }
 
-    console.log("===Done Loading Score Board Information===");
-    // print_results();
-    callback(result);
+        // Insert into wildcard standings
+        if (entry["rank"] > 1){
+            var copy_entry = JSON.parse(JSON.stringify(entry));
+            league.wildcard.push(copy_entry);
+        }
+    }
 }
 
 function print_results(){
@@ -136,11 +151,83 @@ function print_results(){
     console.log(result.nl.west);
     console.log(result.nl.central);
     console.log(result.nl.east);
+    console.log(result.nl.wildcard);
     
     console.log("AL:");
     console.log(result.al.west);
     console.log(result.al.central);
     console.log(result.al.east);
+    console.log(result.al.wildcard);
+}
+
+function fix_gamesback(standing){
+    var top_win = standing[1]["won"];
+    var top_loss = standing[1]["lost"];
+
+    standing[0]["games_back"] = 0.0;
+    standing[1]["games_back"] = 0.0;
+
+    for (var i = 2; i < standing.length; i++){
+        var team = standing[i];
+        var games_back = 0.0;
+        games_back = games_back + ((top_win - team["won"])/2);
+        games_back = games_back + ((team["lost"] - top_loss)/2);
+        team["games_back"] = games_back;
+    }
+}
+
+/**
+ * Sort the wildcard standings into order and fix games back
+ * @return {[type]} [description]
+ */
+function process_wildcards(){
+    var comparator = function(a, b){
+        if (a["win_percent"] === b["win_percent"])
+            return 0;
+        else
+            return parseFloat(a["win_percent"]) > parseFloat(b["win_percent"]) ? -1 : 1;
+    }
+
+    // Calculate correct GBs
+    var leagues = ["nl", "al"];
+    for (var i in leagues){
+        var league = leagues[i];
+        result[league].wildcard.sort(comparator);
+        fix_gamesback(result[league]["wildcard"]);
+    }
+}
+
+/**
+ * Polls the results until the standings are ready then calls the callback which will pass the result back to the main server script
+ * @param  {Function} callback receives 
+ * @return {[type]}            [description]
+ */
+function wait_til_standings_ready(callback){
+    var is_ready = result.nl.west.length > 0;
+    is_ready = is_ready && result.nl.central.length > 0;
+    is_ready = is_ready && result.nl.east.length > 0;
+    is_ready = is_ready && result.nl.wildcard.length > 0;
+
+    is_ready = is_ready && result.al.west.length > 0;
+    is_ready = is_ready && result.al.central.length > 0;
+    is_ready = is_ready && result.al.east.length > 0;
+    is_ready = is_ready && result.al.wildcard.length > 0;
+
+    if (is_ready) {
+        console.log("===Done Loading Standings Information===");
+        process_wildcards();
+        print_results();
+        callback(result);
+    }
+    else{
+        if (poll_timeout <= 0) {
+            console.log("===Timed Out Loading Standings Information===")
+            callback(result);
+            return;
+        }
+        poll_timeout = poll_timeout - poll_interval; //not exactly precise but good enough.
+        setTimeout(function(){ wait_til_standings_ready(callback); }, poll_interval);
+    }
 }
 
 /*
@@ -149,5 +236,8 @@ function print_results(){
 
 exports.load_standings = function(callback){
     console.log("===Loading Standings Information===");
-    get_standings(callback);
+    get_standings(reg_standings_path);
+
+    // Poll the result object to verify completion
+    wait_til_standings_ready(callback);
 }

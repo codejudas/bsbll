@@ -19,29 +19,34 @@ var template_data = {
     "scoreboard" : {},
     "standings" : {},
     "teams" : {}
-}
+};
+
+/*
+    Basic logging for every request
+ */
+app.use("/", function(req, res, next){
+    console.log(req.method + " " + req.path + " - from " + req.ip);
+    next();
+});
+
 
 /*
     Helper functions for serving specific pages
  */
 
 function serve_index(req, res){
-    console.log("Received request for index.html");
     res.render("index", template_data["index"]);
 }
 
 function serve_scoreboard(req, res){
-    console.log("Received request for scoreboard.html");
     res.render("scoreboard", template_data["scoreboard"]);
 }
 
 function serve_standings(req, res){
-    console.log("Received request for standings.html");
     res.render("standings", template_data["standings"]);
 }
 
 function serve_teams(req,res){
-    console.log("Received request for teams.html");
     // Teams page never changes
     res.render("teams", template_data["teams"]);
 }
