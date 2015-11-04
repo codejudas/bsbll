@@ -3,9 +3,12 @@
  */
 
 var express = require('express');
+var fs = require('fs');
 var exp_handlebars = require('express-handlebars');
 var game_parser = require('./util/game-parser.js');
 var standings_parser = require('./util/standings-parser.js');
+var util = require('util/utils.js');
+
 var app = express();
 var port = process.env.PORT || 6969;
 var assets_path = "assets";
@@ -25,7 +28,7 @@ var template_data = {
     Basic logging for every request
  */
 app.use("/", function(req, res, next){
-    console.log(req.method + " " + req.path + " - from " + req.ip);
+    console.log(req.method + " " + req.path + " - ip: " + req.ip);
     next();
 });
 
@@ -39,7 +42,23 @@ function serve_index(req, res){
 }
 
 function serve_scoreboard(req, res){
-    res.render("scoreboard", template_data["scoreboard"]);
+    var date = req.query.date;
+    console.log("==>Date: "+date);
+
+    if (date) {
+        var parsed_date = util.parse_date(date);
+        if (parsed_date.error){
+           res.status(400);
+           res.send(parsed_date.reason);
+           return;
+        }
+
+        // check if scoreboard data already downloaded
+
+    }
+    else{
+        res.render("scoreboard", template_data["scoreboard"]);
+    }
 }
 
 function serve_standings(req, res){

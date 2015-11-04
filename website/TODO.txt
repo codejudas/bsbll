@@ -1,4 +1,4 @@
+be able to switch days in scoreboard
 have special cards for playoffs
 have special page for playoffs with brackets
-be able to switch days in scoreboard
 add clinch highlight in standings

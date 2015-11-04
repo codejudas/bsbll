@@ -9,6 +9,7 @@ var http = require("http");
 var request = require('request');
 var fs = require('fs');
 var cheerio = require('cheerio');
+var util = require('utils.js');
 
 var PITCHER_PATH_PREFIX = "assets/img/players/";
 var GENERIC_PATH = PITCHER_PATH_PREFIX + "generic.png";
@@ -101,35 +102,35 @@ var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'A
     PRIVATE METHODS CALLED INTERNALLY IN THIS SCRIPT
  */
 
-function load_scores(callback){
+function load_scores(callback, specific_date){
     console.log("Loading scores...");
-    // Get todays date first
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
-    var yyyy = today.getFullYear();
-    var hour = today.getHours();
-    var min = today.getMinutes();
+    
+    var date;
+    if (specific_date)
+        date = specific_date;
+    else
+        date = util.get_todays_date();
 
     /*
         To test a specific date we override values of dd,mm,yyyy
      */
     // dd = 12;
 
-
-    if(dd<10) dd='0'+dd
-    if(mm<10) mm='0'+mm
-    console.log("Date: "+mm+"/"+dd+"/"+yyyy+" "+hour+":"+min);
+    console.log("Date: "+date["month"]+"/"+date["day"]+"/"+date["year"]+" "+date["hour"]+":"+date["minute"]);
 
     var day_suffix;
-    if(dd % 10 == 1) day_suffix = "st";
-    else if(dd % 10 == 2) day_suffix = "nd";
-    else if(dd % 10 == 3) day_suffix = "rd";
+    if(date["day"] % 10 == 1) day_suffix = "st";
+    else if(date["day"] % 10 == 2) day_suffix = "nd";
+    else if(date["day"] % 10 == 3) day_suffix = "rd";
     else day_suffix = "th";
 
     // Store the current date
-    result.date = weekdays[today.getDay()] + ", " + months[today.getMonth()] + " " + dd + day_suffix + " " + yyyy;
+    result.date = weekdays[date["dow"]] + ", " + months[date["month"]-1] + " " + date["day"] + day_suffix + " " + date["year"];
+
     // Build path
+    if(date["day"] < 10) date["day"] = '0' + date["day"];
+    if(date["month"] < 10) date["month"] = '0' + date["month"];
+
     var p = "/components/game/mlb/year_"+yyyy+"/month_"+mm+"/day_"+dd+"/master_scoreboard.json";
     console.log("using path='"+p+"'");
 
@@ -157,6 +158,134 @@ function load_scores(callback){
     });
 }
 
+function process_live_game(data, g){
+    if(data["status"] === "Delayed Start") data["display_status"] = "DELAYED";
+    else data["display_status"] = "LIVE";
+
+    data["status"] = "LIVE";
+    
+    data["away_score"] = g["linescore"]["r"]["away"];
+    data["home_score"] = g["linescore"]["r"]["home"];
+
+    data["inning_num"] = g["status"]["inning"];
+    data["inning_arrow"] = g["status"]["inning_state"] === "Bottom" ? "down" : "up";
+
+    // Runners
+    data["runners"] = {};
+    if(g["runners_on_base"]["runner_on_1b"]) data["runners"]["1b"] = 1;
+    if(g["runners_on_base"]["runner_on_2b"]) data["runners"]["2b"] = 1;
+    if(g["runners_on_base"]["runner_on_3b"]) data["runners"]["3b"] = 1;
+
+    // Pitcher
+    data["pitcher"] = g["pitcher"]["first"] + " " + g["pitcher"]["last"];
+    data["pitcher_abrv"] = g["pitcher"]["first"].slice(0,1) + ". " + g["pitcher"]["last"];
+    data["pitcher_era"] = g["pitcher"]["era"];
+
+    // Batter
+    data["batter"] = g["batter"]["first"] + " " + g["batter"]["last"];
+    data["batter_abrv"] = g["batter"]["first"].slice(0,1) + ". " + g["batter"]["last"];
+    data["batter_avg"] = g["batter"]["avg"];
+
+    // Balls
+    data["count"] = {};
+    data["count"]["b"] = {}; 
+    var num_balls = parseInt(g["status"]["b"]);
+    var i;
+    for(i = 0; i < num_balls; i++)
+        data["count"]["b"]["p"+i] = 1;
+    
+    // Strikes
+    data["count"]["s"] = {};
+    var num_strikes = parseInt(g["status"]["s"]);
+    for(i = 0; i < num_strikes; i++)
+        data["count"]["s"]["p"+i] = 1;
+
+    // Outs
+    data["count"]["o"] = {};
+    var num_outs = parseInt(g["status"]["o"]);
+    for(i = 0; i < num_outs; i++)
+        data["count"]["o"]["p"+i] = 1;
+}
+
+function process_final_game(data, g){
+    data["status"] = "FINAL";
+    data["display_status"] = data["status"];
+    data["away_score"] = g["linescore"]["r"]["away"];
+    data["home_score"] = g["linescore"]["r"]["home"];
+    // Check if game went to extra innings
+    if(parseInt(g["status"]["inning"]) > 9){
+        data["display_status"] += " - " + g["status"]["inning"];
+    }
+    // Find winning and losing pitchers
+    if(parseInt(data["away_score"]) < parseInt(data["home_score"])){
+        data["winner"] = "home";
+        data["away_pitcher"] = g["losing_pitcher"]["first"] + " " + g["losing_pitcher"]["last"];
+        data["away_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
+        data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
+        data["away_pitcher_era"] = g["losing_pitcher"]["era"];
+        data["home_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
+        data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
+        data["home_pitcher_era"] = g["winning_pitcher"]["era"];
+        data["home_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
+
+    }
+    else{
+        data["winner"] = "away";
+        data["away_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
+        data["away_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
+        data["away_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
+        data["away_pitcher_era"] = g["winning_pitcher"]["era"];
+        data["home_pitcher"] = g["losing_pitcher"]["first"] + " "+ g["losing_pitcher"]["last"];
+        data["home_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
+        data["home_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
+        data["home_pitcher_era"] = g["losing_pitcher"]["era"];
+    }
+    // Load pitcher images if they havent already been downloaded
+    get_pitcher_image(data, true);
+    get_pitcher_image(data, false);
+
+    // data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
+    // data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
+}
+
+function process_postponed_game(data, g){
+    console.log("Game postponed");
+    data["status"] = "POSTPONED";
+    data["reason"] = g["status"]["reason"];
+}
+
+function process_upcoming_game(data, g){
+    console.log("Game Status = "+data["status"]);
+    var away_pitcher, home_pitcher;
+    if(data["status"] === "Preview"){
+        away_pitcher = "away_probable_pitcher";
+        home_pitcher = "home_probable_pitcher";
+    }
+    else{
+        home_pitcher = "pitcher";
+        away_pitcher = "opposing_pitcher";
+    }
+    data["display_status"] = (data["status"] === "Delayed Start") ? "DELAYED" : "PREVIEW";
+    data["status"] = "UPCOMING";
+    data["away_pitcher"] = g[away_pitcher]["first"] + " " +g[away_pitcher]["last"];
+    data["away_pitcher_abrv"] = g[away_pitcher]["first"].slice(0,1) + ". " +g[away_pitcher]["last"]
+    data["away_pitcher_rec"] = g[away_pitcher]["wins"] + "-" + g[away_pitcher]["losses"];
+    data["away_pitcher_era"] = g[away_pitcher]["era"];
+    // Download away pitcher image
+    get_pitcher_image(data, true);
+    data["home_pitcher"] = g[home_pitcher]["first"] + " "+ g[home_pitcher]["last"];
+    data["home_pitcher_abrv"] = g[home_pitcher]["first"].slice(0,1) + ". " +g[home_pitcher]["last"]
+    data["home_pitcher_rec"] = g[home_pitcher]["wins"] + "-" + g[home_pitcher]["losses"];
+    data["home_pitcher_era"] = g[home_pitcher]["era"];
+    // Download home pitcher image
+    get_pitcher_image(data, false);
+
+    data["game_time"] = g["home_time"] + g["ampm"].toLowerCase();
+    data["game_tzone"] = time_zones[data["home_team"]];
+    data["stadium"] = g["venue"];
+}
+
+
 function parse_scores(response_text, callback){
     console.log("Parsing Response...");
 
@@ -182,129 +311,17 @@ function parse_scores(response_text, callback){
         data["status"] = g["status"]["status"];
 
         // Get Data for in progress game
-        if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
-            if(data["status"] === "Delayed Start") data["display_status"] = "DELAYED";
-            else data["display_status"] = "LIVE";
-            data["status"] = "LIVE";
-            data["away_score"] = g["linescore"]["r"]["away"];
-            data["home_score"] = g["linescore"]["r"]["home"];
-
-            data["inning_num"] = g["status"]["inning"];
-            data["inning_arrow"] = g["status"]["inning_state"] === "Bottom" ? "down" : "up";
-
-            // Runners
-            data["runners"] = {};
-            if(g["runners_on_base"]["runner_on_1b"]) data["runners"]["1b"] = 1;
-            if(g["runners_on_base"]["runner_on_2b"]) data["runners"]["2b"] = 1;
-            if(g["runners_on_base"]["runner_on_3b"]) data["runners"]["3b"] = 1;
-
-            // Pitcher
-            data["pitcher"] = g["pitcher"]["first"] + " " + g["pitcher"]["last"];
-            data["pitcher_abrv"] = g["pitcher"]["first"].slice(0,1) + ". " + g["pitcher"]["last"];
-            data["pitcher_era"] = g["pitcher"]["era"];
-
-            // Batter
-            data["batter"] = g["batter"]["first"] + " " + g["batter"]["last"];
-            data["batter_abrv"] = g["batter"]["first"].slice(0,1) + ". " + g["batter"]["last"];
-            data["batter_avg"] = g["batter"]["avg"];
-
-            // Balls/Strikes/Outs
-            data["count"] = {};
-            data["count"]["b"] = {}; 
-            var num_balls = parseInt(g["status"]["b"]);
-            var i;
-            for(i = 0; i < num_balls; i++)
-                data["count"]["b"]["p"+i] = 1;
-            
-            data["count"]["s"] = {};
-            var num_strikes = parseInt(g["status"]["s"]);
-            for(i = 0; i < num_strikes; i++)
-                data["count"]["s"]["p"+i] = 1;
-
-            data["count"]["o"] = {};
-            var num_outs = parseInt(g["status"]["o"]);
-            for(i = 0; i < num_outs; i++)
-                data["count"]["o"]["p"+i] = 1;
-        }
+        if(data["status"] === "In Progress" || data["status"] === "Delayed Start")
+            process_live_game(data, g);
         // Get Data for Final Game
-        else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early"){
-            data["status"] = "FINAL";
-            data["display_status"] = data["status"];
-            data["away_score"] = g["linescore"]["r"]["away"];
-            data["home_score"] = g["linescore"]["r"]["home"];
-            // Check if game went to extra innings
-            if(parseInt(g["status"]["inning"]) > 9){
-                data["display_status"] += " - " + g["status"]["inning"];
-            }
-            // Find winning and losing pitchers
-            if(parseInt(data["away_score"]) < parseInt(data["home_score"])){
-                data["winner"] = "home";
-                data["away_pitcher"] = g["losing_pitcher"]["first"] + " " + g["losing_pitcher"]["last"];
-                data["away_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
-                data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
-                data["away_pitcher_era"] = g["losing_pitcher"]["era"];
-                data["home_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
-                data["home_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
-                data["home_pitcher_era"] = g["winning_pitcher"]["era"];
-                data["home_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
-
-            }
-            else{
-                data["winner"] = "away";
-                data["away_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
-                data["away_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
-                data["away_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
-                data["away_pitcher_era"] = g["winning_pitcher"]["era"];
-                data["home_pitcher"] = g["losing_pitcher"]["first"] + " "+ g["losing_pitcher"]["last"];
-                data["home_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
-                data["home_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
-                data["home_pitcher_era"] = g["losing_pitcher"]["era"];
-            }
-            // Load pitcher images if they havent already been downloaded
-            get_pitcher_image(data, true);
-            get_pitcher_image(data, false);
-
-            // data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
-            // data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
-        }
+        else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early")
+            process_final_game(data, g);
         // Get Data for postponed game
-        else if(data["status"] === "Postponed" || data["status"] === "Suspended"){
-            console.log("Game postponed");
-            data["status"] = "POSTPONED";
-            data["reason"] = g["status"]["reason"];
-        }
+        else if(data["status"] === "Postponed" || data["status"] === "Suspended")
+            process_postponed_game(data, g);
         // Get Data for upcoming game
-        else{
-            console.log("Game Status = "+data["status"]);
-            var away_pitcher, home_pitcher;
-            if(data["status"] === "Preview"){
-                away_pitcher = "away_probable_pitcher";
-                home_pitcher = "home_probable_pitcher";
-            }
-            else{
-                home_pitcher = "pitcher";
-                away_pitcher = "opposing_pitcher";
-            }
-            data["display_status"] = (data["status"] === "Delayed Start") ? "DELAYED" : "PREVIEW";
-            data["status"] = "UPCOMING";
-            data["away_pitcher"] = g[away_pitcher]["first"] + " " +g[away_pitcher]["last"];
-            data["away_pitcher_abrv"] = g[away_pitcher]["first"].slice(0,1) + ". " +g[away_pitcher]["last"]
-            data["away_pitcher_rec"] = g[away_pitcher]["wins"] + "-" + g[away_pitcher]["losses"];
-            data["away_pitcher_era"] = g[away_pitcher]["era"];
-            // Download away pitcher image
-            get_pitcher_image(data, true);
-            data["home_pitcher"] = g[home_pitcher]["first"] + " "+ g[home_pitcher]["last"];
-            data["home_pitcher_abrv"] = g[home_pitcher]["first"].slice(0,1) + ". " +g[home_pitcher]["last"]
-            data["home_pitcher_rec"] = g[home_pitcher]["wins"] + "-" + g[home_pitcher]["losses"];
-            data["home_pitcher_era"] = g[home_pitcher]["era"];
-            // Download home pitcher image
-            get_pitcher_image(data, false);
-
-            data["game_time"] = g["home_time"] + g["ampm"].toLowerCase();
-            data["game_tzone"] = time_zones[data["home_team"]];
-            data["stadium"] = g["venue"];
-
-        }
+        else
+            process_upcoming_game(data, g);
 
         // Fix long pitcher name abbreviations if necessary
         if(data["away_pitcher_abrv"] && data["away_pitcher_abrv"].length > MAX_PNAME_LENGTH){
