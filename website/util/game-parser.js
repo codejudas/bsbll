@@ -9,23 +9,14 @@ var http = require("http");
 var request = require('request');
 var fs = require('fs');
 var cheerio = require('cheerio');
-var util = require('utils.js');
+var util = require('./utils.js');
 
 var PITCHER_PATH_PREFIX = "assets/img/players/";
 var GENERIC_PATH = PITCHER_PATH_PREFIX + "generic.png";
 var TEAM_LOGO_PATH_PREFIX = "assets/img/teams/";
 var MAX_PNAME_LENGTH = 10;
 var num_asynch_reqs = 0;
-var result = {
-    games: {
-        final_games: [],
-        live_games: [],
-        upcoming_games: [],
-        postponed_games: []
-    },
-    num_games: 0
-
-};
+var result;
 
 var team_abbreviation = {
     "Baltimore" : "bal",
@@ -104,6 +95,19 @@ var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'A
 
 function load_scores(callback, specific_date){
     console.log("Loading scores...");
+
+    // reset result
+    result = {
+        games: {
+            final_games: [],
+            live_games: [],
+            upcoming_games: [],
+            postponed_games: []
+        },
+        num_games: 0,
+        date: undefined,
+        games_active: 0
+    };
     
     var date;
     if (specific_date)
@@ -131,7 +135,7 @@ function load_scores(callback, specific_date){
     if(date["day"] < 10) date["day"] = '0' + date["day"];
     if(date["month"] < 10) date["month"] = '0' + date["month"];
 
-    var p = "/components/game/mlb/year_"+yyyy+"/month_"+mm+"/day_"+dd+"/master_scoreboard.json";
+    var p = "/components/game/mlb/year_"+date["year"]+"/month_"+date["month"]+"/day_"+date["day"]+"/master_scoreboard.json";
     console.log("using path='"+p+"'");
 
     // Build http req
@@ -311,8 +315,10 @@ function parse_scores(response_text, callback){
         data["status"] = g["status"]["status"];
 
         // Get Data for in progress game
-        if(data["status"] === "In Progress" || data["status"] === "Delayed Start")
+        if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
+            result.games_active++;
             process_live_game(data, g);
+        }
         // Get Data for Final Game
         else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early")
             process_final_game(data, g);
@@ -320,8 +326,10 @@ function parse_scores(response_text, callback){
         else if(data["status"] === "Postponed" || data["status"] === "Suspended")
             process_postponed_game(data, g);
         // Get Data for upcoming game
-        else
+        else{
+            result.games_active++;
             process_upcoming_game(data, g);
+        }
 
         // Fix long pitcher name abbreviations if necessary
         if(data["away_pitcher_abrv"] && data["away_pitcher_abrv"].length > MAX_PNAME_LENGTH){

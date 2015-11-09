@@ -7,7 +7,7 @@ module.exports = {};
 module.exports.parse_date = function(date){
     var error_msg = "Error: Incorrect date format, should be mmddyyyy";
     var result = {
-        "error" : false;
+        "error" : false
     };
     
     // sanitize the date
@@ -35,13 +35,13 @@ module.exports.parse_date = function(date){
         result.reason = "Year must be between 2014 and "+ today.getFullYear();
     }
 
-    var that_day = new Date(yyyy, mm, 0).getDate();
+    var max_day = new Date(yyyy, mm, 0).getDate();
 
     var dd = parseInt(date.substring(2,4));
-    if (dd < 1 || dd > that_day.getDate()){
+    if (dd < 1 || dd > max_day){
         console.log(error_msg);
         result.error = true;
-        result.reason = "Day must be between 1 and "+that_day.getDate();
+        result.reason = "Day must be between 1 and "+max_day;
         return result;
     }
 
@@ -67,13 +67,42 @@ module.exports.get_todays_date = function() {
     var day_of_week = today.getDay();
 
     var result = {
-        "error" : false;
-        "day" : dd;
-        "month": mm;
-        "year": yyyy;
-        "minute": min;
-        "hour": hour;
-        "dow": day_of_week;
+        "error" : false,
+        "day" : dd,
+        "month": mm,
+        "year": yyyy,
+        "minute": min,
+        "hour": hour,
+        "dow": day_of_week
     };
     return result;
+}
+
+/**
+ * Compare date
+ * @return {[type]}       -1 if date1 is before date2, 0 if they are the same day/month/year, 1 if date1 is after date2
+ */
+module.exports.compare_date = function(date1, date2){
+    if(date1.year < date2.year) return -1;
+    else if (date1.year > date2.year) return 1;
+    else{
+        if (date1.month < date2.month) return -1;
+        else if(date1.month > date2.month) return 1;
+        else{
+            if (date1.day < date2.day) return -1;
+            else if (date1.day > date2.day) return 1;
+            else return 0;
+        }
+    }
+}
+
+module.exports.date_is_today = function(date){
+    var today = module.exports.get_todays_date();
+    return module.exports.compare_date(today, date) == 0;
+}
+
+module.exports.pad = function(val, str_size){
+    var s = val+"";
+    while (s.length < str_size) s = "0" + s;
+    return s;
 }

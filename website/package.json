@@ -6,6 +6,7 @@
     "cheerio": "*",
     "express": "^4.13.3",
     "express-handlebars": "*",
+    "jsonfile": "^2.2.3",
     "request": "*"
   }
 }
