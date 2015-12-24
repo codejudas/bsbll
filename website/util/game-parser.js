@@ -230,6 +230,8 @@ function process_final_game(data, g){
     // Find winning and losing pitchers
     if(parseInt(data["away_score"]) < parseInt(data["home_score"])){
         data["winner"] = "home";
+        data["away_result"] = "L";
+        data["home_result"] = "W";
         data["away_pitcher"] = g["losing_pitcher"]["first"] + " " + g["losing_pitcher"]["last"];
         data["away_pitcher_abrv"] = g["losing_pitcher"]["first"].slice(0,1) +". " + g["losing_pitcher"]["last"];
         data["away_pitcher_rec"] = g["losing_pitcher"]["wins"] + "-" + g["losing_pitcher"]["losses"];
@@ -242,6 +244,8 @@ function process_final_game(data, g){
     }
     else{
         data["winner"] = "away";
+        data["away_result"] = "W";
+        data["home_result"] = "L";
         data["away_pitcher"] = g["winning_pitcher"]["first"] + " " +g["winning_pitcher"]["last"];
         data["away_pitcher_abrv"] = g["winning_pitcher"]["first"].slice(0,1) +". " + g["winning_pitcher"]["last"];
         data["away_pitcher_rec"] = g["winning_pitcher"]["wins"] + "-" + g["winning_pitcher"]["losses"];
