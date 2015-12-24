@@ -189,5 +189,5 @@ function load_day(date){
     dateQueryString += yyyy;
     console.log("Switching day to: "+dateQueryString);
     /*update current day scoreboard */
-    // window.location.href = "/scoreboard?date="+dateQueryString;
+    window.location.href = "/scoreboard?date="+dateQueryString;
 }

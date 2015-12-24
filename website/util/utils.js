@@ -29,7 +29,7 @@ module.exports.parse_date = function(date){
     var today = new Date();
 
     var yyyy = parseInt(date.substring(4,8));
-    if (yyyy < 2014 || yyyy > today.getFullYear()){
+    if (yyyy < 2014){
         result.error = true;
         result.reason = "Year must be between 2014 and "+ today.getFullYear();
         console.log(result.reason);

@@ -30,8 +30,14 @@
             </div>
         </div>
         <div class="content">
+            <div id="date-selector">
+                <img class="date-arrow" id="date-left-arrow" src="assets/img/cal-arrow.png" />
+                <img id="date-cal-icon" src="assets/img/cal.png" />
+                <span id="date-text">{{date_str}}</span>
+                <span id="date-data">{{date}}</span>
+                <img class="date-arrow" id="date-right-arrow" src="assets/img/cal-arrow.png" />
+            </div>
             <!-- Only display league filter circles if theres games today -->
-            {{#if num_games}}
             <div id="league-filter">
                 <div class="circle nl-circle on">
                     <h1>NL</h1>
@@ -39,14 +45,6 @@
                 <div class="circle al-circle on">
                     <h1>AL</h1>
                 </div>
-            </div>
-            {{/if}}
-            <div id="date-selector">
-                <img class="date-arrow" id="date-left-arrow" src="assets/img/cal-arrow.png" />
-                <img id="date-cal-icon" src="assets/img/cal.png" />
-                <span id="date-text">{{date_str}}</span>
-                <span id="date-data">{{date}}</span>
-                <img class="date-arrow" id="date-right-arrow" src="assets/img/cal-arrow.png" />
             </div>
             <!-- Only display games if there are some today -->
             {{#if num_games}}
