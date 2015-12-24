@@ -32,49 +32,68 @@ var template_data = {
     Helper functions for serving specific pages
  */
 
+/**
+ * GET /index
+ */
 function serve_index(req, res, next){
     res.render("index", template_data["index"]);
     next();
 }
 
+/**
+ * GET /
+ * GET /scoreboard
+ * GET /scoreboard?date=mmddyyyy
+ */
 function serve_scoreboard(req, res, next){
     var date = req.query.date;
     console.log("==>Date: "+date);
-    console.log("test");
     if (date) {
         console.log("parsing date");
         var parsed_date = util.parse_date(date);
-        console.log("Parsed date:"+JSON.stringify(parsed_date));
         debugger;
+        console.log("Parsed date:"+JSON.stringify(parsed_date));
         if (parsed_date.error){
-            console.log("Error parsing date: "+ error.reason);
+            console.log("Error parsing date: "+ parsed_date.reason);
             var err = new Error();
             err.status = 400;
             err.msg = "<h1> 400 - Bad Request: " + parsed_date.reason + "</h1>";
-            next(err);
+            return next(err);
         }
 
         // check if date is today
         if(!util.date_is_today(parsed_date)){
+            console.log("Date is not today");
             // check if scoreboard data already downloaded
             var date_filename = util.pad(parsed_date["month"],2) + util.pad(parsed_date["day"],2) + parsed_date["year"].toString() + ".json";
             var relative_path = "assets/games/"+date_filename;
             try{
                 var stat = fs.statSync(relative_path);
+                console.log("Got file info for "+relative_path);
+                // check if file exists
                 if (stat.isFile()){
-                    console.log("Found scoreboard data for "+date_filename);
-                    var data = jsonfile.readFileSync(relative_path, {throws: false, flags:"r"});
+                    console.log("Found scoreboard data for "+relative_path);
+                    var data = JSON.parse(jsonfile.readFileSync(relative_path, {throws: false, flags:"r"}));
                     if( !data ){
-                        console.log(date_filename + " is invalid, redownloading");
                         // delete + redownload
+                        console.log(date_filename + " invalid, re-downloading data for that day.");
+                        var data = game_parser.load_scoreboard(function(scoreboard){
+                            console.log("Loaded scoreboard: "+JSON.stringify(scoreboard));
+                            // save the scoreboard data to the file
+                            jsonfile.writeFileSync(relative_path, JSON.stringify(scoreboard));
+                            res.render("scoreboard", scoreboard);
+                            next();
+                        }, parsed_date);
                     }
                     else{
+                        // render the loaded data from file
                         console.log(date_filename+" loaded.");
                         res.render("scoreboard", data);
                         next();
                     }
                 }
                 else{
+                    // 500
                     console.log(date_filename + " is not a file.");
                     var err = new Error();
                     err.status = 500;
@@ -83,9 +102,16 @@ function serve_scoreboard(req, res, next){
                 }
             }
             catch(e){
+                // File not found exception => need to download that days data
                 console.log(date_filename + " not found, downloading data for that day.");
-                res.render("scoreboard", template_data["scoreboard"]);
-                next();
+                // DOWNLOAD DATA FOR THAT DAY
+                var data = game_parser.load_scoreboard(function(scoreboard){
+                    console.log("Loaded scoreboard: "+JSON.stringify(scoreboard));
+                    // save the scoreboard data to the file
+                    jsonfile.writeFileSync(relative_path, JSON.stringify(scoreboard));
+                    res.render("scoreboard", scoreboard);
+                    next();
+                }, parsed_date);
             }
         }
         else{
@@ -102,22 +128,32 @@ function serve_scoreboard(req, res, next){
     }
 }
 
+/**
+ * GET /standings
+ */
 function serve_standings(req, res, next){
     res.render("standings", template_data["standings"]);
     next();
 }
 
+/**
+ * GET /teams
+ */
 function serve_teams(req,res, next){
     // Teams page never changes
     res.render("teams", template_data["teams"]);
     next();
 }
 
+/**
+ * Returns error page
+ */
 function serve_error(err, req, res){
+    err.status = err.status || 500;
     console.log("Sending Error Code "+ err.status);
     res.status(err.status);
     console.log(req.method + " " + req.path + " - ip: " + req.ip + " ==> " + res.statusCode);
-    res.send(err.msg);
+    res.send(err.msg || "500 - Internal Server Error");
 }
 
 /**
@@ -139,7 +175,7 @@ function update_scoreboard() {
         });
     }
     // check if no games to update
-    else if (template_data.scoreboard.games_active && template_data.scoreboard.games_active == 0){
+    else if (template_data.scoreboard.games_active == 0){
         console.log("==> Nothing to update");
         return setTimeout(update_scoreboard, REFRESH_RATE);
     }

@@ -1,6 +1,9 @@
 {
   "name": "mlb-redesign",
   "description": "A baseball fan's reimagining of mlb.com with a cleaner interface.",
+  "scripts":{
+    "start": "node server.js"
+  },
   "version": "0.0.1",
   "dependencies": {
     "cheerio": "*",

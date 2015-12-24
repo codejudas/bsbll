@@ -62,7 +62,17 @@ $(document).ready(function(){
     // Hover effect for game cards
     $(".game-card").hover(function(){
         // hilight animation
-        hilight_game_card(this);
+        highlight_game_card(this);
+    });
+
+    // Get games for previous day
+    $("#date-left-arrow").click(function(){
+        load_prev_day();
+    });
+
+    // Get games for next day
+    $("#date-right-arrow").click(function(){
+        load_next_day();
     });
 
     // NL/AL filter buttons effects
@@ -75,7 +85,7 @@ $(document).ready(function(){
             }else{
                 DISPLAY_AL = false;
             }
-            update_games_displayed();
+            update_game_filter();
         }
         else{
             $(this).removeClass("off");
@@ -85,12 +95,12 @@ $(document).ready(function(){
             }else{
                 DISPLAY_AL = true;
             }
-            update_games_displayed();
+            update_game_filter();
         }
     });
 });
 
-function hilight_game_card(elem){
+function highlight_game_card(elem){
     if($(elem).hasClass("fade")) return;
     var $hilight_bar = $(elem).find(".card-highlight");
     if($hilight_bar.hasClass("highlighted")) $hilight_bar.removeClass("highlighted");
@@ -107,11 +117,13 @@ function calc_card_margin(){
     $(".game-card").css("margin-left",leftMarg+"px");
 }
 
-function update_games_displayed(){
+//update filtered games
+function update_game_filter(){
     $(".game-card").each(function(i, elem){
         var team1 = $(elem).find(".away-team").attr("src").split("/")[3];
         team1 = team1.slice(0,team1.length-4);
         if(team1.length == 4) team1 = team1.slice(0,3);
+
         var team2 = $(elem).find(".home-team").attr("src").split("/")[3];
         team2 = team2.slice(0,team2.length-4);
         if(team2.length == 4) team2 = team2.slice(0,3);
@@ -136,4 +148,45 @@ function update_games_displayed(){
         else
             $(elem).addClass("fade");
     });
+}
+
+function load_prev_day(){
+    var thatDate = get_current_date();
+    var prevDate = new Date(thatDate.setDate(thatDate.getDate() - 1));
+
+    load_day(prevDate);
+}
+
+function load_next_day(){
+    var thatDate = get_current_date();
+    var nextDate = new Date(thatDate.setDate(thatDate.getDate() + 1));
+
+    load_day(nextDate);
+}
+
+function get_current_date() {
+    /* Get date from hidden elem in html */
+    var unparsedDate = $("#date-data").html().split(",");
+    var mm = parseInt(unparsedDate[0]);
+    var dd = parseInt(unparsedDate[1]);
+    var yyyy = parseInt(unparsedDate[2]);
+
+    return new Date(yyyy, mm, dd);
+}
+
+/**
+ * Load scoreboard data for a day, can be used to change the displayed day or update the current days scores
+ * @param  {Date} date object representing date to load
+ */
+function load_day(date){
+    var mm = date.getMonth(); //jan is 0
+    var dd = date.getDate();
+    var yyyy = date.getFullYear();
+
+    var dateQueryString = (mm < 10) ? '0' + mm : '' + mm;
+    dateQueryString += (dd < 10) ? '0' + dd : '' + dd;
+    dateQueryString += yyyy;
+    console.log("Switching day to: "+dateQueryString);
+    /*update current day scoreboard */
+    window.location.href = "/scoreboard?date="+dateQueryString;
 }

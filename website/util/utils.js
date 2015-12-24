@@ -12,17 +12,17 @@ module.exports.parse_date = function(date){
     
     // sanitize the date
     if (date.length != 8){
-        console.log(error_msg);
         result.error = true;
         result.reason = "Date is not the right length";
+        console.log(result.reason);
         return result;
     }
 
     var mm = parseInt(date.substring(0,2));
     if (mm > 12 || mm < 1){
-        console.log(error_msg);
         result.error = true;
         result.reason = "Illegal month number";
+        console.log(result.reason);
         return result;
     }
 
@@ -30,18 +30,18 @@ module.exports.parse_date = function(date){
 
     var yyyy = parseInt(date.substring(4,8));
     if (yyyy < 2014 || yyyy > today.getFullYear()){
-        console.log(error_msg);
         result.error = true;
         result.reason = "Year must be between 2014 and "+ today.getFullYear();
+        console.log(result.reason);
     }
 
     var max_day = new Date(yyyy, mm, 0).getDate();
 
     var dd = parseInt(date.substring(2,4));
     if (dd < 1 || dd > max_day){
-        console.log(error_msg);
         result.error = true;
         result.reason = "Day must be between 1 and "+max_day;
+        console.log(result.reason);
         return result;
     }
 

@@ -105,6 +105,7 @@ function load_scores(callback, specific_date){
             postponed_games: []
         },
         num_games: 0,
+        date_str: undefined,
         date: undefined,
         games_active: 0
     };
@@ -129,7 +130,8 @@ function load_scores(callback, specific_date){
     else day_suffix = "th";
 
     // Store the current date
-    result.date = weekdays[date["dow"]] + ", " + months[date["month"]-1] + " " + date["day"] + day_suffix + " " + date["year"];
+    result.date_str = weekdays[date["dow"]] + ", " + months[date["month"]-1] + " " + date["day"] + day_suffix + " " + date["year"];
+    result.date = "" + date["month"] + "," + date["day"] + "," + date["year"];
 
     // Build path
     if(date["day"] < 10) date["day"] = '0' + date["day"];
@@ -513,7 +515,7 @@ function download_image(data, away_bool, fname){
     PUBLIC METHOD CALLED BY MAIN SERVER SCRIPT
  */
 
-exports.load_scoreboard = function(callback){
+exports.load_scoreboard = function(callback, date){
     console.log("===Loading Scoreboard Information===");
-    load_scores(callback);
+    load_scores(callback, date);
 }

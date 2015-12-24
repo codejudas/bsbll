@@ -1,4 +1,3 @@
-be able to switch days in scoreboard
 have special cards for playoffs
 have special page for playoffs with brackets
-add clinch highlight in standings
+pull real news stories from mlb.com
