@@ -167,11 +167,12 @@ function load_next_day(){
 function get_current_date() {
     /* Get date from hidden elem in html */
     var unparsedDate = $("#date-data").html().split(",");
-    var mm = parseInt(unparsedDate[0]);
+    var mm = parseInt(unparsedDate[0]) -1;
     var dd = parseInt(unparsedDate[1]);
     var yyyy = parseInt(unparsedDate[2]);
 
     return new Date(yyyy, mm, dd);
+    // return {"mm": mm, "dd":dd, "yyyy":yyyy};
 }
 
 /**
@@ -179,7 +180,7 @@ function get_current_date() {
  * @param  {Date} date object representing date to load
  */
 function load_day(date){
-    var mm = date.getMonth(); //jan is 0
+    var mm = date.getMonth() + 1; //jan is 0
     var dd = date.getDate();
     var yyyy = date.getFullYear();
 
@@ -188,5 +189,5 @@ function load_day(date){
     dateQueryString += yyyy;
     console.log("Switching day to: "+dateQueryString);
     /*update current day scoreboard */
-    window.location.href = "/scoreboard?date="+dateQueryString;
+    // window.location.href = "/scoreboard?date="+dateQueryString;
 }

@@ -148,16 +148,21 @@ function load_scores(callback, specific_date){
     }
 
     http.get(opts, function(res) {
-      console.log("Got response: " + res.statusCode);
-      var resp_content = "";
-      res.on("data",function(chunk){
-        resp_content += chunk;
-      });
+        console.log("Got response: " + res.statusCode);
 
-      res.on("end",function(){
-        // move on to parsing the response
-        parse_scores(resp_content, callback);
-      });
+        var resp_content = "";
+        res.on("data",function(chunk){
+            resp_content += chunk;
+        });
+
+        res.on("end",function(){
+            if (res.statusCode !== 200){
+                console.log("ERROR: "+res.statusCode);
+                callback(result);
+            }
+            else
+                parse_scores(resp_content, callback);
+        });
 
     }).on('error', function(e) {
       console.log("ERROR: " + e.message);
