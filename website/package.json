@@ -3,7 +3,10 @@
   "description": "A baseball fan's reimagining of mlb.com with a cleaner interface.",
   "author": "Evan Fossier <evan.fossier@gmail.com>",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "clean": "npm run clean:games && npm run clean:players",
+    "clean:games": "rm -vf assets/games/*.json",
+    "clean:players": "find assets/img/players -type f -not -name 'generic.png' | xargs rm -vf"
   },
   "version": "0.1.1",
   "dependencies": {

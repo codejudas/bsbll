@@ -1,3 +1,8 @@
+add a README to the git repo
+add a calendar widget to select the data more easily
+pull real news stories from mlb.com
+
+----
+
 have special cards for playoffs
 have special page for playoffs with brackets
-pull real news stories from mlb.com
