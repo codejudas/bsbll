@@ -1,15 +1,16 @@
 {
   "name": "mlb-redesign",
   "description": "A baseball fan's reimagining of mlb.com with a cleaner interface.",
-  "scripts":{
+  "author": "Evan Fossier <evan.fossier@gmail.com>",
+  "scripts": {
     "start": "node server.js"
   },
-  "version": "0.0.1",
+  "version": "0.1.1",
   "dependencies": {
-    "cheerio": "*",
+    "cheerio": "^0.19.0",
     "express": "^4.13.3",
-    "express-handlebars": "*",
+    "express-handlebars": "^2.0.1",
     "jsonfile": "^2.2.3",
-    "request": "*"
+    "request": "^2.65.0"
   }
 }

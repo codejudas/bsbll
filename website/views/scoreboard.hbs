@@ -51,113 +51,17 @@
             <div id="game-cards-masonry">
                 <!-- LIVE GAMES -->
                 {{#each games.live_games}}
-                    <div class="game-card">
-                        <img class="card-team away-team" src="{{this.away_team_logo}}" />
-                        <img class="card-team home-team" src="{{this.home_team_logo}}" />
-                        <div class="card-header away-score">{{this.away_score}}</div>
-                        <div class="card-header home-score">{{this.home_score}}</div>
-                        <div class="card-separator">|</div>
-                        <div class="card-record away-record">{{this.away_rec}}</div>
-                        <div class="card-record home-record">{{this.home_rec}}</div>
-                        <div class="card-game-status live">{{this.display_status}}</div>
-                        <div class="card-highlight live"></div>
-                        <div class="game-card-details">
-                            <div class="inning-container">
-                                <p>{{this.inning_num}}</p>
-                                <div class="inning-arrow arrow-{{this.inning_arrow}}"></div>
-                            </div>
-                            <div class="bases">
-                                <img class="diamond-icon" src="assets/img/bases.png" />
-                                {{#if this.runners.1b}}<img class="base-icon first-base" src="assets/img/pink-dot.png" /> {{/if}}
-                                {{#if this.runners.2b}}<img class="base-icon second-base" src="assets/img/pink-dot.png" /> {{/if}}
-                                {{#if this.runners.3b}}<img class="base-icon third-base" src="assets/img/pink-dot.png" /> {{/if}}
-                            </div>
-                            <div class="game-info">
-                                <div class="game-info-line"><h1>P</h1> <p class="pitcher-line"><h2>{{this.pitcher_abrv}}</h2> <h4>{{this.pitcher_era}} ERA</h4></p> </div>
-                                <div class="game-info-line">
-                                    <h1>AB</h1> 
-                                    <p class="hitter-line">
-                                        <h2>{{this.batter_abrv}}</h2> <h3>{{this.batter_avg}} AVG</h3> {{#if this.batter_hr}}<h4>{{this.batter_hr}} HR</h4>{{/if}}
-                                    </p>
-                                </div>
-                                <div class="game-info-line">
-                                    <h1>B</h1>
-                                    <div class="circles-container ball-line">
-                                        {{#with count.b}}
-                                            <div class="circle circle-ball-{{#if p0}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-ball-{{#if p1}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-ball-{{#if p2}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-ball-{{#if p3}}active{{else}}inactive{{/if}}"></div>
-                                        {{/with}}
-                                    </div>
-                                </div>
-                                <div class="game-info-line">
-                                    <h1>S</h1>
-                                    <div class="circles-container strike-line">
-                                        {{#with count.s}}
-                                            <div class="circle circle-strike-{{#if p0}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-strike-{{#if p1}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-strike-{{#if p2}}active{{else}}inactive{{/if}}"></div>
-                                        {{/with}}
-                                    </div>
-                                </div>
-
-                                <div class="game-info-line">
-                                    <h1>O</h1>
-                                    <div class="circles-container out-line">
-                                        {{#with count.o}}
-                                            <div class="circle circle-out-{{#if p0}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-out-{{#if p1}}active{{else}}inactive{{/if}}"></div>
-                                            <div class="circle circle-out-{{#if p2}}active{{else}}inactive{{/if}}"></div>
-                                        {{/with}}
-                                    </div>
-                                </div>
-
-                                <img class="radio-icon" src="assets/img/headphones.png" />
-                            </div>
-                        </div>
-                    </div>
+                    {{> live-game-card}}
                 {{/each}}
 
                 <!-- UPCOMING GAMES -->
                 {{#each games.upcoming_games}}
-                    <div class="game-card">
-                        <img class="card-team away-team" src="{{this.away_team_logo}}" />
-                        <img class="card-team home-team" src="{{this.home_team_logo}}" />
-                        <div class="card-header game-time">{{this.game_time}} <h2>{{this.game_tzone}}</h2></div>
-                        <div class="card-header game-loc">@ {{this.stadium}}</div>
-                        <div class="card-record away-record">{{this.away_rec}}</div>
-                        <div class="card-record home-record">{{this.home_rec}}</div>
-                        <div class="card-game-status upcoming">{{this.display_status}}</div>
-                        <div class="card-highlight upcoming"></div>
-                        <div class="game-card-details">
-                            <img class="pitcher-image away-pitcher" src="{{this.away_pitcher_img_path}}"/>
-                            <img class="pitcher-image home-pitcher" src="{{this.home_pitcher_img_path}}"/>
-                            <div class="pitcher-stats away-pitcher"><h1>{{this.away_pitcher_abrv}}</h1> <h2>{{this.away_pitcher_rec}} {{this.away_pitcher_era}} ERA</h2></div>
-                            <div class="pitcher-stats home-pitcher"><h1>{{this.home_pitcher_abrv}}</h1> <h2>{{this.home_pitcher_rec}} {{this.home_pitcher_era}} ERA</h2></div>
-                        </div>
-                    </div>
+                    {{> preview-game-card}}
                 {{/each}}
 
                 <!-- FINAL GAMES -->
                 {{#each games.final_games}}
-                    <div class="game-card">
-                        <img class="card-team away-team" src="{{this.away_team_logo}}" />
-                        <img class="card-team home-team" src="{{this.home_team_logo}}" />
-                        <div class="card-header away-score">{{this.away_score}}</div>
-                        <div class="card-header home-score">{{this.home_score}}</div>
-                        <div class="card-separator">|</div>
-                        <div class="card-record away-record">{{this.away_rec}}</div>
-                        <div class="card-record home-record">{{this.home_rec}}</div>
-                        <div class="card-game-status final">{{this.display_status}}</div>
-                        <div class="card-highlight final"></div>
-                        <div class="game-card-details">
-                            <img class="pitcher-image away-pitcher" src="{{this.away_pitcher_img_path}}"/>
-                            <img class="pitcher-image home-pitcher" src="{{this.home_pitcher_img_path}}"/>
-                            <div class="pitcher-stats away-pitcher"><h3>{{this.away_result}}</h3><h1>{{this.away_pitcher_abrv}}</h1> <h2>{{this.away_pitcher_rec}} {{this.away_pitcher_era}} ERA</h2></div>
-                            <div class="pitcher-stats home-pitcher"><h3>{{this.home_result}}</h3><h1>{{this.home_pitcher_abrv}}</h1> <h2>{{this.home_pitcher_rec}} {{this.home_pitcher_era}} ERA</h2></div>
-                        </div>
-                    </div>
+                    {{> final-game-card}}    
                 {{/each}}
 
             </div>

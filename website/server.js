@@ -10,21 +10,30 @@ var game_parser = require('./util/game-parser.js');
 var standings_parser = require('./util/standings-parser.js');
 var util = require('./util/utils.js');
 
-var app = express();
-var port = process.env.PORT || 6969;
-var assets_path = "assets";
-
+/**
+ * CONSTANTS
+ */
 var REFRESH_RATE = 1 * 60 * 1000; //ms
 
-/*
-    Data in json format for rendering each page
+/**
+ * Server variables
  */
+var app = express();
+var port = process.env.PORT || 6969;
+var hbs = exp_handlebars.create({
+    partialsDir: 'views/partials',
+    extname: '.hbs'
+});
 
+
+/**
+ * Data in json format for rendering each page
+ */
 var template_data = {
-    "index" : {},
-    "scoreboard" : {},
-    "standings" : {},
-    "teams" : {},
+    "index" : {},           // always empty for now
+    "scoreboard" : {},      // populated by game_parser.load_scoreboard
+    "standings" : {},       // populated by standings_parser.load_standings
+    "teams" : {},           // always empty
     "date": undefined
 };
 
@@ -162,8 +171,9 @@ function serve_error(err, req, res){
 function update_scoreboard() {
     console.log("Checking if we need to update scoreboard");
 
-    // check if the day has changed
     var today = util.get_todays_date();
+
+    // check if the day has changed
     if(util.compare_date(today, template_data.date) != 0){
         template_data.day = today;
         // TODO: Save old day to file
@@ -177,23 +187,28 @@ function update_scoreboard() {
     // check if no games to update
     else if (template_data.scoreboard.games_active == 0){
         console.log("==> Nothing to update");
-        return setTimeout(update_scoreboard, REFRESH_RATE);
-    }
-
-    console.log("==> Updating scoreboard");
-    game_parser.load_scoreboard(function(res){
-        template_data.scoreboard = res;
-        console.log("==> Scoreboard updated");
         setTimeout(update_scoreboard, REFRESH_RATE);
-    });
+    }
+    // there are games that may have changed, do update
+    else{
+        console.log("==> Updating scoreboard");
+        game_parser.load_scoreboard(function(res){
+            template_data.scoreboard = res;
+            console.log("==> Scoreboard updated");
+            setTimeout(update_scoreboard, REFRESH_RATE);
+        });
+    }
 }
 
-/*
-    Configure templating
+/**
+ * Configure templating
  */
-app.engine('hbs', exp_handlebars({ext:".hbs"}));
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
+/**
+ * Configure routes
+ */
 app.get('/', serve_scoreboard);
 app.get('/index', serve_index);
 app.get('/scoreboard', serve_scoreboard);
@@ -201,11 +216,9 @@ app.get('/standings', serve_standings);
 app.get('/teams', serve_teams);
 
 /* Allow access to static files */
-app.use('/assets', express.static(assets_path));
+app.use('/assets', express.static("assets/"));
 
-/*
-    Basic logging for every request
- */
+/* Basic logging for every request */
 app.use("/", function(req, res, next){
     console.log(req.method + " " + req.path + " - ip: " + req.ip + " ==> " + res.statusCode);
     if (res.status == 200)
@@ -213,7 +226,7 @@ app.use("/", function(req, res, next){
     return;
 });
 
-// 404
+/* Handle 404 */
 app.get('*', function(req, res, next) {
     var err = new Error();
     err.status = 404;
@@ -231,7 +244,7 @@ app.use(function(err, req, res, next){
  * Start the Server
  */
 
-// Set the date
+// Set the current date
 template_data.date = util.get_todays_date();
 
 // Start the server

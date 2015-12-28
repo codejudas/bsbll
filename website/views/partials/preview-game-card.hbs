@@ -1,0 +1,16 @@
+<div class="game-card">
+    <img class="card-team away-team" src="{{this.away_team_logo}}" />
+    <img class="card-team home-team" src="{{this.home_team_logo}}" />
+    <div class="card-header game-time">{{this.game_time}} <h2>{{this.game_tzone}}</h2></div>
+    <div class="card-header game-loc">@ {{this.stadium}}</div>
+    <div class="card-record away-record">{{this.away_rec}}</div>
+    <div class="card-record home-record">{{this.home_rec}}</div>
+    <div class="card-game-status upcoming">{{this.display_status}}</div>
+    <div class="card-highlight upcoming"></div>
+    <div class="game-card-details">
+        <img class="pitcher-image away-pitcher" src="{{this.away_pitcher_img_path}}"/>
+        <img class="pitcher-image home-pitcher" src="{{this.home_pitcher_img_path}}"/>
+        <div class="pitcher-stats away-pitcher"><h1>{{this.away_pitcher_abrv}}</h1> <h2>{{this.away_pitcher_rec}} {{this.away_pitcher_era}} ERA</h2></div>
+        <div class="pitcher-stats home-pitcher"><h1>{{this.home_pitcher_abrv}}</h1> <h2>{{this.home_pitcher_rec}} {{this.home_pitcher_era}} ERA</h2></div>
+    </div>
+</div>
