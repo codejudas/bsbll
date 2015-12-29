@@ -1,21 +1,19 @@
-/*Standings Parser
+/**
+    Standings Parser
     
     Should be called by the server script periodically.
     Downloads the current mlb standings from erikberg.com in json formats and cherry picks necessary information.
     Thanks to Erik Berg for making his API available for free.
 */
 
-var https = require("https");
 var request = require('request');
 
-var api_host = "erikberg.com";
-var reg_standings_path = "/mlb/standings.json";
-var wildcard_path = "/mlb/wildcard.json";
-var user_agent_str = "Evan Fossier (evan.fossier@yahoo.com)";
+/* Constants */
+var USER_AGENT = "Evan Fossier (evan.fossier@yahoo.com)";
+var HTTP_TIMEOUT = 5 * 1000; //ms
+var STANDINGS_URI = "https://erikberg.com/mlb/standings.json";
 
-var poll_interval = 500; // ms
-var poll_timeout = 10 * 1000; //s * 1000 = ms
-
+/* The standings data structure */
 var result = {
     nl: {
         west: [],
@@ -68,37 +66,31 @@ var team_abbreviation = {
     PRIVATE METHODS
  */
 
-function get_standings(path){
-    console.log("Downloading standings data from: " + api_host + path);
+/**
+ * Makes http request to load standings from erikberg.com
+ */
+function get_standings(callback){
+    console.log("Downloading standings data from: " + STANDINGS_URI);
 
-    // Build http req
     var opts = {
-        host: api_host,
-        port: 443,
-        path: path,
-        headers:{
-            'User-Agent': user_agent_str
-        }
+        timeout: HTTP_TIMEOUT,
+        headers: {'User-Agent': USER_AGENT}
     }
+    request.get(STANDINGS_URI, opts, function(err, res, body){
+        if (err || res.statusCode !== 200) { 
+            console.log("ERROR: Received " + res.statusCode + " while trying to load standings");
+            // return empty standings
+            callback(result);
+        }
+        else{
+            parse_standings(body);
+            process_wildcards();
+            console.log("===Done Loading Standings Information===");
+            print_results();
+        }
 
-    https.get(opts, function(res) {
-      console.log("Got response: " + res.statusCode);
-      if (res.statusCode >= 300){
-        console.log("ERROR: Received " + res.statusCode + " on  URL: " + api_host + path);
-        return;
-      }
-      var resp_content = "";
-      res.on("data",function(chunk){
-        resp_content += chunk;
-      });
-
-      res.on("end",function(){
-        // move on to parsing the response
-        parse_standings(resp_content);
-      });
-
-    }).on('error', function(e) {
-      console.log("ERROR: " + e.message);
+        // return standings to caller
+        callback(result);
     });
 }
 
@@ -178,7 +170,6 @@ function fix_gamesback(standing){
 
 /**
  * Sort the wildcard standings into order and fix games back
- * @return {[type]} [description]
  */
 function process_wildcards(){
     var comparator = function(a, b){
@@ -197,47 +188,11 @@ function process_wildcards(){
     }
 }
 
-/**
- * Polls the results until the standings are ready then calls the callback which will pass the result back to the main server script
- * @param  {Function} callback receives 
- * @return {[type]}            [description]
- */
-function wait_til_standings_ready(callback){
-    var is_ready = result.nl.west.length > 0;
-    is_ready = is_ready && result.nl.central.length > 0;
-    is_ready = is_ready && result.nl.east.length > 0;
-    is_ready = is_ready && result.nl.wildcard.length > 0;
-
-    is_ready = is_ready && result.al.west.length > 0;
-    is_ready = is_ready && result.al.central.length > 0;
-    is_ready = is_ready && result.al.east.length > 0;
-    is_ready = is_ready && result.al.wildcard.length > 0;
-
-    if (is_ready) {
-        console.log("===Done Loading Standings Information===");
-        process_wildcards();
-        print_results();
-        callback(result);
-    }
-    else{
-        if (poll_timeout <= 0) {
-            console.log("===Timed Out Loading Standings Information===")
-            callback(result);
-            return;
-        }
-        poll_timeout = poll_timeout - poll_interval; //not exactly precise but good enough.
-        setTimeout(function(){ wait_til_standings_ready(callback); }, poll_interval);
-    }
-}
-
 /*
     PUBLIC METHOD CALLED BY SERVER SCRIPT
  */
 
 exports.load_standings = function(callback){
     console.log("===Loading Standings Information===");
-    get_standings(reg_standings_path);
-
-    // Poll the result object to verify completion
-    wait_til_standings_ready(callback);
+    get_standings(callback);
 }
