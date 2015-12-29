@@ -10,6 +10,10 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 var util = require('./utils.js');
 var sprintf = require('sprintf-js').sprintf;
+var log = require('bunyan').createLogger({
+    name: 'game-parser',
+    level: 'TRACE'
+});
 
 /* Constants */
 var SCOREBOARD_URI_TEMPLATE = "http://gd2.mlb.com/components/game/mlb/year_%s/month_%s/day_%s/master_scoreboard.json";
@@ -103,8 +107,6 @@ var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'A
  * Entry point for getting scoreboard data
  */
 function load_scores(callback, specific_date){
-    console.log("Loading scores...");
-
     // reset result
     result = {
         games: {
@@ -130,7 +132,7 @@ function load_scores(callback, specific_date){
      */
     // dd = 12;
 
-    console.log("Date: "+date["month"]+"/"+date["day"]+"/"+date["year"]+" "+date["hour"]+":"+date["minute"]);
+    log.info("Loading scoreboard for "+date["month"]+"/"+date["day"]+"/"+date["year"]+" "+date["hour"]+":"+date["minute"]);
 
     var day_suffix;
     if(date["day"] % 10 == 1) day_suffix = "st";
@@ -146,16 +148,14 @@ function load_scores(callback, specific_date){
     if(date["day"] < 10) date["day"] = '0' + date["day"];
     if(date["month"] < 10) date["month"] = '0' + date["month"];
 
-    var p = sprintf(SCOREBOARD_URI_TEMPLATE, date["year"], date["month"], date["day"]);
     var scoreboard_uri = sprintf(SCOREBOARD_URI_TEMPLATE, date["year"], date["month"], date["day"]);
-    console.log("using path='"+p+"'");
+    log.debug("Scoreboard uri='"+scoreboard_uri+"'");
 
     request.get(scoreboard_uri, {timeout: HTTP_TIMEOUT}, function(err, res, body){
-        console.log("Got response: " + res.statusCode);
         if (!err && res.statusCode === 200) 
             parse_scores(body, callback);
         else{
-            console.log("ERROR: "+res.statusCode + " downloading scoreboard data");
+            log.error("MLB responded with "+res.statusCode + " while downloading scoreboard data for %s", JSON.stringify(date));
             callback(result);
         }
     });
@@ -165,14 +165,14 @@ function load_scores(callback, specific_date){
  * Parses the scoreboard json received from mlb into our scoreboard datastructure
  */
 function parse_scores(response_text, callback){
-    console.log("Parsing Response...");
-
     var obj = JSON.parse(response_text);
     var game_data = obj["data"]["games"]["game"];
 
     // Ensure that game_data is an array, the proceeding code assumes it is and if it is not an array than using the for each loop breaks
-    if(game_data !== undefined && !Array.isArray(game_data))
+    if(game_data !== undefined && !Array.isArray(game_data)){
+        log.warn({game_data: game_data}, "Game data is not an array.");
         game_data = [].concat(game_data);
+    }
     
     for(var i in game_data){
         result.num_games++;
@@ -322,13 +322,11 @@ function process_final_game(data, g){
 }
 
 function process_postponed_game(data, g){
-    console.log("Game postponed");
     data["status"] = "POSTPONED";
     data["reason"] = g["status"]["reason"];
 }
 
 function process_upcoming_game(data, g){
-    console.log("Game Status = "+data["status"]);
     var away_pitcher, home_pitcher;
     if(data["status"] === "Preview"){
         away_pitcher = "away_probable_pitcher";
@@ -372,13 +370,13 @@ function fix_abbrev(name){
 // Waits until all the asynchronous requests have completed then calls callback which returns the data to the server
 function wait_for_asynch_reqs(callback){
     if(num_asynch_reqs > 0){
-        console.log("===Waiting on asynch reqs ("+num_asynch_reqs+" left)===");
+        log.info("Waiting on asynch reqs ("+num_asynch_reqs+" left)");
         setTimeout(function(){
             wait_for_asynch_reqs(callback);
         }, 2000);
     }
     else{
-        console.log("===All requests done===");
+        log.info("Done loading scoreboard");
         print_scores();
         // Return the games array and call the callback
         callback(result);
@@ -386,15 +384,15 @@ function wait_for_asynch_reqs(callback){
 }
 
 function print_scores(){
-    console.log("Printing collected data...");
-    console.log("LIVE GAMES");
-    console.log(JSON.stringify(result.games.live_games));
-    console.log("FINAL GAMES");
-    console.log(result.games.final_games);
-    console.log("UPCOMING GAMES");
-    console.log(result.games.upcoming_games);
-    console.log("POSTPONED GAMES");
-    console.log(result.games.postponed_games);
+    log.debug("Printing collected data...");
+    log.debug("LIVE GAMES");
+    log.debug(JSON.stringify(result.games.live_games));
+    log.debug("FINAL GAMES");
+    log.debug(JSON.stringify(result.games.final_games));
+    log.debug("UPCOMING GAMES");
+    log.debug(JSON.stringify(result.games.upcoming_games));
+    log.debug("POSTPONED GAMES");
+    log.debug(JSON.stringify(result.games.postponed_games));
 }
 
 // Checks if we already have pitcher's image, if not downloads the image from espn
@@ -407,15 +405,14 @@ function get_pitcher_image(data, away_bool){
     if(away_bool) team =  data["away_team"];
     else team = data["home_team"];
 
-    console.log("Looking for pitcher "+pitcher_name);
+    log.info("Looking for pitcher "+pitcher_name);
     var path = PITCHER_PATH_PREFIX + pitcher_name.split(" ").join("").toLowerCase()+".png";
-    console.log("path="+path);
     num_asynch_reqs++; //Indicate we are starting a sequence of asynchronous requests
-    console.log(">>>Num asynch reqs ++, = "+num_asynch_reqs);
+    log.info(">>>Num asynch reqs ++, = "+num_asynch_reqs);
     fs.open(path,'r',function(err,fd){
         if (err && err.code=='ENOENT') download_image(data, away_bool, path);
         else{
-            console.log("Already have file "+path);
+            log.info("Already have pitcher image for %s : %s ", pitcher_name, path);
             if(!away_bool) data["home_pitcher_img_path"] = path;
             else data["away_pitcher_img_path"] = path;
 
@@ -434,7 +431,7 @@ function download_image(data, away_bool, fname){
     else team = data["home_team"];
 
     var uri = "http://espn.go.com/mlb/teams/roster?team="+ team_abbreviation[team];
-    console.log("("+pitcher_name+")team uri="+uri);
+    log.info("("+pitcher_name+")team uri="+uri);
 
     // Go to roster page to find player
     request.get(uri, {'timeout': HTTP_TIMEOUT}, function(err,res,body){
@@ -449,13 +446,13 @@ function download_image(data, away_bool, fname){
 
                     // Go to player page
                     uri = $pitcher.attr("href");
-                    console.log("("+pitcher_name+") player uri="+uri);
+                    log.info("("+pitcher_name+") player uri="+uri);
 
                     request.get(uri, {'timeout': HTTP_TIMEOUT}, function(err, res, body){
                         if(!err && res.statusCode === 200){
                             $ = cheerio.load(body);
                             var $pic = $(".main-headshot").children().first();
-                            console.log("pic url="+$pic.attr("src"));
+                            log.info("pic url="+$pic.attr("src"));
                             if(!$pic.attr("src")){
                                 set_generic_pitcher_image("ERROR: player "+pitcher_name+" has no picture, skipping", away_bool, data);
                                 return;
@@ -468,7 +465,7 @@ function download_image(data, away_bool, fname){
                                 .get(uri, {"timeout": HTTP_TIMEOUT})
                                 .pipe(fs.createWriteStream(filename))
                                 .on('close', function(){
-                                    console.log("Downloaded image for "+pitcher_name + " to "+filename);
+                                    log.info("Downloaded image for "+pitcher_name + " to "+filename);
                                     // Populate the appropriate fields in data
                                     if(!away_bool) data["home_pitcher_img_path"] = filename;
                                     else data["away_pitcher_img_path"] = filename;
@@ -502,7 +499,7 @@ function download_image(data, away_bool, fname){
 }
 
 function set_generic_pitcher_image(err_msg, away_bool, data) {
-    console.log(err_msg);
+    log.info(err_msg);
     // Just use generic pitcher image
     if(!away_bool) data["home_pitcher_img_path"] = GENERIC_PATH;
     else data["away_pitcher_img_path"] = GENERIC_PATH;
@@ -512,7 +509,7 @@ function set_generic_pitcher_image(err_msg, away_bool, data) {
 
 function decr_asynch_reqs() {
     num_asynch_reqs--;
-    console.log(">>>Num asynch reqs --, = "+num_asynch_reqs);
+    log.info(">>>Num asynch reqs --, = "+num_asynch_reqs);
 }
 
 /*
@@ -520,6 +517,5 @@ function decr_asynch_reqs() {
  */
 
 exports.load_scoreboard = function(callback, date){
-    console.log("===Loading Scoreboard Information===");
     load_scores(callback, date);
 }

@@ -3,7 +3,8 @@
   "description": "A baseball fan's reimagining of mlb.com with a cleaner interface.",
   "author": "Evan Fossier <evan.fossier@gmail.com>",
   "scripts": {
-    "start": "node server.js | bunyan -o short",
+    "start": "node server.js | bunyan -o short -l info --time local",
+    "start:debug": "node server.js | bunyan -o short -l debug --time local",
     "clean": "npm run clean:games && npm run clean:players",
     "clean:games": "rm -vf assets/games/*.json",
     "clean:players": "find assets/img/players -type f -not -name 'generic.png' | xargs rm -vf"

@@ -6,6 +6,8 @@ var express = require('express');
 var fs = require('fs');
 var exp_handlebars = require('express-handlebars');
 var jsonfile = require('jsonfile');
+var bunyan = require('bunyan');
+
 var game_parser = require('./util/game-parser.js');
 var standings_parser = require('./util/standings-parser.js');
 var util = require('./util/utils.js');
@@ -23,6 +25,10 @@ var port = process.env.PORT || 6969;
 var hbs = exp_handlebars.create({
     partialsDir: 'views/partials',
     extname: '.hbs'
+});
+var log = bunyan.createLogger({
+    name: 'server',
+    level: 'TRACE'
 });
 
 
@@ -56,14 +62,11 @@ function serve_index(req, res, next){
  */
 function serve_scoreboard(req, res, next){
     var date = req.query.date;
-    console.log("==>Date: "+date);
     if (date) {
-        console.log("parsing date");
         var parsed_date = util.parse_date(date);
         debugger;
-        console.log("Parsed date:"+JSON.stringify(parsed_date));
         if (parsed_date.error){
-            console.log("Error parsing date: "+ parsed_date.reason);
+            log.warn("Error parsing date: %s", parsed_date.reason);
             var err = new Error();
             err.status = 400;
             err.msg = "<h1> 400 - Bad Request: " + parsed_date.reason + "</h1>";
@@ -72,22 +75,21 @@ function serve_scoreboard(req, res, next){
 
         // check if date is today
         if(!util.date_is_today(parsed_date)){
-            console.log("Date is not today");
+            log.info("Date is not today");
             // check if scoreboard data already downloaded
             var date_filename = util.pad(parsed_date["month"],2) + util.pad(parsed_date["day"],2) + parsed_date["year"].toString() + ".json";
             var relative_path = "assets/games/"+date_filename;
             try{
                 var stat = fs.statSync(relative_path);
-                console.log("Got file info for "+relative_path);
                 // check if file exists
                 if (stat.isFile()){
-                    console.log("Found scoreboard data for "+relative_path);
+                    log.info("Found scoreboard data for %s (%s)", date, relative_path);
                     var data = JSON.parse(jsonfile.readFileSync(relative_path, {throws: false, flags:"r"}));
                     if( !data ){
                         // delete + redownload
-                        console.log(date_filename + " invalid, re-downloading data for that day.");
+                        log.warn("%s invalid, re-downloading data.", date_filename);
                         var data = game_parser.load_scoreboard(function(scoreboard){
-                            console.log("Loaded scoreboard: "+JSON.stringify(scoreboard));
+                            log.debug({scoreboard: scoreboard}, "Loaded scoreboard for %s",date);
                             // save the scoreboard data to the file
                             jsonfile.writeFileSync(relative_path, JSON.stringify(scoreboard));
                             res.render("scoreboard", scoreboard);
@@ -96,14 +98,14 @@ function serve_scoreboard(req, res, next){
                     }
                     else{
                         // render the loaded data from file
-                        console.log(date_filename+" loaded.");
+                        log.info("Loaded %s", date_filename);
                         res.render("scoreboard", data);
                         next();
                     }
                 }
                 else{
                     // 500
-                    console.log(date_filename + " is not a file.");
+                    log.error("%s is not a file.", date_filename);
                     var err = new Error();
                     err.status = 500;
                     err.msg = "<h1> 500 - Internal Error: " + date_filename + " is not a file.";
@@ -112,10 +114,10 @@ function serve_scoreboard(req, res, next){
             }
             catch(e){
                 // File not found exception => need to download that days data
-                console.log(date_filename + " not found, downloading data for that day.");
+                log.info("%s not found, downloading data for that day.", date_filename);
                 // DOWNLOAD DATA FOR THAT DAY
                 var data = game_parser.load_scoreboard(function(scoreboard){
-                    console.log("Loaded scoreboard: "+JSON.stringify(scoreboard));
+                    log.debug({scoreboard: scoreboard}, "Loaded scoreboard for %s", date);
                     // save the scoreboard data to the file
                     jsonfile.writeFileSync(relative_path, JSON.stringify(scoreboard));
                     res.render("scoreboard", scoreboard);
@@ -124,14 +126,14 @@ function serve_scoreboard(req, res, next){
             }
         }
         else{
-            console.log("Date is TODAY!!");
+            log.info("Date is TODAY!!");
             res.render("scoreboard", template_data["scoreboard"]);
             next();
         }
 
     }
     else{
-        console.log("No date specified returning todays games");
+        log.info("No date specified returning todays games");
         res.render("scoreboard", template_data["scoreboard"]);
         next();
     }
@@ -159,9 +161,8 @@ function serve_teams(req,res, next){
  */
 function serve_error(err, req, res){
     err.status = err.status || 500;
-    console.log("Sending Error Code "+ err.status);
     res.status(err.status);
-    console.log(req.method + " " + req.path + " - ip: " + req.ip + " ==> " + res.statusCode);
+    log.warn("%s %s - params:%s ip:%s => %d", req.method, req.path, JSON.stringify(req.query), req.ip, res.statusCode);
     res.send(err.msg || "500 - Internal Server Error");
 }
 
@@ -169,7 +170,7 @@ function serve_error(err, req, res){
  * Periodically checks if the todays scoreboard needs to be refreshed
  */
 function update_scoreboard() {
-    console.log("Checking if we need to update scoreboard");
+    log.info("Checking if we need to update scoreboard");
 
     var today = util.get_todays_date();
 
@@ -177,24 +178,24 @@ function update_scoreboard() {
     if(util.compare_date(today, template_data.date) != 0){
         template_data.day = today;
         // TODO: Save old day to file
-        console.log("==>Its a new day, redownloading data");
+        log.info("==>Its a new day, downloading data for %s", JSON.stringify(today));
         game_parser.load_scoreboard(function(res){
             template_data.scoreboard = res;
-            console.log("==> Scoreboard updated");
+            log.info("==> Scoreboard updated");
             setTimeout(update_scoreboard, REFRESH_RATE);
         });
     }
     // check if no games to update
     else if (template_data.scoreboard.games_active == 0){
-        console.log("==> Nothing to update");
+        log.info("==> Nothing to update");
         setTimeout(update_scoreboard, REFRESH_RATE);
     }
     // there are games that may have changed, do update
     else{
-        console.log("==> Updating scoreboard");
+        log.info("==> Updating scoreboard");
         game_parser.load_scoreboard(function(res){
             template_data.scoreboard = res;
-            console.log("==> Scoreboard updated");
+            log.info("==> Scoreboard updated");
             setTimeout(update_scoreboard, REFRESH_RATE);
         });
     }
@@ -219,8 +220,9 @@ app.get('/teams', serve_teams);
 app.use('/assets', express.static("assets/"));
 
 /* Basic logging for every request */
-app.use("/", function(req, res, next){
-    console.log(req.method + " " + req.path + " - ip: " + req.ip + " ==> " + res.statusCode);
+app.use('/', function(req, res, next){
+    // console.log(req.method + " " + req.path + " - ip: " + req.ip + " ==> " + res.statusCode);
+    log.info("%s %s - params:%s ip:%s => %d", req.method, req.path, JSON.stringify(req.query), req.ip, res.statusCode);
     if (res.status == 200)
         next();
     return;
@@ -249,11 +251,11 @@ template_data.date = util.get_todays_date();
 
 // Start the server
 app.listen(port, function(){
-    console.log("===STARTING SERVER===");
-    console.log("Listening on port "+port);
-    console.log("Refresh rate: "+ (REFRESH_RATE / 1000) + "s");
-    console.log("Todays Date: " + JSON.stringify(template_data.date));
-    console.log("Root dir: "+__dirname);
+    log.info("===STARTING SERVER===");
+    log.info("Listening on port %d", port);
+    log.info("Scoreboard refresh rate: %d s", (REFRESH_RATE / 1000));
+    log.info("Todays Date: %s", JSON.stringify(template_data.date));
+    log.info("Root dir: %s", __dirname);
 });
 
 // Asynchronously get scoreboard

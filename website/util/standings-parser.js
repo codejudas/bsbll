@@ -7,6 +7,10 @@
 */
 
 var request = require('request');
+var log = require('bunyan').createLogger({
+    name: 'standing-parser',
+    level: 'TRACE'
+});
 
 /* Constants */
 var USER_AGENT = "Evan Fossier (evan.fossier@yahoo.com)";
@@ -70,7 +74,7 @@ var team_abbreviation = {
  * Makes http request to load standings from erikberg.com
  */
 function get_standings(callback){
-    console.log("Downloading standings data from: " + STANDINGS_URI);
+    log.info("Downloading standings data from: " + STANDINGS_URI);
 
     var opts = {
         timeout: HTTP_TIMEOUT,
@@ -78,15 +82,15 @@ function get_standings(callback){
     }
     request.get(STANDINGS_URI, opts, function(err, res, body){
         if (err || res.statusCode !== 200) { 
-            if (res) console.log("ERROR: Received " + res.statusCode + " while trying to load standings");
-            else console.log(err);
+            if (res) log.error("Received " + res.statusCode + " while trying to load standings");
+            else log.error(err);
             // return empty standings
             callback(result);
         }
         else{
             parse_standings(body);
             process_wildcards();
-            console.log("===Done Loading Standings Information===");
+            log.info("===Done Loading Standings Information===");
             print_results();
         }
 
@@ -96,7 +100,6 @@ function get_standings(callback){
 }
 
 function parse_standings(response_text){
-    console.log("Parsing Response...");
     var obj = JSON.parse(response_text);
     var standings = obj["standing"];
 
@@ -140,17 +143,17 @@ function parse_standings(response_text){
 }
 
 function print_results(){
-    console.log("NL:");
-    console.log(result.nl.west);
-    console.log(result.nl.central);
-    console.log(result.nl.east);
-    console.log(result.nl.wildcard);
+    log.debug("NL:");
+    log.debug(JSON.stringify(result.nl.west));
+    log.debug(JSON.stringify(result.nl.central));
+    log.debug(JSON.stringify(result.nl.east));
+    log.debug(JSON.stringify(result.nl.wildcard));
     
-    console.log("AL:");
-    console.log(result.al.west);
-    console.log(result.al.central);
-    console.log(result.al.east);
-    console.log(result.al.wildcard);
+    log.debug("AL:");
+    log.debug(JSON.stringify(result.al.west));
+    log.debug(JSON.stringify(result.al.central));
+    log.debug(JSON.stringify(result.al.east));
+    log.debug(JSON.stringify(result.al.wildcard));
 }
 
 function fix_gamesback(standing){
@@ -194,6 +197,6 @@ function process_wildcards(){
  */
 
 exports.load_standings = function(callback){
-    console.log("===Loading Standings Information===");
+    log.info("===Loading Standings Information===");
     get_standings(callback);
 }

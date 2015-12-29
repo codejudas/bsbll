@@ -1,6 +1,10 @@
 /**
  *  Utility functions
  */
+var log = require('bunyan').createLogger({
+    name: 'utils',
+    level: 'TRACE'
+});
 
 module.exports = {};
 
@@ -14,7 +18,7 @@ module.exports.parse_date = function(date){
     if (date.length != 8){
         result.error = true;
         result.reason = "Date is not the right length";
-        console.log(result.reason);
+        log.warn(result.reason);
         return result;
     }
 
@@ -22,7 +26,7 @@ module.exports.parse_date = function(date){
     if (mm > 12 || mm < 1){
         result.error = true;
         result.reason = "Illegal month number";
-        console.log(result.reason);
+        log.warn(result.reason);
         return result;
     }
 
@@ -32,7 +36,8 @@ module.exports.parse_date = function(date){
     if (yyyy < 2014){
         result.error = true;
         result.reason = "Year must be between 2014 and "+ today.getFullYear();
-        console.log(result.reason);
+        log.warn(result.reason);
+        return result;
     }
 
     var max_day = new Date(yyyy, mm, 0).getDate();
@@ -41,7 +46,7 @@ module.exports.parse_date = function(date){
     if (dd < 1 || dd > max_day){
         result.error = true;
         result.reason = "Day must be between 1 and "+max_day;
-        console.log(result.reason);
+        log.warn(result.reason);
         return result;
     }
 
