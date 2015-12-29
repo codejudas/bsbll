@@ -1,5 +1,4 @@
 add a README to the git repo
-remove mixing of http and request libs in game-parser.js
 add a calendar widget to select the data more easily
 pull real news stories from mlb.com
 

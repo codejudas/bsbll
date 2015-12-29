@@ -5,15 +5,19 @@
     For Upcoming and Final games, downloads pitcher images from espn.com and adds them to the assets folder.
 */
 
-var http = require("http");
 var request = require('request');
 var fs = require('fs');
 var cheerio = require('cheerio');
 var util = require('./utils.js');
+var sprintf = require('sprintf-js').sprintf;
+
+/* Constants */
+var SCOREBOARD_URI_TEMPLATE = "http://gd2.mlb.com/components/game/mlb/year_%s/month_%s/day_%s/master_scoreboard.json";
 
 var PITCHER_PATH_PREFIX = "assets/img/players/";
 var GENERIC_PATH = PITCHER_PATH_PREFIX + "generic.png";
 var TEAM_LOGO_PATH_PREFIX = "assets/img/teams/";
+
 var MAX_PNAME_LENGTH = 10;
 var HTTP_TIMEOUT = 15 * 1000; //ms
 
@@ -142,36 +146,88 @@ function load_scores(callback, specific_date){
     if(date["day"] < 10) date["day"] = '0' + date["day"];
     if(date["month"] < 10) date["month"] = '0' + date["month"];
 
-    var p = "/components/game/mlb/year_"+date["year"]+"/month_"+date["month"]+"/day_"+date["day"]+"/master_scoreboard.json";
+    var p = sprintf(SCOREBOARD_URI_TEMPLATE, date["year"], date["month"], date["day"]);
+    var scoreboard_uri = sprintf(SCOREBOARD_URI_TEMPLATE, date["year"], date["month"], date["day"]);
     console.log("using path='"+p+"'");
 
-    // Build http req
-    var opts = {
-        host: "gd2.mlb.com",
-        port: 80,
-        path: p
+    request.get(scoreboard_uri, {timeout: HTTP_TIMEOUT}, function(err, res, body){
+        console.log("Got response: " + res.statusCode);
+        if (!err && res.statusCode === 200) 
+            parse_scores(body, callback);
+        else{
+            console.log("ERROR: "+res.statusCode + " downloading scoreboard data");
+            callback(result);
+        }
+    });
+}
+
+/**
+ * Parses the scoreboard json received from mlb into our scoreboard datastructure
+ */
+function parse_scores(response_text, callback){
+    console.log("Parsing Response...");
+
+    var obj = JSON.parse(response_text);
+    var game_data = obj["data"]["games"]["game"];
+
+    // Ensure that game_data is an array, the proceeding code assumes it is and if it is not an array than using the for each loop breaks
+    if(game_data !== undefined && !Array.isArray(game_data))
+        game_data = [].concat(game_data);
+    
+    for(var i in game_data){
+        result.num_games++;
+
+        // Cherry pick information we need
+        var g = game_data[i];
+        var data = {};
+        data["away_team"] = g["away_team_city"];
+        data["home_team"] = g["home_team_city"];
+        data["away_team_logo"] = TEAM_LOGO_PATH_PREFIX + team_abbreviation[data["away_team"]] + ".png";
+        data["home_team_logo"] = TEAM_LOGO_PATH_PREFIX + team_abbreviation[data["home_team"]] + ".png";
+        data["away_rec"] = g["away_win"] + " - " +g["away_loss"];
+        data["home_rec"] = g["home_win"] + " - " +g["home_loss"];
+        data["status"] = g["status"]["status"];
+
+        // Get Data for in progress game
+        if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
+            result.games_active++;
+            process_live_game(data, g);
+        }
+        // Get Data for Final Game
+        else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early")
+            process_final_game(data, g);
+        // Get Data for postponed game
+        else if(data["status"] === "Postponed" || data["status"] === "Suspended")
+            process_postponed_game(data, g);
+        // Get Data for upcoming game
+        else{
+            result.games_active++;
+            process_upcoming_game(data, g);
+        }
+
+        // Fix long pitcher name abbreviations if necessary
+        if(data["away_pitcher_abrv"] && data["away_pitcher_abrv"].length > MAX_PNAME_LENGTH){
+            data["away_pitcher_abrv"] = fix_abbrev(data["away_pitcher_abrv"]);
+        }
+        if(data["home_pitcher_abrv"] && data["home_pitcher_abrv"].length > MAX_PNAME_LENGTH){
+            data["home_pitcher_abrv"] = fix_abbrev(data["home_pitcher_abrv"]);
+        }
+        // Fix long batter names in live games
+        if(data["batter_abrv"] && data["batter_abrv"].length > MAX_PNAME_LENGTH){
+            data["batter_abrv"] = fix_abbrev(data["batter_abrv"]);
+        }
+        // Fix long pitcher names in live games
+        if(data["pitcher_abrv"] && data["pitcher_abrv"].length > MAX_PNAME_LENGTH){
+            data["pitcher_abrv"] = fix_abbrev(data["pitcher_abrv"]);
+        }
+
+        if(data["status"] === "UPCOMING") result.games.upcoming_games.push(data);
+        else if(data["status"] === "LIVE") result.games.live_games.push(data);
+        else if(data["status"] === "POSTPONED") result.games.postponed_games.push(data);
+        else result.games.final_games.push(data);
     }
 
-    http.get(opts, function(res) {
-        console.log("Got response: " + res.statusCode);
-
-        var resp_content = "";
-        res.on("data",function(chunk){
-            resp_content += chunk;
-        });
-
-        res.on("end",function(){
-            if (res.statusCode !== 200){
-                console.log("ERROR: "+res.statusCode);
-                callback(result);
-            }
-            else
-                parse_scores(resp_content, callback);
-        });
-
-    }).on('error', function(e) {
-      console.log("ERROR: " + e.message);
-    });
+    wait_for_asynch_reqs(callback);
 }
 
 function process_live_game(data, g){
@@ -263,9 +319,6 @@ function process_final_game(data, g){
     // Load pitcher images if they havent already been downloaded
     get_pitcher_image(data, true);
     get_pitcher_image(data, false);
-
-    // data["away_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["away_pitcher"].split(" ").join("").toLowerCase()+".png";
-    // data["home_pitcher_img_path"] = PITCHER_PATH_PREFIX + data["home_pitcher"].split(" ").join("").toLowerCase()+".png";
 }
 
 function process_postponed_game(data, g){
@@ -305,72 +358,6 @@ function process_upcoming_game(data, g){
     data["stadium"] = g["venue"];
 }
 
-
-function parse_scores(response_text, callback){
-    console.log("Parsing Response...");
-
-    var obj = JSON.parse(response_text);
-    var game_data = obj["data"]["games"]["game"];
-
-    // Ensure that game_data is an array, the proceeding code assumes it is and if it is not an array than using the for each loop breaks
-    if(game_data !== undefined && !Array.isArray(game_data))
-        game_data = [].concat(game_data);
-    
-    for(var i in game_data){
-        result.num_games++;
-
-        // Cherry pick information we need
-        var g = game_data[i];
-        var data = {};
-        data["away_team"] = g["away_team_city"];
-        data["home_team"] = g["home_team_city"];
-        data["away_team_logo"] = TEAM_LOGO_PATH_PREFIX + team_abbreviation[data["away_team"]] + ".png";
-        data["home_team_logo"] = TEAM_LOGO_PATH_PREFIX + team_abbreviation[data["home_team"]] + ".png";
-        data["away_rec"] = g["away_win"] + " - " +g["away_loss"];
-        data["home_rec"] = g["home_win"] + " - " +g["home_loss"];
-        data["status"] = g["status"]["status"];
-
-        // Get Data for in progress game
-        if(data["status"] === "In Progress" || data["status"] === "Delayed Start"){
-            result.games_active++;
-            process_live_game(data, g);
-        }
-        // Get Data for Final Game
-        else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early")
-            process_final_game(data, g);
-        // Get Data for postponed game
-        else if(data["status"] === "Postponed" || data["status"] === "Suspended")
-            process_postponed_game(data, g);
-        // Get Data for upcoming game
-        else{
-            result.games_active++;
-            process_upcoming_game(data, g);
-        }
-
-        // Fix long pitcher name abbreviations if necessary
-        if(data["away_pitcher_abrv"] && data["away_pitcher_abrv"].length > MAX_PNAME_LENGTH){
-            data["away_pitcher_abrv"] = fix_abbrev(data["away_pitcher_abrv"]);
-        }
-        if(data["home_pitcher_abrv"] && data["home_pitcher_abrv"].length > MAX_PNAME_LENGTH){
-            data["home_pitcher_abrv"] = fix_abbrev(data["home_pitcher_abrv"]);
-        }
-        // Fix long batter names in live games
-        if(data["batter_abrv"] && data["batter_abrv"].length > MAX_PNAME_LENGTH){
-            data["batter_abrv"] = fix_abbrev(data["batter_abrv"]);
-        }
-        // Fix long pitcher names in live games
-        if(data["pitcher_abrv"] && data["pitcher_abrv"].length > MAX_PNAME_LENGTH){
-            data["pitcher_abrv"] = fix_abbrev(data["pitcher_abrv"]);
-        }
-
-        if(data["status"] === "UPCOMING") result.games.upcoming_games.push(data);
-        else if(data["status"] === "LIVE") result.games.live_games.push(data);
-        else if(data["status"] === "POSTPONED") result.games.postponed_games.push(data);
-        else result.games.final_games.push(data);
-    }
-
-    wait_for_asynch_reqs(callback);
-}
 
 /**
  * Abrreviate pitcher's last name to fit on game card

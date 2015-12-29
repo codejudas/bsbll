@@ -78,7 +78,8 @@ function get_standings(callback){
     }
     request.get(STANDINGS_URI, opts, function(err, res, body){
         if (err || res.statusCode !== 200) { 
-            console.log("ERROR: Received " + res.statusCode + " while trying to load standings");
+            if (res) console.log("ERROR: Received " + res.statusCode + " while trying to load standings");
+            else console.log(err);
             // return empty standings
             callback(result);
         }
