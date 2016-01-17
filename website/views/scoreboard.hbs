@@ -54,6 +54,11 @@
                     {{> live-game-card}}
                 {{/each}}
 
+                <!-- POSTPONED GAMES -->
+                {{#each games.postponed_games}}
+                    {{> postponed-game-card}}
+                {{/each}}
+
                 <!-- UPCOMING GAMES -->
                 {{#each games.upcoming_games}}
                     {{> preview-game-card}}

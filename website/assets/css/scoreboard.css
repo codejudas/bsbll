@@ -197,6 +197,10 @@
     background-color: #8BEC32;
 }
 
+.postponed{
+    background-color: #F5AB35;
+}
+
 .card-highlight.highlighted{
     width:100%;
     left:0px;

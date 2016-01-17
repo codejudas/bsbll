@@ -197,7 +197,7 @@ function parse_scores(response_text, callback){
         else if(data["status"] === "Game Over" || data["status"] === "Final" || data["status"] === "Completed Early")
             process_final_game(data, g);
         // Get Data for postponed game
-        else if(data["status"] === "Postponed" || data["status"] === "Suspended")
+        else if(data["status"] === "Postponed" || data["status"] === "Suspended" || data["status"] === "Cancelled")
             process_postponed_game(data, g);
         // Get Data for upcoming game
         else{
@@ -322,6 +322,7 @@ function process_final_game(data, g){
 }
 
 function process_postponed_game(data, g){
+    data["display_status"] = data["status"].toUpperCase() ;
     data["status"] = "POSTPONED";
     data["reason"] = g["status"]["reason"];
 }

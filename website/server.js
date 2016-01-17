@@ -15,7 +15,7 @@ var util = require('./util/utils.js');
 /**
  * CONSTANTS
  */
-var REFRESH_RATE = 1 * 60 * 1000; //ms
+var REFRESH_RATE = 5 * 60 * 1000; //ms
 
 /**
  * Server variables
