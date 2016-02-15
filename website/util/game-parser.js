@@ -325,6 +325,15 @@ function process_postponed_game(data, g){
     data["display_status"] = data["status"].toUpperCase() ;
     data["status"] = "POSTPONED";
     data["reason"] = g["status"]["reason"];
+    data["reason_img"] = "/assets/img/weather/" + data["reason"].toLowerCase() + ".png";
+
+    data["game_time"] = g["home_time"] + g["ampm"].toLowerCase();
+    data["game_tzone"] = time_zones[data["home_team"]];
+    data["stadium"] = g["venue"];
+    log.warn("Got postponed game with resume_date set: "+g["resume_date"]);
+
+    if (!g["resume_date"] || g["resume_date"].length === 0) data["eta"] = "unknown";
+    else data["eta"] = g["resume_date"];
 }
 
 function process_upcoming_game(data, g){

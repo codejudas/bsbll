@@ -472,7 +472,7 @@
     left:85px;
 }
 
-.game-info-line>h1,h2,h3,h4{
+.game-info-line>h1, .game-info-line>h2, .game-info-line>h3, .game-info-line>h4{
     margin: 0px;
     font-weight: 300;
     color:white;
@@ -488,7 +488,7 @@
     opacity: 0.6;
 }
 
-.game-info-line>h3,h4{
+.game-info-line>h3, .game-info-line>h4{
     font-size: 12px;
     opacity: 0.6;
     float:right;
@@ -584,6 +584,41 @@
     height:13px;
     margin-left: 1px;
     border:1px solid #f83240;
+}
+
+/**
+ * Postponed game stuff
+ */
+
+.postponed-weather {
+    position:relative;
+    opacity: 0.9;
+    width: 80px;
+    height: 80px;
+    left: 20px;
+    top: 25px;
+}
+
+.postponed-reason {
+    position: absolute;
+    top: 25px;
+    left: 120px;
+    color: #ffffff;
+    font-family: "Open Sans", Arial;
+}
+
+.postponed-reason > h1 {
+    font-size: 23px;
+    font-weight: 300;
+    margin: 0px;
+}
+
+.postponed-reason > h2 {
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0px;
+    margin-top: 10px;
+    opacity: 0.6;
 }
 
 /*

@@ -8,6 +8,7 @@ var exp_handlebars = require('express-handlebars');
 var jsonfile = require('jsonfile');
 var bunyan = require('bunyan');
 
+var handlebar_helpers = require('./util/handlebars-helpers.js');
 var game_parser = require('./util/game-parser.js');
 var standings_parser = require('./util/standings-parser.js');
 var util = require('./util/utils.js');
@@ -24,8 +25,10 @@ var app = express();
 var port = process.env.PORT || 6969;
 var hbs = exp_handlebars.create({
     partialsDir: 'views/partials',
-    extname: '.hbs'
+    extname: '.hbs',
+    helpers: handlebar_helpers.load_helpers()
 });
+
 var log = bunyan.createLogger({
     name: 'server',
     level: 'TRACE'
@@ -218,6 +221,8 @@ app.get('/teams', serve_teams);
 
 /* Allow access to static files */
 app.use('/assets', express.static("assets/"));
+/* favicon */
+app.use('/favicon.ico', express.static('favicon.ico'));
 
 /* Basic logging for every request */
 app.use('/', function(req, res, next){

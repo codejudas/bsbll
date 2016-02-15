@@ -1,7 +1,8 @@
 add a README to the git repo
 add a calendar widget to select the data more easily
 pull real news stories from mlb.com
-add a card for postponed games (see 9/10/2015)
+improve postponed games card
+clicking on a game card should open that games page on mlb
 
 ----
 
