@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MLB News</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300|Oswald:400,700,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="assets/css/global.css" />
+        <link rel="stylesheet" type="text/css" href="assets/css/navbar.css" />
+        <link rel="stylesheet" type="text/css" href="assets/css/news.css" />
+        <!--[if !IE]><!-->
+        <script language="javascript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+        <!--<![endif]-->
+        <!--[if IE]>
+            <script language="javascript" type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <![endif]-->
+        <script language="javascript" type="text/javascript" src="assets/js/nav-script.js"></script>
+        <script language="javascript" type="text/javascript" src="assets/js/news-script.js"></script>
+    </head>
+    <body>
+        <div class="nav">
+            <img id="mlb-icon" src="assets/img/mlb.png" />
+            <div id="nav-selector"></div>
+            <div class="nav-entry nav-selected"><p>News</p></div>
+            <div class="nav-entry"><p>Scoreboard</p></div>
+            <div class="nav-entry"><p>Standings</p></div>
+            <div class="nav-entry"><p>Teams</p></div>
+            <img id="nav-search-icon" src="assets/img/search-flipped.png" />
+            <div id="nav-border"></div>
+        </div>
+        <div id="search-container">
+            <div id="search-overlay"></div>
+            <div class="search-modal modal-hidden">
+                <img id="search-modal-icon" src="assets/img/search-flipped.png" />
+                <input type="text" placeholder="Search the mlb" id="search-input"/>
+            </div>
+        </div>
+        <div class="content">
+            <div id="splash-container">
+                <div id="splash-overlay"></div>
+                <img id="splash-right-arrow" src="assets/img/splash-arrow.png" />
+                <img id="splash-left-arrow" src="assets/img/splash-arrow.png" />
+                <div id="story-container">
+                    <div class="news-story-splash active">
+                        <div class="splash-text">
+                            <h1>Don't miss any of the Opening Day action with this viewing guide</h1>
+                            <h2>5:17 pm EST | 69 Comments</h2>
+                        </div>
+                        <img class="splash-img" src="assets/img/news_op.jpg"/>
+                    </div>
+                    <div class="news-story-splash">
+                        <div class="splash-text">
+                            <h1>Is Buster Posey the league's best catcher?</h1>
+                            <h2>12:12 pm EST | 99 Comments</h2>
+                        </div>
+                        <img class="splash-img" src="assets/img/news_bp.jpg"/>
+                    </div>
+                    <div class="news-story-splash">
+                        <div class="splash-text">
+                            <h1>The top 10 nastiest interleague rivalries</h1>
+                            <h2>10:02 am EST | 34 Comments</h2>
+                        </div>
+                        <img class="splash-img" src="assets/img/news_fight.jpg"/>
+                    </div>
+                    <div class="news-story-splash">
+                        <div class="splash-text">
+                            <h1>Archer dominates Jays to keep Rays rolling</h1>
+                            <h2>2:34 pm EST | 10 Comments</h2>
+                        </div>
+                        <img class="splash-img" src="assets/img/news_ch.jpg"/>
+                    </div>
+                </div>
+            </div>
+            <div id="splash-bottom-bar">
+                <img id="splash-bottom-arrow" src="assets/img/down-arrow-white.png"/>
+            </div>
+            <div id="news-list">
+                <div class="news-card">
+                    <div class="story-date"><p>April 26</p><p>2:34pm</p></div>
+                    <div class="story-text">
+                        <h1>Archer dominates Jays to keep Rays rolling</h1>
+                        <p>ST. PETERSBURG -- The Rays completed a three-game weekend sweep of the Blue Jays with a 5-1 win Sunday afternoon at Tropicana Field. Chris Archer led the way with... <u>Continue Reading</u></p>
+                    </div>
+                </div>
+
+                <div class="news-card">
+                    <div class="story-date"><p>April 22</p><p>12:12pm</p></div>
+                    <div class="story-text">
+                        <h1>Is Buster Posey the league's best catcher?</h1>
+                        <p>So... do you think Derek Jeter is starting to get jealous of Buster Posey? He probably should be. Because if you just substitute wholesome family dude for cool bachelor dude... <u>Continue Reading</u></p>
+                    </div>
+                </div>
+
+                <div class="news-card">
+                    <div class="story-date"><p>April 11</p><p>7:34pm</p></div>
+                    <div class="story-text">
+                        <h1>Orioles Get 20 Hits in 18-7 Rout of Red Sox</h1>
+                        <p>BALTIMORE -- Delmon Young drove in five runs, Chris Davis homered and the Baltimore Orioles received a bounce-back pitching performance from Bud Norris in an 18-7 victory... <u>Continue Reading</u></p>
+                    </div>
+                </div>
+
+                <div class="news-card">
+                    <div class="story-date"><p>April 4</p><p>10:02am</p></div>
+                    <div class="story-text">
+                        <h1>The top 10 nastiest interleague rivalries</h1>
+                        <p>A fight in Major League Baseball is a rather rare occurrence, especially those that result in injury and bloodshed. Regardless, baseball has seen its fair share of brawls over time... <u>Continue Reading</u></p>
+                    </div>
+                </div>
+
+                <div class="news-card">
+                    <div class="story-date"><p>April 1</p><p>5:17pm</p></div>
+                    <div class="story-text">
+                        <h1>Don't miss any of the Opening Day action with this viewing guide</h1>
+                        <p>We stayed late up to watch the pageantry of the Major League Baseball season beginning in Australia. We saw the Dodgers win both games of the Opening Series at the Sydney...<u>Continue Reading</u></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,14 @@
+add a README to the git repo
+add a calendar widget to select the data more easily
+pull real news stories from mlb.com
+improve postponed games card
+clicking on a game card should open that games page on mlb
+fix layout so that cards take up as much of screen as possible
+add credits page
+make search functional
+refactor pages so that there is a main page which contains navbar/search and everything else implemented as partials
+
+----
+
+have special cards for playoffs
+have special page for playoffs with brackets

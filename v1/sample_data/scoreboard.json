@@ -1,0 +1,14 @@
+{
+    'games': {
+        'final_games': [
+
+        ],
+        'live_games': [],
+        'upcoming_games': [],
+        'postponed_games': []
+    },
+    'num_games': 0,
+    'date_str': undefined,
+    'date': undefined,
+    'games_active': 0
+}
