@@ -1,15 +1,16 @@
 .DS_Store
 
 # Don't track downloaded player images
-website/assets/img/players/**
+v1/assets/img/players/**
 
 # Except generic player image
-!website/assets/img/players/generic.png
+!v1/assets/img/players/generic.png
 
 # Don't track node dependency files
-website/node_modules
+v1/node_modules/*
+v2/node_modules/*
 
 # Don't track game data that is downloaded
-website/assets/games/*.json
+v1/assets/games/*.json
 
 npm-debug.log
