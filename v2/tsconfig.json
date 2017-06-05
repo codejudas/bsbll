@@ -8,9 +8,12 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "outDir": "build",
-    "jsx": "preserve"
+    "jsx": "react"
   },
+  "include": [
+    "./src/**/*"
+  ],
   "exclude": [
-    "node_modules"
+    "./node_modules/**/*"
   ]
 }

@@ -4,9 +4,10 @@ import * as express from 'express';
 import * as bunyan from 'bunyan';
 import * as proc from 'process';
 import * as cron from 'node-cron';
+import * as path from 'path';
 
-import { loadScores } from './scoreboard/loader';
-import { toFileName } from './common/util';
+import { loadScores } from './scoreboard';
+import { toFileName } from '../common/util';
 
 var log = bunyan.createLogger({
     name: 'server',
@@ -20,13 +21,23 @@ const app = express();
 const port = proc.env.PORT || 6969;
 
 /**
+ * Log Every Request
+ */
+app.use((req, res, next) => {
+    log.info("%s %s - params:%s ip:%s", req.method, req.path, JSON.stringify(req.query), req.ip);
+    next();
+});
+
+
+/**
  * Setup Routes
  */
 
 // GET / 
 app.get('/', (req, res, next) => {
-    res.send('Hey!');
-    next();
+    let p = path.join(__dirname, '../web/index.html');
+    log.info(`Index path: ${p}`);
+    res.sendFile(p);
 });
 
 // GET /api/scoreboard
@@ -55,18 +66,10 @@ app.get('/api/scoreboard/:date', (req, res, next) => {
 /**
  * Serve web and img files
  */
-app.use('/assets/js/web', express.static('./build/web'));
-app.use('/assets/js/common', express.static('./build/common'));
-app.use('/assets/img/pitchers', express.static('./data/pitchers'));
-
-
-/**
- * Log Every Request
- */
-app.use((req, res, next) => {
-    log.info("%s %s - params:%s ip:%s => %d", req.method, req.path, JSON.stringify(req.query), req.ip, res.statusCode);
-    next();
-});
+app.use('/assets/js', express.static('./build/web')); // Compiled front-end js
+app.use('/assets/css', express.static('./src/web/css')); // CSS
+app.use('/assets/js/common', express.static('./build/common')); // Compiled common js
+app.use('/assets/img/pitchers', express.static('./data/pitchers')); //pitcher imgs
 
 /**
  * Start Server
