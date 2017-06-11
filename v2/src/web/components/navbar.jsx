@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Radium from 'radium';
+import {Link} from 'react-router-dom';
 
 
 export const TABS = {
@@ -22,7 +23,13 @@ class Tab extends React.Component {
                 backgroundColor: 'blue'
             }
         };
-        return <div style={style} className="tab">{this.props.name}</div>;
+        return (
+            <Link to={`/${this.props.name.toLowerCase()}`}>
+                <div style={style} className="tab">
+                    {this.props.name}
+                </div>
+            </Link>
+        );
     }
 }
 Tab = Radium(Tab);

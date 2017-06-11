@@ -2,19 +2,20 @@ const path = require('path');
 const proc = require('process');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 const production = process.env.NODE_ENV === 'production';
 
 function devConfig() {
   return {
     cache: true,
-    entry: './src/web/index.jsx',
+    entry: './src/web/app.jsx',
     devtool: "source-map", // enable sourcemap for debugging
     target: 'web', // default value for something
     output: {
       publicPath: 'http://localhost:6969/', // location html expects to find js
       path: '/',  // / Because we are building to memory now
-      filename: 'assets/js/index.js'
+      filename: 'assets/js/bundle.js'
     },
     module: {
       rules: [
@@ -27,13 +28,18 @@ function devConfig() {
         ]
     },
     plugins: [
+      // HMR
+      new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         template: './src/web/index.template.ejs',
         filename: '/index.html',
-        inject: 'body'
+        inject: 'body',
+        alwaysWriteToDisk: true,
       }),
-      // HMR
-      new webpack.HotModuleReplacementPlugin()
+      // Necessary to write out index.html w/ HMR
+      new HtmlWebpackHarddiskPlugin({
+        outputPath: path.resolve(__dirname, 'build/web')
+      })
     ]
   };
 }
@@ -41,12 +47,12 @@ function devConfig() {
 function prodConfig() {
   return {
     cache: true,
-    entry: './src/web/index.jsx',
+    entry: './src/web/app.jsx',
     devtool: "source-map", // enable sourcemap for debugging
     output: {
       path: path.resolve(__dirname, 'build/web'),
       publicPath: '/assets/js/',
-      filename: 'index.js'
+      filename: 'bundle.js'
     },
     module: {
       rules: [
@@ -62,7 +68,8 @@ function prodConfig() {
       new HtmlWebpackPlugin({
         template: './src/web/index.template.ejs',
         filename: 'index.html',
-        inject: 'body'
+        inject: 'body',
+        alwaysWriteToDisk: true,
       })
     ]
   };

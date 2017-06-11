@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 // GET / 
 app.get('/', (req, res, next) => {
-    res.redirect('/index.html');
+    res.redirect('/app');
 });
 
 // GET /api/scoreboard
@@ -74,8 +74,15 @@ if (!production) {
     enableWebpackHMR(app);
 } else {
     app.use('/assets/js', express.static('./build/web')); // Compiled front-end js
-    app.get('/index.html', (req, res, next) => { res.sendFile(path.join(__dirname, '../web/index.html')); });
 }
+
+/**
+ * Anything /app redirects to react app page
+ */
+app.use('/app', (req, res, next) => {
+    log.info(`Path: ${req.path}`);
+    res.sendFile(path.join(__dirname, '../web/index.html'));
+});
 
 /**
  * Start Server
