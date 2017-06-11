@@ -3,7 +3,7 @@ import * as webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
 import * as webpackHotMiddleware from 'webpack-hot-middleware';
 
-const webpackConfig = require('../../webpack.config.dev.js');
+const webpackConfig = require('../../webpack.config.js');
 const webpackCompiler = webpack(webpackConfig);
 
 /* Enable webpack middleware for hot-reloads in development */
@@ -12,7 +12,7 @@ export function enableWebpackHMR(app) {
         publicPath: webpackConfig.output.publicPath,
         stats: {
             colors: true,
-            /* chunks: false, // this reduces the amount of stuff I see in my terminal; configure to your needs*/
+            chunks: false, // this reduces the amount of stuff I see in my terminal; configure to your needs
             'errors-only': true
         }
     }));
@@ -23,7 +23,7 @@ export function enableWebpackHMR(app) {
     });
 
     app.use(webpackHotMiddleware(webpackCompiler, {
-        log: log.info
+        log: log.info.bind(log)
     }));
  
     return app;
