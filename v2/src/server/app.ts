@@ -8,6 +8,7 @@ import * as path from 'path';
 
 import { loadScores } from './scoreboard';
 import { toFileName } from '../common/util';
+import { enableWebpackHMR } from './app.dev';
 
 var log = bunyan.createLogger({
     name: 'server',
@@ -19,6 +20,7 @@ var log = bunyan.createLogger({
  */
 const app = express();
 const port = proc.env.PORT || 6969;
+const production = proc.env.NODE_ENV === 'production';
 
 /**
  * Log Every Request
@@ -35,9 +37,7 @@ app.use((req, res, next) => {
 
 // GET / 
 app.get('/', (req, res, next) => {
-    let p = path.join(__dirname, '../web/index.html');
-    log.info(`Index path: ${p}`);
-    res.sendFile(p);
+    res.redirect('/index.html');
 });
 
 // GET /api/scoreboard
@@ -66,17 +66,28 @@ app.get('/api/scoreboard/:date', (req, res, next) => {
 /**
  * Serve web and img files
  */
-app.use('/assets/js', express.static('./build/web')); // Compiled front-end js
-app.use('/assets/css', express.static('./src/web/css')); // CSS
 app.use('/assets/js/common', express.static('./build/common')); // Compiled common js
 app.use('/assets/img/pitchers', express.static('./data/pitchers')); //pitcher imgs
+
+if (!production) {
+    log.warn('Enabling hot module replacement in development environment.');
+    enableWebpackHMR(app);
+} else {
+    app.use('/assets/js', express.static('./build/web')); // Compiled front-end js
+    app.get('/index.html', (req, res, next) => { res.sendFile(path.join(__dirname, '../web/index.html')); });
+}
 
 /**
  * Start Server
  */
 app.listen(port, () => {
     log.info("===STARTING SERVER===");
-    log.info("Listening on port %d", port);
+    if (production) {
+        log.warn('Running in production environment.');
+    } else {
+        log.warn('Running in development environment.');
+    }
+    log.info(`Listening on port ${port}`);
 });
 
 /**
