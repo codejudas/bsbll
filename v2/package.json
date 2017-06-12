@@ -6,7 +6,7 @@
   "scripts": {
     "start:server": "node build/server/app.js | bunyan -o short -l info --time local",
     "start": "npm run clean:build && npm run build && npm run start:server",
-    "build": "tsc && webpack",
+    "build": "tsc && webpack --progress",
     "clean:build": "rm -rf build/*",
     "clean:dep": "rm -rf node_modules",
     "clean:all": "npm run clean:dep && npm run clean:build"

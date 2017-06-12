@@ -16,7 +16,7 @@ class Tab extends React.Component {
     render() {
         let style = {
             cursor: 'pointer',
-            height: '100%',
+            height: '90%',
             display: 'inline-block',
             backgroundColor: 'grey',
             ':hover': {

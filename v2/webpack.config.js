@@ -13,9 +13,9 @@ function devConfig() {
     devtool: "source-map", // enable sourcemap for debugging
     target: 'web', // default value for something
     output: {
-      publicPath: 'http://localhost:6969/', // location html expects to find js
-      path: '/',  // / Because we are building to memory now
-      filename: 'assets/js/bundle.js'
+      path: path.resolve(__dirname, 'build/web'),
+      publicPath: '/assets/js/',
+      filename: 'bundle.js'
     },
     module: {
       rules: [
@@ -32,7 +32,7 @@ function devConfig() {
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         template: './src/web/index.template.ejs',
-        filename: '/index.html',
+        filename: 'index.html',
         inject: 'body',
         alwaysWriteToDisk: true,
       }),
