@@ -12,6 +12,12 @@ export const TABS = {
 export const DEFAULT_TAB = TABS.Scoreboard;
 
 
+function pathToTab(path) {
+    path = path.replace('/app/', '');
+    return path.charAt(0).toUpperCase() + path.slice(1);
+}
+
+
 class Tab extends React.Component {
     render() {
         let style = {
@@ -38,10 +44,12 @@ export class Navbar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.state.page = props.page;
+        this.state.page = pathToTab(location.pathname);
+        console.log(`Current page ${this.state.page}`);
     }
 
     render() {
+        // console.log(`Current page: ${this.props.location.pathname}`);
         let barStyle = {
             position: "fixed", 
             width: "100%", 
