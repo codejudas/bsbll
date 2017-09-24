@@ -68,6 +68,7 @@ app.get('/api/scoreboard/:date', (req, res, next) => {
  */
 app.use('/assets/js/common', express.static('./build/common')); // Compiled common js
 app.use('/assets/img/pitchers', express.static('./data/pitchers')); //pitcher imgs
+app.use('/assets', express.static('./assets')); // Other static files
 
 if (!production) {
     log.warn('Enabling hot module replacement in development environment.');

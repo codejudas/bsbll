@@ -1,4 +1,6 @@
 export const COLORS = {
-    BACKGROUND_PRIMARY: '#ECF0F1'
+    BACKGROUND: '#F0F0F0',
 
+    ACCENT_MAIN: '#FF5326',
+    ACCENT_BLUE: '#3278F8'
 };

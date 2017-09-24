@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Radium from 'radium';
+import {Helmet} from "react-helmet";
 
 import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 
@@ -10,10 +11,12 @@ import {Standings} from './components/standings.jsx';
 import {News} from './components/news.jsx';
 import {NotFound} from './components/not_found.jsx';
 import {COLORS} from './theme';
+import {getPageTitle} from './util';
 
 
-let GLOBAL_STYLE = {
-    backgroundColor: COLORS.BACKGROUND_PRIMARY,
+const GLOBAL_STYLE = {
+    backgroundColor: COLORS.BACKGROUND,
+    margin: 0
 };
 
 
@@ -33,14 +36,17 @@ class App extends React.Component {
     }
 
     render() {
-        let NAV_SIZE = '50px';
+        let NAV_SIZE = 80; //px
 
         let contentStyle = {
-            marginTop: NAV_SIZE
+            marginTop: `${NAV_SIZE + 20}px`
         };
 
         return (
             <div style={GLOBAL_STYLE}>
+                <Helmet>
+                    <title>{getPageTitle()}</title>
+                </Helmet>
                 <Navbar height={NAV_SIZE} />
                 <div style={contentStyle}>
                     <Switch>
@@ -55,6 +61,7 @@ class App extends React.Component {
         );
     }
 }
+
 
 ReactDOM.render(
     <BrowserRouter basename="/app">

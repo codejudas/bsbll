@@ -2,6 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Radium from 'radium';
 import {Link} from 'react-router-dom';
+import {Helmet} from "react-helmet";
+
+import {COLORS} from '../theme';
+import {getPageTitle} from '../util';
 
 
 export const TABS = {
@@ -10,6 +14,8 @@ export const TABS = {
     Standings: 'Standings',
 };
 export const DEFAULT_TAB = TABS.Scoreboard;
+
+const LOGO_PADDING = 10; //px
 
 
 function pathToTab(path) {
@@ -24,13 +30,17 @@ class Tab extends React.Component {
             cursor: 'pointer',
             height: '90%',
             display: 'inline-block',
-            backgroundColor: 'grey',
-            ':hover': {
-                backgroundColor: 'blue'
-            }
+            paddingLeft: '15px',
+            paddingRight: '15px',
+            // ':hover': {
+            //     backgroundColor: 'blue'
+            // }
         };
+
+        if (this.props.active) style.fontWeight = 700;
+        
         return (
-            <Link to={`/${this.props.name.toLowerCase()}`}>
+            <Link to={`/${this.props.name.toLowerCase()}`} onClick={() => this.props.action(this.props.name)}>
                 <div style={style} className="tab">
                     {this.props.name}
                 </div>
@@ -45,7 +55,15 @@ export class Navbar extends React.Component {
         super(props);
         this.state = {};
         this.state.page = pathToTab(location.pathname);
+    }
+
+    componentDidMount() {
         console.log(`Current page ${this.state.page}`);
+    }
+
+    navigateToTab(page) {
+        console.log(`Update page ${page}`);
+        this.setState({page: pathToTab(page)});
     }
 
     render() {
@@ -54,25 +72,37 @@ export class Navbar extends React.Component {
             position: "fixed", 
             width: "100%", 
             top: 0, 
-            height: this.props.height, 
-            backgroundColor: "cyan"
+            height: `${this.props.height}px`, 
+            backgroundColor: COLORS.BACKGROUND,
+            borderBottom: `solid 7px ${COLORS.ACCENT_MAIN}`
         };
         let headerStyle = {
             transition: '0.5s background-color',
             display: 'inline-block',
-            backgroundColor: 'blue',
-            color: 'white',
             height: '100%',
-            ':hover': {
-                backgroundColor: 'red',
-                transition: '0.5s background-color'
-            }
+            padding: '0px 15px',
+            // ':hover': {
+            //     backgroundColor: 'red',
+            //     transition: '0.5s background-color'
+            // }
         };
-        let tabs = Object.keys(TABS).map(page => <Tab key={page} name={page}/>);
+        let imgStyle = {
+            height: `${this.props.height - (LOGO_PADDING*2)}px`,
+            marginTop: `${LOGO_PADDING}px`
+        }
+
         return (
             <div id="navbar" style={barStyle}>
-                <div style={headerStyle}>Navbar {this.state.page}</div>
-                {tabs}
+                <Helmet>
+                    <title>{getPageTitle(this.state.page)}</title>
+                </Helmet>
+
+                <div style={headerStyle}>
+                    <img style={imgStyle} id='mlb-logo' src='/assets/img/mlb.png' />
+                </div>
+                {Object.keys(TABS).map(page =>
+                    <Tab key={page} name={page} active={page === this.state.page} action={this.navigateToTab.bind(this)}/>
+                )}
             </div>
         );
     }
