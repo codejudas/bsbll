@@ -13,4 +13,4 @@ Both v1 and v2 use the mlb.com api to dynamically load and populate game data, s
 
 ## Live Demo
 
-V1 of the webapp is currently hosted on heroku [here](bsbll.herokuapp.com).
+V1 of the webapp is currently hosted on heroku [here](https://bsbll.herokuapp.com).
