@@ -23,6 +23,7 @@ $NAVBAR_TEXT_COLOR: white;
     background-color: $NAVBAR_COLOR;
     box-shadow: 0px 0px 50px rgba(0,0,0, 0.2);
     overflow: hidden;
+    z-index: $ZINDEX_MAX;
 }
 
 
