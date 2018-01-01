@@ -27,25 +27,17 @@ class Tab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.ownRef = props.domRef;
-    }
-
-    componentDidMount() {
-        // Freeze the width of the component so activating tab cant change size
-        let dimensions = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        let width = dimensions.width;
-        console.log(`Freezing elem width ${width}`);
-        // this.setState({
-        //     width: width
-        // });
+        this.padding = props.padding;
     }
 
     render() {
         let tab_class = ['tab-content']
         if (this.props.active) tab_class.push('tab-active');
 
-        let style = {};
-        // if (this.state.width) style.width = this.state.width;
+        let style = {
+            paddingLeft: this.padding,
+            paddingRight: this.padding,
+        };
         
         return (
             <Link to={`/${this.props.name.toLowerCase()}`} onClick={() => this.props.action(this.props.name)}>
@@ -65,14 +57,26 @@ export class Navbar extends React.Component {
         this.state = {};
         this.state.page = pathToTab(location.pathname);
         this.state.seekerOffset = 0; // pixels from the left to offset seeker
+        this.state.seekerHidden = true;
     }
 
     componentDidMount() {
         console.log(`Current page ${this.state.page}`);
-        this.navigateToTab(this.state.page);
+        // Necessary to let everything load before getting value?
+        setTimeout(() => {
+            this.navigateToTab(this.state.page);
+            // Make the seeker appear
+            setTimeout(() => {
+                this.setState({
+                    seekerHidden: false,
+                });
+            }, 700);
+        }, 1000);
     }
 
     navigateToTab(page) {
+        // Initial scoreboard is 317.281px
+        // After it is 392.312px
         console.log(`Navigating to ${page}`);
 
         let activeTabDimensions = this.getTabDimensions(page);
@@ -97,10 +101,12 @@ export class Navbar extends React.Component {
     }
 
     render() {
+        let seekerClass = this.state.seekerHidden ? 'seeker-start' : '';
         let seekerPosition = {};
         seekerPosition.left = this.state.seekerOffset;
         if (this.state.seekerWidth) seekerPosition.width = this.state.seekerWidth;
-        console.log(seekerPosition);
+
+        console.log('Seeker pos: ' + JSON.stringify(seekerPosition));
 
         return (
             <nav id="navbar">
@@ -117,7 +123,7 @@ export class Navbar extends React.Component {
                 {Object.keys(TABS).map(page =>
                     <Tab key={page} 
                          ref={`Tab-${page}`}
-                         domRef={`Tab-${page}`}
+                         padding={20}
                          name={page} 
                          active={page === this.state.page} 
                          action={this.navigateToTab.bind(this)} />
@@ -132,7 +138,7 @@ export class Navbar extends React.Component {
                     <li key="search" style={searchStyle} onClick={this.activateSearch.bind(this)}><i className="material-icons left">search</i></li>
                     <li key="padding" style={{paddingRight: NAVBAR_EDGE_PADDING}}></li>
                 </ul>*/}
-                <div id='navbar-seeker' style={seekerPosition}/>
+                <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
                 <div id='navbar-accent'/>
             </nav>
         );

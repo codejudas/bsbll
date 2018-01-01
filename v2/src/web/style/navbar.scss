@@ -22,6 +22,7 @@ $NAVBAR_TEXT_COLOR: white;
     height: $NAVBAR_HEIGHT;
     background-color: $NAVBAR_COLOR;
     box-shadow: 0px 0px 50px rgba(0,0,0, 0.2);
+    overflow: hidden;
 }
 
 
@@ -67,8 +68,13 @@ $NAVBAR_TEXT_COLOR: white;
         height: $SEEKER_HEIGHT;
         width: 80px;
         background-color: $NAVBAR_ACCENT_COLOR;
-        transition: left 0.7s, width 0.7s;
+        transition: left 0.7s, width 0.7s, top 0.3s;
         transition-timing-function: ease-in;
+    }
+
+    // Start seeker hidden
+    #navbar-seeker.seeker-start {
+        top: ($NAVBAR_EFFECTIVE_HEIGHT); 
     }
 }
 
@@ -98,11 +104,7 @@ $NAVBAR_TEXT_COLOR: white;
                 line-height: $NAVBAR_EFFECTIVE_HEIGHT;
                 font-size: 24px;
                 font-weight: 200;
-                margin: 0px 20px;
-                
-                &.tab-active {
-                    font-weight: 400;
-                }
+                padding: 0px 20px;
             }
         }
     }
