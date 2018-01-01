@@ -6,6 +6,7 @@ import {Helmet} from "react-helmet";
 
 import {COLORS} from '../theme';
 import {getPageTitle} from '../util';
+import '../style/navbar.scss';
 
 
 export const TABS = {
@@ -15,8 +16,6 @@ export const TABS = {
 };
 export const DEFAULT_TAB = TABS.Scoreboard;
 
-const LOGO_PADDING = 10; //px
-
 
 function pathToTab(path) {
     path = path.replace('/app/', '');
@@ -25,86 +24,117 @@ function pathToTab(path) {
 
 
 class Tab extends React.Component {
-    render() {
-        let style = {
-            cursor: 'pointer',
-            height: '90%',
-            display: 'inline-block',
-            paddingLeft: '15px',
-            paddingRight: '15px',
-            // ':hover': {
-            //     backgroundColor: 'blue'
-            // }
-        };
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.ownRef = props.domRef;
+    }
 
-        if (this.props.active) style.fontWeight = 700;
+    componentDidMount() {
+        // Freeze the width of the component so activating tab cant change size
+        let dimensions = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        let width = dimensions.width;
+        console.log(`Freezing elem width ${width}`);
+        // this.setState({
+        //     width: width
+        // });
+    }
+
+    render() {
+        let tab_class = ['tab-content']
+        if (this.props.active) tab_class.push('tab-active');
+
+        let style = {};
+        // if (this.state.width) style.width = this.state.width;
         
         return (
             <Link to={`/${this.props.name.toLowerCase()}`} onClick={() => this.props.action(this.props.name)}>
-                <div style={style} className="tab">
-                    {this.props.name}
+                <div className="tab">
+                    <span className={tab_class.join(' ')} style={style}>
+                        {this.props.name}
+                    </span>
                 </div>
             </Link>
         );
     }
 }
-Tab = Radium(Tab);
 
 export class Navbar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
         this.state.page = pathToTab(location.pathname);
+        this.state.seekerOffset = 0; // pixels from the left to offset seeker
     }
 
     componentDidMount() {
         console.log(`Current page ${this.state.page}`);
+        this.navigateToTab(this.state.page);
     }
 
     navigateToTab(page) {
-        console.log(`Update page ${page}`);
-        this.setState({page: pathToTab(page)});
+        console.log(`Navigating to ${page}`);
+
+        let activeTabDimensions = this.getTabDimensions(page);
+        this.setState({
+            page: pathToTab(page),
+            seekerWidth: activeTabDimensions.width,
+            seekerOffset: activeTabDimensions.x,
+        });
+    }
+
+    getTabDimensions(tabName) {
+        console.log(`Calculating tab width for ${tabName}`);
+
+        let dimensions = ReactDOM.findDOMNode(this.refs[`Tab-${tabName}`])
+                                 .getBoundingClientRect();
+        console.log(`Got dimensions: ${JSON.stringify(dimensions)}`);
+        return dimensions;
+    }
+
+    activateSearch() {
+        console.log('Activating Search');
     }
 
     render() {
-        // console.log(`Current page: ${this.props.location.pathname}`);
-        let barStyle = {
-            position: "fixed", 
-            width: "100%", 
-            top: 0, 
-            height: `${this.props.height}px`, 
-            backgroundColor: COLORS.BACKGROUND,
-            borderBottom: `solid 7px ${COLORS.ACCENT_MAIN}`
-        };
-        let headerStyle = {
-            transition: '0.5s background-color',
-            display: 'inline-block',
-            height: '100%',
-            padding: '0px 15px',
-            // ':hover': {
-            //     backgroundColor: 'red',
-            //     transition: '0.5s background-color'
-            // }
-        };
-        let imgStyle = {
-            height: `${this.props.height - (LOGO_PADDING*2)}px`,
-            marginTop: `${LOGO_PADDING}px`
-        }
+        let seekerPosition = {};
+        seekerPosition.left = this.state.seekerOffset;
+        if (this.state.seekerWidth) seekerPosition.width = this.state.seekerWidth;
+        console.log(seekerPosition);
 
         return (
-            <div id="navbar" style={barStyle}>
+            <nav id="navbar">
                 <Helmet>
                     <title>{getPageTitle(this.state.page)}</title>
                 </Helmet>
-
-                <div style={headerStyle}>
-                    <img style={imgStyle} id='mlb-logo' src='/assets/img/mlb.png' />
+                <div id="logo">
+                    <Link to={`/${DEFAULT_TAB.toLowerCase()}`}>
+                        <img id='mlb-logo' src='/assets/img/mlb-white.png'/>
+                        <span id='site-title'>BSBLL</span>
+                    </Link>
                 </div>
+                <div id="tab-bar">
                 {Object.keys(TABS).map(page =>
-                    <Tab key={page} name={page} active={page === this.state.page} action={this.navigateToTab.bind(this)}/>
+                    <Tab key={page} 
+                         ref={`Tab-${page}`}
+                         domRef={`Tab-${page}`}
+                         name={page} 
+                         active={page === this.state.page} 
+                         action={this.navigateToTab.bind(this)} />
                 )}
-            </div>
+                </div>
+                {/*<ul id="nav-mobile" className="right">
+                    {Object.keys(TABS).map(page =>
+                        <li key={page}>
+                            <Tab name={page} active={page === this.state.page} action={this.navigateToTab.bind(this)}/>
+                        </li>
+                    )}
+                    <li key="search" style={searchStyle} onClick={this.activateSearch.bind(this)}><i className="material-icons left">search</i></li>
+                    <li key="padding" style={{paddingRight: NAVBAR_EDGE_PADDING}}></li>
+                </ul>*/}
+                <div id='navbar-seeker' style={seekerPosition}/>
+                <div id='navbar-accent'/>
+            </nav>
         );
     }
 }
-Navbar = Radium(Navbar);

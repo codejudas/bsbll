@@ -64,6 +64,14 @@ app.get('/api/scoreboard/:date', (req, res, next) => {
 });
 
 /**
+ * Anything /app redirects to react app page
+ */
+app.use('/app', (req, res, next) => {
+    log.info(`Path: ${req.path}`);
+    res.sendFile(path.join(__dirname, '../web/index.html'));
+});
+
+/**
  * Serve web and img files
  */
 app.use('/assets/js/common', express.static('./build/common')); // Compiled common js
@@ -76,14 +84,6 @@ if (!production) {
 } else {
     app.use('/assets/js', express.static('./build/web')); // Compiled front-end js
 }
-
-/**
- * Anything /app redirects to react app page
- */
-app.use('/app', (req, res, next) => {
-    log.info(`Path: ${req.path}`);
-    res.sendFile(path.join(__dirname, '../web/index.html'));
-});
 
 /**
  * Start Server

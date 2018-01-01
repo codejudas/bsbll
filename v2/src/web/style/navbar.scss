@@ -1,0 +1,109 @@
+@import 'global';
+
+$LOGO_PADDING: 10px;
+$EDGE_PADDING: 60px;
+
+$NAVBAR_HEIGHT: 80px;
+$NAVBAR_ACCENT_THICKNESS: 5px;
+$SEEKER_HEIGHT: 7px;
+$NAVBAR_EFFECTIVE_HEIGHT: $NAVBAR_HEIGHT - $NAVBAR_ACCENT_THICKNESS;
+
+$NAVBAR_COLOR: $PRIMARY_COLOR;
+$NAVBAR_ACCENT_COLOR: $ACCENT_COLOR;
+
+$NAVBAR_TEXT_COLOR: white;
+
+
+/** Navbar styles **/
+#navbar {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: $NAVBAR_HEIGHT;
+    background-color: $NAVBAR_COLOR;
+    box-shadow: 0px 0px 50px rgba(0,0,0, 0.2);
+}
+
+
+/* Navbar logo & brand styles */
+#navbar {
+    #logo {
+        display: inline-block;
+        height: 100%;
+        margin-left: $EDGE_PADDING;
+    }
+
+    #mlb-logo {
+        $logo-height: 50px;
+        height: $logo-height;
+        margin-top: ($NAVBAR_EFFECTIVE_HEIGHT - $logo-height) / 2;
+        opacity: 0.9;
+        color: $NAVBAR_TEXT_COLOR;
+    }
+
+    #site-title {
+        vertical-align: top;
+        margin-left: 10px;
+        margin-right: 5px;
+        color: $NAVBAR_TEXT_COLOR;
+        line-height: $NAVBAR_EFFECTIVE_HEIGHT;
+        font-size: 40px;
+        font-weight: 100;
+        cursor: pointer,
+    }
+
+    #navbar-accent {
+        background-color:$NAVBAR_ACCENT_COLOR;
+        top: $NAVBAR_HEIGHT - $NAVBAR_ACCENT_THICKNESS;
+        height: $NAVBAR_ACCENT_THICKNESS;
+        width: 100%;
+        position: absolute;
+    }
+
+    #navbar-seeker {
+        position: absolute;
+        left: 0px;
+        top: ($NAVBAR_EFFECTIVE_HEIGHT - $SEEKER_HEIGHT);
+        height: $SEEKER_HEIGHT;
+        width: 80px;
+        background-color: $NAVBAR_ACCENT_COLOR;
+        transition: left 0.7s, width 0.7s;
+        transition-timing-function: ease-in;
+    }
+}
+
+/* Navbar tab styling */
+#navbar {
+    #tab-bar {
+        position: absolute;
+        vertical-align: top;
+        display: inline-block;
+        margin-left: 20px;
+        height: 100%;
+
+        .tab {
+            display: inline-block;
+            vertical-align: top;
+            height: 100%;
+            transition: background-color 0.7s;
+
+            &:hover {
+                background-color: rgba(255,255,255, 0.35);
+                transition: background-color 0.7s;
+            }
+
+            .tab-content {
+                display: inline-block;
+                color: $NAVBAR_TEXT_COLOR;
+                line-height: $NAVBAR_EFFECTIVE_HEIGHT;
+                font-size: 24px;
+                font-weight: 200;
+                margin: 0px 20px;
+                
+                &.tab-active {
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+}
