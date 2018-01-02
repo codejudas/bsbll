@@ -90,6 +90,7 @@ $NAVBAR_TEXT_COLOR: white;
 
         .tab {
             display: inline-block;
+            cursor: pointer;
             vertical-align: top;
             height: 100%;
             transition: background-color 0.7s;
@@ -107,6 +108,34 @@ $NAVBAR_TEXT_COLOR: white;
                 font-weight: 200;
                 padding: 0px 20px;
             }
+        }
+    }
+
+    #button-bar {
+        position: absolute;
+        vertical-align: top;
+        right: 0px;
+        top: 0px;
+        height: 100%;
+        margin-right: $EDGE_PADDING;
+
+        .button {
+            display: inline-block;
+            cursor: pointer;
+            line-height: $NAVBAR_HEIGHT;
+            height: 100%;
+            transition: background-color 0.7s;
+
+            &:hover {
+                background-color: rgba(255,255,255, 0.35);
+                transition: background-color 0.7s;
+            }
+        }
+
+        .button-search {
+            color: white;
+            padding: 0px 25px;
+
         }
     }
 }

@@ -4,6 +4,7 @@ import Radium from 'radium';
 import {Link} from 'react-router-dom';
 import {Helmet} from "react-helmet";
 import classNames from 'classnames';
+import FontAwesome from 'react-fontawesome';
 
 import {COLORS} from '../theme';
 import {getPageTitle} from '../util';
@@ -25,6 +26,12 @@ function pathToTab(path) {
 
 
 class Tab extends React.Component {
+    /*
+     * Props:
+     * text: str, tab name
+     * action: fn, callback function when tab is clicked
+     * active: bool, whether tab is currently active
+     */
     constructor(props) {
         super(props);
         this.state = {};
@@ -34,13 +41,36 @@ class Tab extends React.Component {
         let tab_class = classNames('tab-content');
         
         return (
-            <Link to={`/${this.props.name.toLowerCase()}`} onClick={() => this.props.action(this.props.name)}>
-                <div className="tab">
-                    <span className={tab_class}>
-                        {this.props.name}
-                    </span>
-                </div>
-            </Link>
+            <div className="tab" onClick={this.props.action}>
+                <span className={tab_class}>
+                    {this.props.text}
+                </span>
+            </div>
+        );
+    }
+}
+
+class Button extends React.Component {
+    /*
+     * Props:
+     * icon: JSX or str url to an image
+     * action: fn, callback function when tab is clicked
+     * active: bool, whether button is currently active
+     */
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    render() {
+        let tab_class = classNames('tab-content');
+        
+        return (
+            <div className="button" onClick={this.props.action}>
+                <FontAwesome className='fa fa-search button-search'
+                             name='search'
+                             size='2x'/>
+            </div>
         );
     }
 }
@@ -116,26 +146,23 @@ export class Navbar extends React.Component {
                 </div>
                 <div id="tab-bar">
                 {Object.keys(TABS).map(page =>
-                    <Tab key={page} 
-                         ref={`Tab-${page}`}
-                         name={page} 
-                         active={page === this.state.page} 
-                         action={this.navigateToTab.bind(this)} />
+                    <Link key={page} to={`/${page.toLowerCase()}`}>
+                        <Tab ref={`Tab-${page}`}
+                             text={page} 
+                             active={page === this.state.page} 
+                             action={() => this.navigateToTab(page)} />
+                    </Link>
                 )}
-                    <Tab key="search" 
-                         icon='material-icons left'
-                         name='search'
-                         active={this.state.searchActive}
-                         action={this.activateSearch.bind(this)} />
                 </div>
-                {/*<ul id="nav-mobile" className="right">
-                    {Object.keys(TABS).map(page =>
-                        <li key={page}>
-                            <Tab name={page} active={page === this.state.page} action={this.navigateToTab.bind(this)}/>
-                        </li>
-                    )}
-                    <li key="padding" style={{paddingRight: NAVBAR_EDGE_PADDING}}></li>
-                </ul>*/}
+                <div id="button-bar">
+                    <Button class="button-search" 
+                            key='search'
+                            ref='tab-search'
+                            icon='material-icons left'
+                            name='search'
+                            active={this.state.searchActive}
+                            action={this.activateSearch.bind(this)} />
+                </div>
                 <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
                 <div id='navbar-accent'/>
             </nav>
