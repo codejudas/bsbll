@@ -91,7 +91,7 @@ export class Navbar extends React.Component {
         console.log(`Current page ${this.state.page}`);
         // Necessary to let everything load before getting value?
         setTimeout(() => {
-            this.navigateToTab(this.state.page);
+            this.moveSeeker(this.state.page);
             // Make the seeker appear
             setTimeout(() => {
                 this.setState({
@@ -101,12 +101,30 @@ export class Navbar extends React.Component {
         }, 1000);
     }
 
-    navigateToTab(page) {
-        console.log(`Navigating to ${page}`);
-
-        let activeTabDimensions = this.getTabDimensions(page);
+    navigateToTab(tab) {
+        console.log(`Navigating to tab ${tab}`);
         this.setState({
-            page: pathToTab(page),
+            page: pathToTab(tab),
+            searchActive: false,
+        })
+        this.moveSeeker(tab);
+    }
+
+    toggleSearch() {
+        console.log('Activating Search in Navbar');
+        this.props.searchCallback();
+        this.setState({
+            searchActive: !this.state.searchActive,
+        })
+        let dest = this.state.searchActive ? this.state.page : 'search';
+        this.moveSeeker(dest);
+    }
+
+    moveSeeker(elem) {
+        console.log(`Moving seeker to ${elem}`);
+
+        let activeTabDimensions = this.getTabDimensions(elem);
+        this.setState({
             seekerWidth: activeTabDimensions.width,
             seekerOffset: activeTabDimensions.x,
         });
@@ -115,14 +133,10 @@ export class Navbar extends React.Component {
     getTabDimensions(tabName) {
         console.log(`Calculating tab width for ${tabName}`);
 
-        let dimensions = ReactDOM.findDOMNode(this.refs[`Tab-${tabName}`])
+        let dimensions = ReactDOM.findDOMNode(this.refs[`tab-${tabName.toLowerCase()}`])
                                  .getBoundingClientRect();
         console.log(`Got dimensions: ${JSON.stringify(dimensions)}`);
         return dimensions;
-    }
-
-    activateSearch() {
-        console.log('Activating Search');
     }
 
     render() {
@@ -147,7 +161,7 @@ export class Navbar extends React.Component {
                 <div id="tab-bar">
                 {Object.keys(TABS).map(page =>
                     <Link key={page} to={`/${page.toLowerCase()}`}>
-                        <Tab ref={`Tab-${page}`}
+                        <Tab ref={`tab-${page.toLowerCase()}`}
                              text={page} 
                              active={page === this.state.page} 
                              action={() => this.navigateToTab(page)} />
@@ -161,7 +175,7 @@ export class Navbar extends React.Component {
                             icon='material-icons left'
                             name='search'
                             active={this.state.searchActive}
-                            action={this.activateSearch.bind(this)} />
+                            action={this.toggleSearch.bind(this)} />
                 </div>
                 <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
                 <div id='navbar-accent'/>
