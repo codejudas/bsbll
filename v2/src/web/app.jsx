@@ -34,7 +34,7 @@ class App extends React.Component {
     }
 
     toggleSearch() {
-        console.log(`Search ${this.state.searchActive ? 'deactivated' : 'activated'}`);
+        console.log(`Toggling search`);
         this.setState({
             searchActive: !this.state.searchActive,
         })
@@ -50,9 +50,7 @@ class App extends React.Component {
                 </Helmet>
                 <Navbar searchCallback={this.toggleSearch.bind(this)}/>
                 <div className="container">
-                    {this.state.searchActive && (
-                    <SearchOverlay />
-                    )}
+                    <SearchOverlay active={this.state.searchActive} />
                     <div className="content">
                         <Switch>
                             <Redirect exact from='/' to='/scoreboard'/>

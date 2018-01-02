@@ -76,7 +76,10 @@ class Button extends React.Component {
 }
 
 export class Navbar extends React.Component {
-
+    /**
+     * Props
+     * searchCallback: fn, called when search button is clicked
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -123,15 +126,15 @@ export class Navbar extends React.Component {
     moveSeeker(elem) {
         console.log(`Moving seeker to ${elem}`);
 
-        let activeTabDimensions = this.getTabDimensions(elem);
+        let activeElem = this.getElemDimensions(elem);
         this.setState({
-            seekerWidth: activeTabDimensions.width,
-            seekerOffset: activeTabDimensions.x,
+            seekerWidth: activeElem.width,
+            seekerOffset: activeElem.x,
         });
     }
 
-    getTabDimensions(tabName) {
-        console.log(`Calculating tab width for ${tabName}`);
+    getElemDimensions(tabName) {
+        console.log(`Calculating element width for ${tabName}`);
 
         let dimensions = ReactDOM.findDOMNode(this.refs[`tab-${tabName.toLowerCase()}`])
                                  .getBoundingClientRect();

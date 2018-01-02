@@ -1,9 +1,17 @@
 @import 'global';
 
 #search-overlay {
+    display: inline-block;
     position: absolute;
     top: 0px;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.7);
+    transition: background-color 1s;
+}
+
+#search-overlay.hidden {
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 1s, visibility 1s;
 }
