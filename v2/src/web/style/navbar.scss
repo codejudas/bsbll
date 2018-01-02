@@ -69,8 +69,8 @@ $NAVBAR_TEXT_COLOR: white;
         height: $SEEKER_HEIGHT;
         width: 80px;
         background-color: $NAVBAR_ACCENT_COLOR;
-        transition: left 0.7s, width 0.7s, top 0.3s;
-        transition-timing-function: ease-in;
+        transition: left 0.7s, width 0.7s, top 0.2s;
+        transition-timing-function: ease-in, ease-in, ease-out;
     }
 
     // Start seeker hidden

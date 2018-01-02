@@ -23,7 +23,6 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        // Object.assign(document.body.style, GLOBAL_STYLE);
         console.log('Mounted app!');
     }
      

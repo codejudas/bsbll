@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Radium from 'radium';
 import {Link} from 'react-router-dom';
 import {Helmet} from "react-helmet";
+import classNames from 'classnames';
 
 import {COLORS} from '../theme';
 import {getPageTitle} from '../util';
@@ -27,22 +28,15 @@ class Tab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.padding = props.padding;
     }
 
     render() {
-        let tab_class = ['tab-content']
-        if (this.props.active) tab_class.push('tab-active');
-
-        let style = {
-            paddingLeft: this.padding,
-            paddingRight: this.padding,
-        };
+        let tab_class = classNames('tab-content');
         
         return (
             <Link to={`/${this.props.name.toLowerCase()}`} onClick={() => this.props.action(this.props.name)}>
                 <div className="tab">
-                    <span className={tab_class.join(' ')} style={style}>
+                    <span className={tab_class}>
                         {this.props.name}
                     </span>
                 </div>
@@ -52,12 +46,15 @@ class Tab extends React.Component {
 }
 
 export class Navbar extends React.Component {
+
     constructor(props) {
         super(props);
-        this.state = {};
-        this.state.page = pathToTab(location.pathname);
-        this.state.seekerOffset = 0; // pixels from the left to offset seeker
-        this.state.seekerHidden = true;
+        this.state = {
+            page: pathToTab(location.pathname), // Set by constructor
+            seekerOffset: 0,                    // Pixels from the left to offset seeker
+            seekerHidden: true,                 // Start seeker hidden
+            searchActive: false,                // Search being hidden
+        };
     }
 
     componentDidMount() {
@@ -75,8 +72,6 @@ export class Navbar extends React.Component {
     }
 
     navigateToTab(page) {
-        // Initial scoreboard is 317.281px
-        // After it is 392.312px
         console.log(`Navigating to ${page}`);
 
         let activeTabDimensions = this.getTabDimensions(page);
@@ -101,7 +96,7 @@ export class Navbar extends React.Component {
     }
 
     render() {
-        let seekerClass = this.state.seekerHidden ? 'seeker-start' : '';
+        let seekerClass = classNames({'seeker-start': this.state.seekerHidden});
         let seekerPosition = {};
         seekerPosition.left = this.state.seekerOffset;
         if (this.state.seekerWidth) seekerPosition.width = this.state.seekerWidth;
@@ -123,11 +118,15 @@ export class Navbar extends React.Component {
                 {Object.keys(TABS).map(page =>
                     <Tab key={page} 
                          ref={`Tab-${page}`}
-                         padding={20}
                          name={page} 
                          active={page === this.state.page} 
                          action={this.navigateToTab.bind(this)} />
                 )}
+                    <Tab key="search" 
+                         icon='material-icons left'
+                         name='search'
+                         active={this.state.searchActive}
+                         action={this.activateSearch.bind(this)} />
                 </div>
                 {/*<ul id="nav-mobile" className="right">
                     {Object.keys(TABS).map(page =>
@@ -135,7 +134,6 @@ export class Navbar extends React.Component {
                             <Tab name={page} active={page === this.state.page} action={this.navigateToTab.bind(this)}/>
                         </li>
                     )}
-                    <li key="search" style={searchStyle} onClick={this.activateSearch.bind(this)}><i className="material-icons left">search</i></li>
                     <li key="padding" style={{paddingRight: NAVBAR_EDGE_PADDING}}></li>
                 </ul>*/}
                 <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
