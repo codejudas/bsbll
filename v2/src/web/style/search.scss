@@ -1,17 +1,89 @@
 @import 'global';
 
-#search-overlay {
-    display: inline-block;
+$search-width: 40%;
+$search-height: 70px;
+
+$z-index-front: 100;
+$z-index-back: 1;
+
+#search-container {
     position: absolute;
     top: 0px;
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    transition: background-color 1s;
+
+    &.hidden {
+        visibility: hidden;
+    }
+
+    #search-background {
+        position: absolute;
+        top: 0px;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        transition: background-color 1s;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: $z-index-back;
+
+        &.hidden {
+            background-color: rgba(0, 0, 0, 0);
+            transition: background-color 1s, visibility 1s;
+        }
+
+    }
+
+
 }
 
-#search-overlay.hidden {
-    visibility: hidden;
-    background-color: rgba(0, 0, 0, 0);
-    transition: background-color 1s, visibility 1s;
+#search-container {
+    $box-border-radius: 2px;
+    $box-edge-padding: 30px;
+    $box-accent-thickness: 5px;
+
+    .search-modal {
+        position: relative;
+        display: table;
+        margin: 100px auto;
+        width: $search-width;
+        max-width: 1000px;
+        height: 70px;
+        z-index: $z-index-front;
+        background-color: white;
+        border-radius: 2px;
+        padding: 0px $box-edge-padding;
+        border-bottom: solid $BACKGROUND_COLOR $box-accent-thickness;
+        transition: border 0.5s;
+
+        &.focused {
+            border-bottom: solid $PRIMARY_COLOR $box-accent-thickness;
+            transition: border 0.5s;
+        }
+    }
+
+    .search-modal {
+        .fa.fa-search {
+            display: table-cell;
+            height: 100%;
+            width: 45px;
+            vertical-align: top;
+            background-color: white;
+            line-height: $search-height;
+        }
+
+        .search-input {
+            display: table-cell;
+            font-size: 30px;
+            font-weight: 200;
+            height: 100%;
+            width: 100%;
+            border: none;
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+
 }

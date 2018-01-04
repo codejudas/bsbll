@@ -50,7 +50,8 @@ class App extends React.Component {
                 </Helmet>
                 <Navbar searchCallback={this.toggleSearch.bind(this)}/>
                 <div className="container">
-                    <SearchOverlay active={this.state.searchActive} />
+                    <SearchOverlay active={this.state.searchActive} 
+                                   onDismissed={this.toggleSearch.bind(this)} />
                     <div className="content">
                         <Switch>
                             <Redirect exact from='/' to='/scoreboard'/>

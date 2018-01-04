@@ -62,6 +62,10 @@ $NAVBAR_TEXT_COLOR: white;
         position: absolute;
     }
 
+    $pulse-time: 0.2s;
+    $appear-time: 0.2s;
+    $move-time: 0.5s;
+
     #navbar-seeker {
         position: absolute;
         left: 0px;
@@ -69,18 +73,36 @@ $NAVBAR_TEXT_COLOR: white;
         height: $SEEKER_HEIGHT;
         width: 80px;
         background-color: $NAVBAR_ACCENT_COLOR;
-        transition: left 0.7s, width 0.7s, top 0.2s;
-        transition-timing-function: ease-in, ease-in, ease-out;
+        transition: left $move-time, width $move-time, top $appear-time, opacity $pulse-time;
+        transition-timing-function: ease-in, ease-in, ease-out, ease-out;
     }
 
     // Start seeker hidden
     #navbar-seeker.seeker-start {
         top: ($NAVBAR_EFFECTIVE_HEIGHT); 
     }
+
+    #navbar-seeker.seeker-pulse {
+        opacity: 0.5;
+        transition: opacity $pulse-time;
+    }
 }
 
 /* Navbar tab styling */
 #navbar {
+    div.nav-element {
+        display: inline-block;
+        cursor: pointer;
+        vertical-align: top;
+        height: 100%;
+        transition: background-color 0.7s;
+
+        &:hover {
+            background-color: rgba(255,255,255, 0.35);
+            transition: background-color 0.7s;
+        }
+    }
+
     #tab-bar {
         position: absolute;
         vertical-align: top;
@@ -88,26 +110,13 @@ $NAVBAR_TEXT_COLOR: white;
         margin-left: 20px;
         height: 100%;
 
-        .tab {
+        .tab-content {
             display: inline-block;
-            cursor: pointer;
-            vertical-align: top;
-            height: 100%;
-            transition: background-color 0.7s;
-
-            &:hover {
-                background-color: rgba(255,255,255, 0.35);
-                transition: background-color 0.7s;
-            }
-
-            .tab-content {
-                display: inline-block;
-                color: $NAVBAR_TEXT_COLOR;
-                line-height: $NAVBAR_EFFECTIVE_HEIGHT;
-                font-size: 24px;
-                font-weight: 200;
-                padding: 0px 20px;
-            }
+            color: $NAVBAR_TEXT_COLOR;
+            line-height: $NAVBAR_EFFECTIVE_HEIGHT;
+            font-size: 24px;
+            font-weight: 200;
+            padding: 0px 20px;
         }
     }
 
@@ -119,21 +128,9 @@ $NAVBAR_TEXT_COLOR: white;
         height: 100%;
         margin-right: $EDGE_PADDING;
 
-        .button {
-            display: inline-block;
-            cursor: pointer;
-            line-height: $NAVBAR_HEIGHT;
-            height: 100%;
-            transition: background-color 0.7s;
-
-            &:hover {
-                background-color: rgba(255,255,255, 0.35);
-                transition: background-color 0.7s;
-            }
-        }
-
         .button-search {
             color: white;
+            line-height: $NAVBAR_HEIGHT;
             padding: 0px 25px;
 
         }

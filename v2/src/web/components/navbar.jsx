@@ -24,12 +24,13 @@ function pathToTab(path) {
     return path.charAt(0).toUpperCase() + path.slice(1);
 }
 
-
-class Tab extends React.Component {
-    /*
+class NavElem extends React.Component {
+    /**
+     * Base class for elements residing in the navbar
      * Props:
-     * text: str, tab name
-     * action: fn, callback function when tab is clicked
+     * onClick: fn, callback function when elem is clicked
+     * onMouseEnter: fn, callback function when mouse enters elem
+     * onMouseLeave: fn, callback function when nouse leaves elem
      * active: bool, whether tab is currently active
      */
     constructor(props) {
@@ -37,40 +38,58 @@ class Tab extends React.Component {
         this.state = {};
     }
 
+    /**
+     * Returns the JSX content of the NavElem
+     */
+    getContent() { throw new Error('Method not implemented'); }
+
     render() {
-        let tab_class = classNames('tab-content');
-        
         return (
-            <div className="tab" onClick={this.props.action}>
-                <span className={tab_class}>
-                    {this.props.text}
-                </span>
+            <div className='nav-element'
+                 onClick={this.props.onClick} 
+                 onMouseEnter={this.props.onMouseEnter}
+                 onMouseLeave={this.props.onMouseLeave}>
+                 {this.getContent()}
             </div>
+        );
+    }
+
+}
+
+
+class Tab extends NavElem {
+    /*
+     * Props:
+     * text: str, tab name
+     */
+    constructor(props) {
+        super(props);
+    }
+
+    /* Override */
+    getContent() {
+        return (
+            <span className='tab-content'>
+                {this.props.text}
+            </span>
         );
     }
 }
 
-class Button extends React.Component {
+class Button extends NavElem {
     /*
      * Props:
      * icon: JSX or str url to an image
-     * action: fn, callback function when tab is clicked
-     * active: bool, whether button is currently active
      */
     constructor(props) {
         super(props);
-        this.state = {};
     }
 
-    render() {
-        let tab_class = classNames('tab-content');
-        
+    getContent() {
         return (
-            <div className="button" onClick={this.props.action}>
-                <FontAwesome className='fa fa-search button-search'
-                             name='search'
-                             size='2x'/>
-            </div>
+            <FontAwesome className='fa fa-search button-search'
+                         name='search'
+                         size='2x'/>
         );
     }
 }
@@ -86,6 +105,7 @@ export class Navbar extends React.Component {
             page: pathToTab(location.pathname), // Set by constructor
             seekerOffset: 0,                    // Pixels from the left to offset seeker
             seekerHidden: true,                 // Start seeker hidden
+            seekerPulsed: false,                // Only pulsed on click
             searchActive: false,                // Search being hidden
         };
     }
@@ -108,19 +128,29 @@ export class Navbar extends React.Component {
         console.log(`Navigating to tab ${tab}`);
         this.setState({
             page: pathToTab(tab),
-            searchActive: false,
         })
-        this.moveSeeker(tab);
+        this.toggleSearch(false);
     }
 
-    toggleSearch() {
+    toggleSearch(value = null) {
         console.log('Activating Search in Navbar');
+        let new_value = value;
+        if (new_value == undefined) 
+            new_value = (value == undefined) ? !this.state.searchActive : value;
+
         this.props.searchCallback();
+        this.setState({ searchActive: new_value });
+    }
+
+    pulseSeeker() {
+        console.log('Pulsing seeker');
         this.setState({
-            searchActive: !this.state.searchActive,
-        })
-        let dest = this.state.searchActive ? this.state.page : 'search';
-        this.moveSeeker(dest);
+            seekerPulsed: true,
+        });
+
+        setTimeout(() => this.setState({
+            seekerPulsed: false,
+        }), 300);
     }
 
     moveSeeker(elem) {
@@ -143,10 +173,15 @@ export class Navbar extends React.Component {
     }
 
     render() {
-        let seekerClass = classNames({'seeker-start': this.state.seekerHidden});
-        let seekerPosition = {};
-        seekerPosition.left = this.state.seekerOffset;
-        if (this.state.seekerWidth) seekerPosition.width = this.state.seekerWidth;
+        let seekerClass = classNames({
+            'seeker-start': this.state.seekerHidden,
+            'seeker-pulse': this.state.seekerPulsed,
+        });
+
+        let seekerPosition = {
+            left: this.state.seekerOffset,
+            width: this.state.seekerWidth ? this.state.seekerWidth : 0,
+        };
 
         console.log('Seeker pos: ' + JSON.stringify(seekerPosition));
 
@@ -167,7 +202,9 @@ export class Navbar extends React.Component {
                         <Tab ref={`tab-${page.toLowerCase()}`}
                              text={page} 
                              active={page === this.state.page} 
-                             action={() => this.navigateToTab(page)} />
+                             onClick={() => {this.navigateToTab(page); this.pulseSeeker()}}
+                             onMouseEnter={() => this.moveSeeker(page)}
+                             onMouseLeave={() => this.moveSeeker(this.state.page)} />
                     </Link>
                 )}
                 </div>
@@ -178,7 +215,9 @@ export class Navbar extends React.Component {
                             icon='material-icons left'
                             name='search'
                             active={this.state.searchActive}
-                            action={this.toggleSearch.bind(this)} />
+                            onClick={() => {this.toggleSearch(); this.pulseSeeker();}}
+                            onMouseEnter={() => this.moveSeeker('search')}
+                            onMouseLeave={() => this.moveSeeker(this.state.page)} />
                 </div>
                 <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
                 <div id='navbar-accent'/>
