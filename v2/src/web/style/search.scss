@@ -41,11 +41,13 @@ $z-index-back: 1;
     $box-border-radius: 2px;
     $box-edge-padding: 30px;
     $box-accent-thickness: 5px;
+    $box-accent-color: #afafaf;
 
     .search-modal {
         position: relative;
+        top: 15%;
         display: table;
-        margin: 100px auto;
+        margin: 0px auto;
         width: $search-width;
         max-width: 1000px;
         height: 70px;
@@ -53,7 +55,7 @@ $z-index-back: 1;
         background-color: white;
         border-radius: 2px;
         padding: 0px $box-edge-padding;
-        border-bottom: solid $BACKGROUND_COLOR $box-accent-thickness;
+        border-bottom: solid $box-accent-color $box-accent-thickness;
         transition: border 0.5s;
 
         &.focused {
@@ -66,8 +68,10 @@ $z-index-back: 1;
         .fa.fa-search {
             display: table-cell;
             height: 100%;
-            width: 45px;
+            width: 55px;
             vertical-align: top;
+            color: $LIGHT_TEXT_COLOR;
+            -webkit-text-stroke: 2px white;
             background-color: white;
             line-height: $search-height;
         }
