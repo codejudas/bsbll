@@ -33,10 +33,12 @@ class App extends React.Component {
         this.unlisten();
     }
 
-    toggleSearch() {
-        console.log(`Toggling search`);
+    toggleSearch(value) {
+        console.log(`Toggling search: ${value}`);
+
+        let new_value = (value === undefined) ? !this.state.searchActive : value;
         this.setState({
-            searchActive: !this.state.searchActive,
+            searchActive: new_value,
         })
     }
 
@@ -48,7 +50,8 @@ class App extends React.Component {
                     <link href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto:300,400,500" rel="stylesheet" />
                     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
                 </Helmet>
-                <Navbar searchCallback={this.toggleSearch.bind(this)}/>
+                <Navbar searchActive={this.state.searchActive}
+                        searchCallback={this.toggleSearch.bind(this)} />
                 <div className="container">
                     <SearchOverlay active={this.state.searchActive} 
                                    onDismissed={this.toggleSearch.bind(this)} />

@@ -49,7 +49,7 @@ $NAVBAR_TEXT_COLOR: white;
         margin-right: 5px;
         color: $NAVBAR_TEXT_COLOR;
         line-height: $NAVBAR_EFFECTIVE_HEIGHT;
-        font-size: 40px;
+        font-size: $TEXT_BRAND;
         font-weight: 100;
         cursor: pointer,
     }
@@ -114,7 +114,7 @@ $NAVBAR_TEXT_COLOR: white;
             display: inline-block;
             color: $NAVBAR_TEXT_COLOR;
             line-height: $NAVBAR_EFFECTIVE_HEIGHT;
-            font-size: 24px;
+            font-size: $TEXT_H2;
             font-weight: 200;
             padding: 0px 20px;
         }

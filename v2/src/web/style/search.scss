@@ -1,7 +1,7 @@
 @import 'global';
 
 $search-width: 40%;
-$search-height: 70px;
+$search-height: 60px;
 
 $z-index-front: 100;
 $z-index-back: 1;
@@ -39,48 +39,57 @@ $z-index-back: 1;
 
 #search-container {
     $box-border-radius: 2px;
-    $box-edge-padding: 30px;
-    $box-accent-thickness: 5px;
+    $box-edge-padding: 25px;
+    $box-accent-thickness: 7px;
     $box-accent-color: #afafaf;
+    $box-top-margin: 15%;
 
     .search-modal {
         position: relative;
-        top: 15%;
-        display: table;
-        margin: 0px auto;
+        top: $box-top-margin;
         width: $search-width;
         max-width: 1000px;
-        height: 70px;
+        height: $search-height;
+
+        display: table;
+        margin: 0px auto;
         z-index: $z-index-front;
         background-color: white;
         border-radius: 2px;
         padding: 0px $box-edge-padding;
         border-bottom: solid $box-accent-color $box-accent-thickness;
-        transition: border 0.5s;
+
+        transition: border 0.5s, top 1s;
 
         &.focused {
             border-bottom: solid $PRIMARY_COLOR $box-accent-thickness;
-            transition: border 0.5s;
+            transition: border 0.5s, top 1s;
+        }
+
+        &.hidden {
+            top: $box-top-margin + 10%;
+            transition: border 0.5s, top 1s;
         }
     }
 
     .search-modal {
         .fa.fa-search {
             display: table-cell;
-            height: 100%;
-            width: 55px;
-            vertical-align: top;
+            font-size: 1.9em;
+            height: inherit;
+            width: 50px;
+            vertical-align: middle;
             color: $LIGHT_TEXT_COLOR;
             -webkit-text-stroke: 2px white;
             background-color: white;
-            line-height: $search-height;
+            line-height: 100%;
         }
 
         .search-input {
             display: table-cell;
-            font-size: 30px;
+            font-size: $TEXT_H2;
             font-weight: 200;
-            height: 100%;
+            height: inherit;
             width: 100%;
             border: none;
 

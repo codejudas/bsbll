@@ -97,6 +97,7 @@ class Button extends NavElem {
 export class Navbar extends React.Component {
     /**
      * Props
+     * searchActive: bool, whether search is active
      * searchCallback: fn, called when search button is clicked
      */
     constructor(props) {
@@ -106,7 +107,6 @@ export class Navbar extends React.Component {
             seekerOffset: 0,                    // Pixels from the left to offset seeker
             seekerHidden: true,                 // Start seeker hidden
             seekerPulsed: false,                // Only pulsed on click
-            searchActive: false,                // Search being hidden
         };
     }
 
@@ -129,17 +129,7 @@ export class Navbar extends React.Component {
         this.setState({
             page: pathToTab(tab),
         })
-        this.toggleSearch(false);
-    }
-
-    toggleSearch(value = null) {
-        console.log('Activating Search in Navbar');
-        let new_value = value;
-        if (new_value == undefined) 
-            new_value = (value == undefined) ? !this.state.searchActive : value;
-
-        this.props.searchCallback();
-        this.setState({ searchActive: new_value });
+        this.props.searchCallback(false);
     }
 
     pulseSeeker() {
@@ -214,8 +204,8 @@ export class Navbar extends React.Component {
                             ref='tab-search'
                             icon='material-icons left'
                             name='search'
-                            active={this.state.searchActive}
-                            onClick={() => {this.toggleSearch(); this.pulseSeeker();}}
+                            active={this.props.searchActive}
+                            onClick={() => {this.props.searchCallback(); this.pulseSeeker();}}
                             onMouseEnter={() => this.moveSeeker('search')}
                             onMouseLeave={() => this.moveSeeker(this.state.page)} />
                 </div>
