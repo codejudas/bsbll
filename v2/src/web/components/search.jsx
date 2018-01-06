@@ -19,22 +19,19 @@ export class SearchBox extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         // When search is activated, grab focus
-        if (this.isAppearing(this.props, nextProps)) {
+        if (this.props.active !== nextProps.active) {
             this.setState({
-                focused: true,
+                focused: nextProps.active,
             });
         }
     }
 
     componentDidUpdate(prevProps) {
-        if (this.isAppearing(prevProps, this.props)) {
-            console.log('Focusing input');
+        if (this.props.active) {
             this.searchInput.focus();
+        } else {
+            this.searchInput.blur();
         }
-    }
-
-    isAppearing(startProps, endProps) {
-        return !startProps.active && endProps.active;
     }
 
     onInputChanged(event) {
@@ -42,8 +39,6 @@ export class SearchBox extends React.Component {
     }
 
     onInputFocus(event) {
-        console.log('focus');
-        console.log(event);
         if (event === 'blurred') this.setState({ focused: false });
         else if (event === 'focused') this.setState({ focused: true });
     }
