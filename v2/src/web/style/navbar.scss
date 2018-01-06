@@ -95,12 +95,12 @@ $NAVBAR_TEXT_COLOR: white;
         cursor: pointer;
         vertical-align: top;
         height: 100%;
-        transition: background-color 0.7s;
+        // transition: background-color 0.7s;
 
-        &:hover {
-            background-color: rgba(255,255,255, 0.35);
-            transition: background-color 0.7s;
-        }
+        // &:hover {
+        //     background-color: rgba(255,255,255, 0.35);
+        //     transition: background-color 0.7s;
+        // }
     }
 
     #tab-bar {
@@ -132,7 +132,8 @@ $NAVBAR_TEXT_COLOR: white;
             color: white;
             line-height: $NAVBAR_HEIGHT;
             padding: 0px 25px;
-
+            font-size: 2.2em;
+            -webkit-text-stroke: 2px $NAVBAR_COLOR;
         }
     }
 }

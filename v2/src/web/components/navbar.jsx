@@ -102,6 +102,7 @@ export class Navbar extends React.Component {
      */
     constructor(props) {
         super(props);
+        this.seekables = {};        // Things that can be seeked to by the seeker
         this.state = {
             page: pathToTab(location.pathname), // Set by constructor
             seekerOffset: 0,                    // Pixels from the left to offset seeker
@@ -129,7 +130,13 @@ export class Navbar extends React.Component {
         this.setState({
             page: pathToTab(tab),
         })
+        this.pulseSeeker();
         this.props.searchCallback(false);
+    }
+
+    handleSearchButton() {
+        this.props.searchCallback();
+        this.pulseSeeker();
     }
 
     pulseSeeker() {
@@ -153,10 +160,19 @@ export class Navbar extends React.Component {
         });
     }
 
-    getElemDimensions(tabName) {
-        console.log(`Calculating element width for ${tabName}`);
+    seekerIdle() {
+        console.log(`Returning seeker to idle position`);
+        let selectedElem = this.state.page;
+        if (this.props.searchActive) {
+            selectedElem = 'search';
+        }
 
-        let dimensions = ReactDOM.findDOMNode(this.refs[`tab-${tabName.toLowerCase()}`])
+        this.moveSeeker(selectedElem);
+    }
+
+    getElemDimensions(elem) {
+        console.log(`Calculating element width for ${elem}`);
+        let dimensions = ReactDOM.findDOMNode(this.seekables[elem.toLowerCase()])
                                  .getBoundingClientRect();
         console.log(`Got dimensions: ${JSON.stringify(dimensions)}`);
         return dimensions;
@@ -189,25 +205,25 @@ export class Navbar extends React.Component {
                 <div id="tab-bar">
                 {Object.keys(TABS).map(page =>
                     <Link key={page} to={`/${page.toLowerCase()}`}>
-                        <Tab ref={`tab-${page.toLowerCase()}`}
+                        <Tab ref={(tab) => this.seekables[page.toLowerCase()] = tab}
                              text={page} 
                              active={page === this.state.page} 
-                             onClick={() => {this.navigateToTab(page); this.pulseSeeker()}}
+                             onClick={() => {this.navigateToTab(page)}}
                              onMouseEnter={() => this.moveSeeker(page)}
-                             onMouseLeave={() => this.moveSeeker(this.state.page)} />
+                             onMouseLeave={() => this.seekerIdle()} />
                     </Link>
                 )}
                 </div>
                 <div id="button-bar">
                     <Button class="button-search" 
                             key='search'
-                            ref='tab-search'
+                            ref={(ref) => this.seekables.search = ref}
                             icon='material-icons left'
                             name='search'
                             active={this.props.searchActive}
-                            onClick={() => {this.props.searchCallback(); this.pulseSeeker();}}
+                            onClick={this.handleSearchButton.bind(this)}
                             onMouseEnter={() => this.moveSeeker('search')}
-                            onMouseLeave={() => this.moveSeeker(this.state.page)} />
+                            onMouseLeave={() => this.seekerIdle()} />
                 </div>
                 <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
                 <div id='navbar-accent'/>
