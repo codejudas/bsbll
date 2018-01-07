@@ -3,7 +3,13 @@ import ReactDOM from 'react-dom';
 import Radium from 'radium';
 import {Helmet} from "react-helmet";
 
-import {BrowserRouter, HashRouter, Route, Switch, Redirect} from 'react-router-dom';
+import {withRouter} from 'react-router';
+import {
+    BrowserRouter, 
+    Route, 
+    Switch, 
+    Redirect,
+} from 'react-router-dom';
 
 import {Navbar, DEFAULT_TAB} from './components/navbar.jsx';
 import {Scoreboard} from './components/scoreboard.jsx';
@@ -27,10 +33,7 @@ class App extends React.Component {
 
     componentDidMount() {
         console.log('Mounted app!');
-    }
-     
-    componentWillUnmount() {
-        this.unlisten();
+        this.props.history.listen(this.handleRouteChange.bind(this));
     }
 
     toggleSearch(value) {
@@ -40,6 +43,12 @@ class App extends React.Component {
         this.setState({
             searchActive: new_value,
         })
+    }
+
+    handleRouteChange(location) {
+        console.log(`Route changed to ${location.pathname}`);
+        // Turn off search anytime page changes
+        this.toggleSearch(false);
     }
 
     render() {
@@ -69,10 +78,11 @@ class App extends React.Component {
         );
     }
 }
+App = withRouter(App);
 
 
 ReactDOM.render(
-    <BrowserRouter basename="/app">
+    <BrowserRouter basename="/app" history={history}>
         <App />
     </BrowserRouter>, 
     document.getElementById('content')
