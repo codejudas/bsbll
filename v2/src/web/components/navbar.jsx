@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import {Helmet} from "react-helmet";
 import classNames from 'classnames';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
 
 import {COLORS} from '../theme';
 import {getPageTitle} from '../util';
@@ -26,13 +27,19 @@ function pathToTab(path) {
 }
 
 class NavElem extends React.Component {
+    static propTypes = {
+        // Whether tab is currently active
+        active: PropTypes.bool.isRequired,
+        // Callback function when elem is clicked
+        onClick: PropTypes.func.isRequired,
+        // Callback function when mouse enters elem
+        onMouseEnter: PropTypes.func,
+        // Callback function when mouse leaves elem
+        onMouseLeave: PropTypes.func,
+    };
+
     /**
      * Base class for elements residing in the navbar
-     * Props:
-     * onClick: fn, callback function when elem is clicked
-     * onMouseEnter: fn, callback function when mouse enters elem
-     * onMouseLeave: fn, callback function when nouse leaves elem
-     * active: bool, whether tab is currently active
      */
     constructor(props) {
         super(props);
@@ -59,10 +66,11 @@ class NavElem extends React.Component {
 
 
 class Tab extends NavElem {
-    /*
-     * Props:
-     * text: str, tab name
-     */
+    static propTypes = {
+        // Tab name
+        text: PropTypes.string,
+    }
+
     constructor(props) {
         super(props);
     }
@@ -78,9 +86,8 @@ class Tab extends NavElem {
 }
 
 class SearchButton extends NavElem {
-    /*
-     * Props:
-     */
+    static propTypes = {};
+
     constructor(props) {
         super(props);
     }
@@ -95,11 +102,13 @@ class SearchButton extends NavElem {
 }
 
 export class Navbar extends React.Component {
-    /**
-     * Props
-     * searchActive: bool, whether search is active
-     * searchCallback: fn, called when search button is clicked
-     */
+    static propTypes = {
+        // Whether search is currently active
+        searchActive: PropTypes.bool.isRequired,
+        // Callback function when search button is pressed
+        searchCallback: PropTypes.func.isRequired,
+    };
+
     constructor(props) {
         super(props);
         this.seekables = {};        // Things that can be seeked to by the seeker
@@ -137,7 +146,6 @@ export class Navbar extends React.Component {
             page: pathToTab(tab),
         })
         this.pulseSeeker();
-        this.props.searchCallback(false);
     }
 
     /**

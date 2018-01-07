@@ -3,14 +3,18 @@ import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import FontAwesome from 'react-fontawesome';
 import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import '../style/search.scss';
 
 export class SearchBox extends React.Component {
-    /**
-     * props:
-     * active - bool, whether search is visible
-     */
+    static propTypes = {
+        // Whether search is currently active
+        active: PropTypes.bool.isRequired,
+        // Placeholder to display in search box
+        placeholder: PropTypes.string,
+    };
+    
     constructor(props) {
         super(props);
         this.state = {
@@ -63,9 +67,11 @@ export class SearchBox extends React.Component {
                         onBlur={() => this.onInputFocus('blurred')}
                         onFocus={() => this.onInputFocus('focused')} />
                 </div>
-                <SearchResult url="/nothing" text="result1" />
-                <SearchResultDivider />
-                <SearchResult url="/nothing" text="result2" />
+                <div className='search-results-group'>
+                    <SearchResult url="/nothing" text="result1" />
+                    <SearchResultDivider />
+                    <SearchResult url="/nothing" text="result2" />
+                </div>
             </span>
         );
     }
@@ -73,11 +79,13 @@ export class SearchBox extends React.Component {
 
 
 class SearchResult extends React.Component {
-    /**
-     * Props:
-     * url: str, url to redirect to if result is clicked
-     * text: str, text to display in result
-     */
+    static propTypes = {
+        // Url to redirect to if result is clicked
+        url: PropTypes.string.isRequired,
+        // Text to display in result
+        text: PropTypes.string.isRequired,
+    };
+    
     render() {
         return (
             <Link to={this.props.url}>
@@ -89,6 +97,8 @@ class SearchResult extends React.Component {
 }
 
 class SearchResultDivider extends React.Component {
+    static propTypes = {};
+
     render () {
         return (
             <div className='search-divider'>
@@ -101,14 +111,12 @@ class SearchResultDivider extends React.Component {
 
 
 export class SearchOverlay extends React.Component {
-    /**
-     * props
-     * active: bool, true if overlay should display
-     * onDismissed: fn, callback when user dismisses search overlay
-     */
-    // constructor(props) {
-    //     super(props);
-    // }
+    static propTypes = {
+        // True if overlay should display
+        active: PropTypes.bool.isRequired,
+        // Callback when user dismisses search overlay
+        onDismissed: PropTypes.func,
+    };
 
     render() {
         let overlayClass = classNames({

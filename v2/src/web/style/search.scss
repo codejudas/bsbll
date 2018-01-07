@@ -112,31 +112,47 @@ $box-accent-color: #afafaf;
             }
 
         }
+    }
+}
 
-        .search-result {
+#search-container {
+    .search-modal {
+        .search-results-group {
             box-sizing: border-box;
             width: 100%;
             background-color: white;
-            height: $search-height;
-            line-height: $search-height;
-            color: $LIGHT_TEXT_COLOR;
-            padding: 0px $box-edge-padding;
-
-            &:hover {
-                background-color: $LIGHT_GRAY;
-            }
+            border-radius: 0px 0px $box-border-radius $box-border-radius;
         }
+    }
+}
 
-        .search-divider {
-            width: 100%;
-            background-color: white;
-            height: 3px;
+#search-container {
+    .search-modal {
+        .search-results-group {
+            .search-result {
+                height: $search-height;
+                line-height: $search-height;
+                color: $LIGHT_TEXT_COLOR;
+                padding: 0px $box-edge-padding;
+                transition: background-color 0.5s;
 
-            .search-divider-bar {
-                background-color: $LIGHT_GRAY;
-                height: 100%;
-                width: calc(100% - #{$box-edge-padding});
-                margin: 0px auto;
+                &:hover {
+                    background-color: $LIGHT_GRAY;
+                    transition: background-color 0.5s;
+                }
+            }
+
+            .search-divider {
+                width: 100%;
+                background-color: white;
+                height: 3px;
+
+                .search-divider-bar {
+                    background-color: $LIGHT_GRAY;
+                    height: 100%;
+                    width: calc(100% - #{$box-edge-padding});
+                    margin: 0px auto;
+                }
             }
         }
     }

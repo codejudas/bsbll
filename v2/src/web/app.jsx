@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Radium from 'radium';
 import {Helmet} from "react-helmet";
+import PropTypes from 'prop-types';
 
 import {withRouter} from 'react-router';
 import {
@@ -24,6 +25,11 @@ import './style/background.scss';
 
 
 class App extends React.Component {
+    static propTypes = {
+        // Web app history, used to listen for route changes
+        history: PropTypes.object.isRequired,
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -58,6 +64,7 @@ class App extends React.Component {
                     <title>{getPageTitle()}</title>
                     <link href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto:300,400,500" rel="stylesheet" />
                     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+                    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
                 </Helmet>
                 <Navbar searchActive={this.state.searchActive}
                         searchCallback={this.toggleSearch.bind(this)} />
