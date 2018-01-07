@@ -26,7 +26,6 @@ $z-index-back: 1;
         height: 100%;
         transition: background-color 1s;
         background-color: rgba(0, 0, 0, 0.6);
-        z-index: $z-index-back;
 
         &.hidden {
             background-color: rgba(0, 0, 0, 0);
@@ -35,66 +34,110 @@ $z-index-back: 1;
     }
 }
 
-#search-container {
-    $box-border-radius: 2px;
-    $box-edge-padding: 25px;
-    $box-accent-thickness: 7px;
-    $box-accent-color: #afafaf;
-    $box-top-margin: 15%;
 
+$box-top-margin: 15%;
+$box-border-radius: 2px;
+$box-edge-padding: 25px;
+$box-accent-thickness: 7px;
+$box-accent-color: #afafaf;
+
+#search-container {
     .search-modal {
-        position: relative;
+        position: absolute;
         top: $box-top-margin;
         width: $search-width;
         max-width: 1000px;
-        height: $search-height;
-
-        display: table;
-        margin: 0px auto;
+        margin: 0px (100% - $search-width)/2;
         z-index: $z-index-front;
-        background-color: white;
-        border-radius: 2px;
-        padding: 0px $box-edge-padding;
-        border-bottom: solid $box-accent-color $box-accent-thickness;
-
-        transition: border 0.5s, top 1s;
-
-        &.focused {
-            border-bottom: solid $PRIMARY_COLOR $box-accent-thickness;
-            transition: border 0.5s, top 1s;
-        }
-
-        &.hidden {
-            top: $box-top-margin + 10%;
-            transition: border 0.5s, top 1s;
-        }
     }
 
+}
+
+#search-container {
     .search-modal {
-        .fa.fa-search {
-            display: table-cell;
-            font-size: 1.9em;
-            height: inherit;
-            width: 50px;
-            vertical-align: middle;
-            color: $LIGHT_TEXT_COLOR;
-            -webkit-text-stroke: 2px white;
-            background-color: white;
-            line-height: 100%;
-        }
-
-        .search-input {
-            display: table-cell;
-            font-size: $TEXT_H2;
-            font-weight: 200;
-            height: inherit;
+        .search-input-group {
+            box-sizing: border-box;
             width: 100%;
-            border: none;
+            max-width: 1000px;
+            height: $search-height;
 
-            &:focus {
-                outline: none;
+            display: table;
+            background-color: white;
+            border-radius: 2px;
+            padding: 0px $box-edge-padding;
+            border-bottom: solid $box-accent-color $box-accent-thickness;
+
+            transition: border 0.5s, top 1s;
+
+            &.focused {
+                border-bottom: solid $PRIMARY_COLOR $box-accent-thickness;
+                transition: border 0.5s, top 1s;
+            }
+
+            &.hidden {
+                top: $box-top-margin + 10%;
+                transition: border 0.5s, top 1s;
             }
         }
     }
+}
 
+#search-container {
+    .search-modal {
+        .search-input-group {
+            .fa.fa-search {
+                display: table-cell;
+                font-size: 1.9em;
+                height: inherit;
+                width: 50px;
+                vertical-align: middle;
+                color: $LIGHT_TEXT_COLOR;
+                -webkit-text-stroke: 2px white;
+                background-color: white;
+                line-height: 100%;
+            }
+
+            .search-input {
+                display: table-cell;
+                font-size: $TEXT_H2;
+                letter-spacing: 0.04em;
+                font-weight: 200;
+                height: inherit;
+                width: 100%;
+                border: none;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+
+        }
+
+        .search-result {
+            box-sizing: border-box;
+            width: 100%;
+            background-color: white;
+            height: $search-height;
+            line-height: $search-height;
+            color: $LIGHT_TEXT_COLOR;
+            padding: 0px $box-edge-padding;
+
+            &:hover {
+                background-color: $LIGHT_GRAY;
+            }
+        }
+
+        .search-divider {
+            width: 100%;
+            background-color: white;
+            height: 3px;
+
+            .search-divider-bar {
+                background-color: $LIGHT_GRAY;
+                height: 100%;
+                width: calc(100% - #{$box-edge-padding});
+                margin: 0px auto;
+            }
+        }
+    }
 }

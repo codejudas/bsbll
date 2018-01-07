@@ -15,6 +15,7 @@ export const TABS = {
     News: 'News', 
     Scoreboard: 'Scoreboard', 
     Standings: 'Standings',
+    Teams: 'Teams',
 };
 export const DEFAULT_TAB = TABS.Scoreboard;
 
@@ -76,10 +77,9 @@ class Tab extends NavElem {
     }
 }
 
-class Button extends NavElem {
+class SearchButton extends NavElem {
     /*
      * Props:
-     * icon: JSX or str url to an image
      */
     constructor(props) {
         super(props);
@@ -111,6 +111,9 @@ export class Navbar extends React.Component {
         };
     }
 
+    /**
+     * Move seeker to selected tab on page load
+     */
     componentDidMount() {
         console.log(`Current page ${this.state.page}`);
         // Necessary to let everything load before getting value?
@@ -125,6 +128,9 @@ export class Navbar extends React.Component {
         }, 1000);
     }
 
+    /**
+     * Make `tab` the active page
+     */
     navigateToTab(tab) {
         console.log(`Navigating to tab ${tab}`);
         this.setState({
@@ -134,11 +140,17 @@ export class Navbar extends React.Component {
         this.props.searchCallback(false);
     }
 
+    /**
+     * Handle clicks on the search button
+     */
     handleSearchButton() {
         this.props.searchCallback();
         this.pulseSeeker();
     }
 
+    /**
+     * Produce visual pulse effect on seeker
+     */
     pulseSeeker() {
         console.log('Pulsing seeker');
         this.setState({
@@ -150,6 +162,9 @@ export class Navbar extends React.Component {
         }), 300);
     }
 
+    /**
+     * Move seeker to a given nav element
+     */
     moveSeeker(elem) {
         console.log(`Moving seeker to ${elem}`);
 
@@ -160,6 +175,9 @@ export class Navbar extends React.Component {
         });
     }
 
+    /**
+     * Return seeker to idle position
+     */
     seekerIdle() {
         console.log(`Returning seeker to idle position`);
         let selectedElem = this.state.page;
@@ -170,6 +188,9 @@ export class Navbar extends React.Component {
         this.moveSeeker(selectedElem);
     }
 
+    /**
+     * Utility function to calculate width of a nav element
+     */
     getElemDimensions(elem) {
         console.log(`Calculating element width for ${elem}`);
         let dimensions = ReactDOM.findDOMNode(this.seekables[elem.toLowerCase()])
@@ -178,6 +199,9 @@ export class Navbar extends React.Component {
         return dimensions;
     }
 
+    /**
+     * Render
+     */
     render() {
         let seekerClass = classNames({
             'seeker-start': this.state.seekerHidden,
@@ -215,15 +239,15 @@ export class Navbar extends React.Component {
                 )}
                 </div>
                 <div id="button-bar">
-                    <Button class="button-search" 
-                            key='search'
-                            ref={(ref) => this.seekables.search = ref}
-                            icon='material-icons left'
-                            name='search'
-                            active={this.props.searchActive}
-                            onClick={this.handleSearchButton.bind(this)}
-                            onMouseEnter={() => this.moveSeeker('search')}
-                            onMouseLeave={() => this.seekerIdle()} />
+                    <SearchButton className="button-search" 
+                                  key='search'
+                                  ref={(ref) => this.seekables.search = ref}
+                                  icon='material-icons left'
+                                  name='search'
+                                  active={this.props.searchActive}
+                                  onClick={this.handleSearchButton.bind(this)}
+                                  onMouseEnter={() => this.moveSeeker('search')}
+                                  onMouseLeave={() => this.seekerIdle()} />
                 </div>
                 <div id='navbar-seeker' className={seekerClass} style={seekerPosition}/>
                 <div id='navbar-accent'/>
