@@ -176,11 +176,19 @@ export class Navbar extends React.Component {
     moveSeeker(elem) {
         console.log(`Moving seeker to ${elem}`);
 
-        let activeElem = this.getElemDimensions(elem);
-        this.setState({
-            seekerWidth: activeElem.width,
-            seekerOffset: activeElem.x,
-        });
+        try {
+            let activeElem = this.getElemDimensions(elem);
+            this.setState({
+                seekerHidden: false,
+                seekerWidth: activeElem.width,
+                seekerOffset: activeElem.x,
+            });
+        } catch(e) {
+            console.error(`Unable to move seeker to ${elem}`);
+            this.setState({
+                seekerHidden: true,
+            });
+        }
     }
 
     /**

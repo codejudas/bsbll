@@ -19,9 +19,13 @@ export class SearchBox extends React.Component {
         super(props);
         this.state = {
             focused: false,
+            searchResults: [],
         };
     }
 
+    /**
+     * Grab focus to input when search is activated
+     */
     componentWillReceiveProps(nextProps) {
         // When search is activated, grab focus
         if (this.props.active !== nextProps.active) {
@@ -31,6 +35,9 @@ export class SearchBox extends React.Component {
         }
     }
 
+    /**
+     * Grab focus to input when search is active
+     */
     componentDidUpdate(prevProps) {
         if (prevProps.active != this.props.active) {
             if (this.props.active) this.searchInput.focus();
@@ -38,17 +45,39 @@ export class SearchBox extends React.Component {
         }
     }
 
-    onInputChanged(event) {
-        console.log('Search input changed!');
+    /**
+     * Load new search results from searchQuery
+     */
+    getSearchResults(searchQuery) {
+        console.log(`Getting results for ${searchQuery}`);
+        this.setState({
+            searchResults: [
+                <SearchResult url="/nothing" text="result1" />,
+                <SearchResult url="/nothing" text="result2" />,
+            ]
+        })
+
     }
 
+    /**
+     * Event handler for search input box
+     */
+    onInputChanged() {
+        let inputText = this.searchInput.value;
+        console.log(`Search input: ${inputText}`);
+        // TODO: Dont do this one every change event
+        this.getSearchResults(inputText);
+    }
+
+    /**
+     * Animate input being focused or blurred
+     */
     onInputFocus(event) {
         if (event === 'blurred') this.setState({ focused: false });
         else if (event === 'focused') this.setState({ focused: true });
     }
 
     render() {
-        console.log(`this.state.focused: ${this.state.focused}`);
         let inputClass = classNames('search-input-group', {
             'focused': this.state.focused,
             'hidden': !this.props.active,
@@ -68,9 +97,15 @@ export class SearchBox extends React.Component {
                         onFocus={() => this.onInputFocus('focused')} />
                 </div>
                 <div className='search-results-group'>
-                    <SearchResult url="/nothing" text="result1" />
+                {this.state.searchResults.forEach((result, idx) => {
+                    if (idx == this.state.searchResults.length - 1) {
+                        return result;
+                    }
+                    return [result, <SearchResultDivider />]
+                })}
+                    {/*<SearchResult url="/nothing" text="result1" />
                     <SearchResultDivider />
-                    <SearchResult url="/nothing" text="result2" />
+                    <SearchResult url="/nothing" text="result2" />*/}
                 </div>
             </span>
         );
@@ -118,12 +153,32 @@ export class SearchOverlay extends React.Component {
         onDismissed: PropTypes.func,
     };
 
+    componentWillMount() {
+        document.onkeyup = this.handleKeyPress.bind(this);
+    }
+
+    componentWillUnmount() {
+        document.onkeyup = undefined;
+    }
+
+    /**
+     * Bind esc key to dismiss search
+     */
+    handleKeyPress(event) {
+        console.log(event);
+        if(event.key == 'Escape'){
+            event.preventDefault();
+            console.log('Dismissing search');
+            this.props.onDismissed(false);
+        }
+    }
+
     render() {
         let overlayClass = classNames({
             "hidden": !this.props.active
         });
         return (
-            <div id="search-container" className={overlayClass}>
+            <div id="search-container" className={overlayClass} onKeyPress={this.handleKeyPress.bind(this)}>
                 <div id="search-background" 
                      className={overlayClass}
                      onClick={() => this.props.onDismissed(false)} />
