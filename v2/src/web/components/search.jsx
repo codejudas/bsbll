@@ -216,7 +216,7 @@ export class SearchOverlay extends React.Component {
                      onClick={() => this.props.onDismissed(false)} />
 
                 <SearchBox active={this.props.active}
-                           placeholder='Search TBD...'/>
+                           placeholder='Search...'/>
             </div>
         );
     }
