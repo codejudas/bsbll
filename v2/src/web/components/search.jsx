@@ -73,6 +73,7 @@ export class SearchBox extends React.Component {
 
         console.log(`Got matches ${JSON.stringify(matches)}`);
         this.setState({
+            searchQuery: searchQuery,
             searchResults: matches.map(elem => {
                 let url = '/' + elem.original.toLowerCase().replace(' ', '_');
                 return {
@@ -96,6 +97,14 @@ export class SearchBox extends React.Component {
                 results.push(<SearchResultDivider key={`div-${idx}`} />);
             }
         });
+        if (results.length == 0 && !!this.state.searchQuery) {
+            console.log(`"${this.state.searchQuery}"`);
+            results.push(
+                <SearchResult key='1'>
+                    {'No results found :('}
+                </SearchResult>
+            );
+        }
         return results;
     }
 
@@ -149,12 +158,13 @@ export class SearchBox extends React.Component {
 class SearchResult extends React.Component {
     static propTypes = {
         // Url to redirect to if result is clicked
-        url: PropTypes.string.isRequired,
+        url: PropTypes.string,
     };
     
     render() {
+        let url = this.props.url || '#';
         return (
-            <Link to={this.props.url}>
+            <Link to={url}>
                 <div className='search-result'
                      dangerouslySetInnerHTML={{__html: this.props.children}}></div>
             </Link>
