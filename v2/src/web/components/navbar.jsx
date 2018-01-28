@@ -179,7 +179,6 @@ export class Navbar extends React.Component {
         try {
             let activeElem = this.getElemDimensions(elem);
             this.setState({
-                seekerHidden: false,
                 seekerWidth: activeElem.width,
                 seekerOffset: activeElem.x,
             });
