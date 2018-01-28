@@ -120,8 +120,15 @@ $box-accent-color: #afafaf;
         .search-results-group {
             box-sizing: border-box;
             width: 100%;
+            max-height: 40vh;
+            overflow: scroll;
             background-color: white;
             border-radius: 0px 0px $box-border-radius $box-border-radius;
+
+            b {
+                font-weight: 400;
+                color: $PRIMARY_COLOR;
+            }
         }
     }
 }

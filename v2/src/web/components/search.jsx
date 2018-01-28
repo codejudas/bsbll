@@ -4,8 +4,22 @@ import classNames from 'classnames';
 import FontAwesome from 'react-fontawesome';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import * as fuzzy from 'fuzzy';
 
 import '../style/search.scss';
+
+const DUMMY_SEARCH_RESULTS = [
+    'San Francisco Giants',
+    'Buster Posey',
+    'Barry Bonds',
+    'Tim Lincecum',
+    'Hunter Pence',
+    'Ryan Vogelsong',
+    'Brandon Crawford',
+    'Evan Longoria',
+    'Andrew McCutchen',
+    'Johnny Cueto',
+];
 
 export class SearchBox extends React.Component {
     static propTypes = {
@@ -48,15 +62,41 @@ export class SearchBox extends React.Component {
     /**
      * Load new search results from searchQuery
      */
-    getSearchResults(searchQuery) {
+    loadSearchResuts(searchQuery) {
         console.log(`Getting results for ${searchQuery}`);
-        this.setState({
-            searchResults: [
-                <SearchResult url="/nothing" text="result1" />,
-                <SearchResult url="/nothing" text="result2" />,
-            ]
-        })
+        let matches = [];
+        /* Only load results if there is something in the input */
+        if (searchQuery !== '') {
+            let options = {pre: '<b>', post: '</b>'};
+            matches = fuzzy.filter(searchQuery, DUMMY_SEARCH_RESULTS, options);
+        }
 
+        console.log(`Got matches ${JSON.stringify(matches)}`);
+        this.setState({
+            searchResults: matches.map(elem => {
+                let url = '/' + elem.original.toLowerCase().replace(' ', '_');
+                return {
+                    url: url,
+                    text: elem.string
+                }
+            })
+        });
+    }
+
+    /**
+     * Display search results stored in state
+     */
+    displaySearchResults() {
+        let results = [];
+        this.state.searchResults.forEach((elem, idx) => {
+            results.push(
+                <SearchResult key={idx} {...elem}>{elem.text}</SearchResult>
+            );
+            if (idx !== (this.state.searchResults.length - 1)) {
+                results.push(<SearchResultDivider key={`div-${idx}`} />);
+            }
+        });
+        return results;
     }
 
     /**
@@ -65,8 +105,8 @@ export class SearchBox extends React.Component {
     onInputChanged() {
         let inputText = this.searchInput.value;
         console.log(`Search input: ${inputText}`);
-        // TODO: Dont do this one every change event
-        this.getSearchResults(inputText);
+        // TODO: Dont do this on every change event
+        this.loadSearchResuts(inputText);
     }
 
     /**
@@ -78,6 +118,7 @@ export class SearchBox extends React.Component {
     }
 
     render() {
+        console.log('Rendering results: ' + JSON.stringify(this.state.searchResults));
         let inputClass = classNames('search-input-group', {
             'focused': this.state.focused,
             'hidden': !this.props.active,
@@ -97,15 +138,7 @@ export class SearchBox extends React.Component {
                         onFocus={() => this.onInputFocus('focused')} />
                 </div>
                 <div className='search-results-group'>
-                {this.state.searchResults.forEach((result, idx) => {
-                    if (idx == this.state.searchResults.length - 1) {
-                        return result;
-                    }
-                    return [result, <SearchResultDivider />]
-                })}
-                    {/*<SearchResult url="/nothing" text="result1" />
-                    <SearchResultDivider />
-                    <SearchResult url="/nothing" text="result2" />*/}
+                    {this.displaySearchResults()}
                 </div>
             </span>
         );
@@ -117,14 +150,13 @@ class SearchResult extends React.Component {
     static propTypes = {
         // Url to redirect to if result is clicked
         url: PropTypes.string.isRequired,
-        // Text to display in result
-        text: PropTypes.string.isRequired,
     };
     
     render() {
         return (
             <Link to={this.props.url}>
-                <div className='search-result'>{this.props.text}</div>
+                <div className='search-result'
+                     dangerouslySetInnerHTML={{__html: this.props.children}}></div>
             </Link>
         );
 
