@@ -19,6 +19,7 @@ const DUMMY_SEARCH_RESULTS = [
     'Evan Longoria',
     'Andrew McCutchen',
     'Johnny Cueto',
+    'Madison Bumgarner'
 ];
 
 export class SearchBox extends React.Component {
