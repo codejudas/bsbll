@@ -1,6 +1,7 @@
 @import 'global';
 
 $LOGO_PADDING: 10px;
+$LOGO_DIMENSIONS: (width: 95px, height: 60px);
 $EDGE_PADDING: 60px;
 
 $NAVBAR_HEIGHT: 80px;
@@ -11,7 +12,7 @@ $NAVBAR_EFFECTIVE_HEIGHT: $NAVBAR_HEIGHT - $NAVBAR_ACCENT_THICKNESS;
 $NAVBAR_COLOR: $PRIMARY_COLOR;
 $NAVBAR_ACCENT_COLOR: $ACCENT_COLOR;
 
-$NAVBAR_TEXT_COLOR: white;
+$NAVBAR_TEXT_COLOR: $DARK_TEXT_COLOR;
 
 
 /** Navbar styles **/
@@ -36,9 +37,9 @@ $NAVBAR_TEXT_COLOR: white;
     }
 
     #mlb-logo {
-        $logo-height: 50px;
-        height: $logo-height;
-        margin-top: ($NAVBAR_EFFECTIVE_HEIGHT - $logo-height) / 2;
+        height: map-get($LOGO_DIMENSIONS, 'height');
+        width: map-get($LOGO_DIMENSIONS, 'width');
+        margin-top: ($NAVBAR_EFFECTIVE_HEIGHT - map-get($LOGO_DIMENSIONS, 'height')) / 2;
         opacity: 0.9;
         color: $NAVBAR_TEXT_COLOR;
     }

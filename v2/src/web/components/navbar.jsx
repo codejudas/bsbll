@@ -237,7 +237,7 @@ export class Navbar extends React.Component {
                 </Helmet>
                 <div id="logo">
                     <Link to={`/${DEFAULT_TAB.toLowerCase()}`}>
-                        <img id='mlb-logo' src='/assets/img/mlb-white.png'/>
+                        <img id='mlb-logo' src='/assets/img/mlb.png'/>
                         <span id='site-title'>BSBLL</span>
                     </Link>
                 </div>

@@ -1,0 +1,8 @@
+@import 'global';
+@import 'navbar';
+
+$page-padding: (vert: 50px, horiz: 10%);
+
+div.container .content {
+    padding: map-get($page-padding, 'vert') map-get($page-padding, 'horiz');
+}
